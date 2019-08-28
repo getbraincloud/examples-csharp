@@ -17,6 +17,8 @@ namespace XamarinExample
         public MainPage()
         {
             InitializeComponent();
+            InitWrapper();
+            client = wrapper.Client;
         }
         int count = 0;
 
@@ -35,8 +37,8 @@ namespace XamarinExample
         {
             count++;
             ((Button)sender).Text = $"You clicked {count} times.";
-            InitWrapper();
-            client = wrapper.Client;
+            System.Diagnostics.Debug.WriteLine("PRESSED");
+            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
         }
 
         public void InitWrapper()
@@ -47,15 +49,15 @@ namespace XamarinExample
                 wrapper.Init(ServerUrl, Secret, AppId, version);
                 remote_loading_in_progress = true;
                 wrapper.AuthenticateAnonymous(OnAuthorizationSuccess, OnAuthorizationFail);
-                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
             }
-            //wrapper.Update();
 
-            Content = new StackLayout
-            {
-                Children = { new Label { Text = "TEST1" } }
-            };
-            Console.WriteLine("woooooooork");
+            //wrapper.Update();
+            //Content = new StackLayout
+            //{
+            //    Children = { new Label { Text = "TEST1" } }
+            //};
+            //Console.WriteLine("woooooooork");
+
             System.Diagnostics.Debug.WriteLine("Logs work!");
         }
 
