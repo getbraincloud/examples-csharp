@@ -734,6 +734,7 @@ namespace BrainCloud.Internal
             if (_blockingQueue)
             {
                 _clientRef.Log("Flushing cached messages");
+                System.Diagnostics.Debug.WriteLine("FLUSHING CACHED MESSAGES");
 
                 // try to cancel if request is in progress (shouldn't happen)
                 if (_activeRequest != null)
@@ -820,6 +821,8 @@ namespace BrainCloud.Internal
         /// <param name="jsonData">The received message bundle.</param>
         private void HandleResponseBundle(string jsonData)
         {
+            System.Diagnostics.Debug.WriteLine("TIME TO HANDLE RESPONSE BINDLE");
+            System.Diagnostics.Debug.WriteLine("DATA: " + jsonData);
             _clientRef.Log(String.Format("{0} - {1}\n{2}", "RESPONSE", DateTime.Now, jsonData));
 
             if (string.IsNullOrEmpty(jsonData))
@@ -830,8 +833,11 @@ namespace BrainCloud.Internal
 
             JsonResponseBundleV2 bundleObj = JsonReader.Deserialize<JsonResponseBundleV2>(jsonData);
             long receivedPacketId = (long)bundleObj.packetId;
+
+            System.Diagnostics.Debug.WriteLine("PACKET ID: " + receivedPacketId);
             if (_expectedIncomingPacketId == NO_PACKET_EXPECTED || _expectedIncomingPacketId != receivedPacketId)
             {
+                System.Diagnostics.Debug.WriteLine("DROPPING DUPLICATE PACKET");
                 _clientRef.Log("Dropping duplicate packet");
                 return;
             }
@@ -844,8 +850,11 @@ namespace BrainCloud.Internal
             for (int j = 0; j < responseBundle.Length; ++j)
             {
                 response = responseBundle[j];
+                System.Diagnostics.Debug.WriteLine("RESPONSE: " + response);
                 int statusCode = (int)response["status"];
                 string data = "";
+
+                System.Diagnostics.Debug.WriteLine("RESPONSE STATUS: " + statusCode);
 
                 //
                 // It's important to note here that a user error callback *might* call
@@ -1320,11 +1329,14 @@ namespace BrainCloud.Internal
                         //put auth first
                         for (int i = 0; i < numMessagesWaiting; ++i)
                         {
+                            System.Diagnostics.Debug.WriteLine("CALL TYPE WAITING " + _serviceCallsWaiting[i].GetOperation());
+
                             if (_serviceCallsWaiting[i].GetType() == typeof(EndOfBundleMarker))
                                 break;
 
                             if (_serviceCallsWaiting[i].GetOperation() == ServiceOperation.Authenticate.Value)
                             {
+                                System.Diagnostics.Debug.WriteLine("IS AN AUTHENTICATION CALL");
                                 if (i != 0)
                                 {
                                     var call = _serviceCallsWaiting[i];
@@ -1514,9 +1526,11 @@ namespace BrainCloud.Internal
             requestState.DotNetRequestStatus = RequestState.eWebRequestStatus.STATUS_PENDING;
 #endif
             System.Diagnostics.Debug.WriteLine("We are in Internal send message");
+            System.Diagnostics.Debug.WriteLine("REQUEST STATE: " + requestState);
             // bundle up the data into a string
             Dictionary<string, object> packet = new Dictionary<string, object>();
             packet[OperationParam.ServiceMessagePacketId.Value] = requestState.PacketId;
+            System.Diagnostics.Debug.WriteLine("PacketId: " + requestState.PacketId);
             packet[OperationParam.ServiceMessageSessionId.Value] = SessionID;
             if (AppId != null && AppId.Length > 0)
             {
@@ -1526,6 +1540,7 @@ namespace BrainCloud.Internal
             packet[OperationParam.ServiceMessageMessages.Value] = requestState.MessageList;
 
             string jsonRequestString = JsonWriter.Serialize(packet);
+            System.Diagnostics.Debug.WriteLine("REQUEST STRING: " + jsonRequestString);
             string sig = CalculateMD5Hash(jsonRequestString + SecretKey);
 
 #if UNITY_EDITOR
