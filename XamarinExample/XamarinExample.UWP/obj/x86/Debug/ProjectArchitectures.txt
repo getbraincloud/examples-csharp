@@ -1,0 +1,1 @@
+C:\Users\pascalf\source\repos\XamarinExample\XamarinExample.UWP\XamarinExample.UWP.csproj;x86
