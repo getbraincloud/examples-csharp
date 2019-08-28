@@ -51,7 +51,7 @@ namespace XamarinExample
                 wrapper.AuthenticateAnonymous(OnAuthorizationSuccess, OnAuthorizationFail);
             }
 
-            //wrapper.Update();
+            wrapper.Update();
             //Content = new StackLayout
             //{
             //    Children = { new Label { Text = "TEST1" } }

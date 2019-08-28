@@ -329,10 +329,10 @@ public class BrainCloudWrapper
 
     public void Update()
     {
-        System.Diagnostics.Debug.WriteLine("WRAPPPPPPPPPPPPPPER UPDATTTTTTE");
+        //System.Diagnostics.Debug.WriteLine("WRAPPPPPPPPPPPPPPER UPDATTTTTTE");
         if (Client != null)
         {
-            System.Diagnostics.Debug.WriteLine("CLIENT IS NOT NULLL!!!!!!!!!!!!!!!!! YESSSSSSS");
+            //System.Diagnostics.Debug.WriteLine("CLIENT IS NOT NULLL!!!!!!!!!!!!!!!!! YESSSSSSS");
             // MonoBehavior runs every update Tick
             // for further control please review eBrainCloudUpdateType
             // from the direct Client Updates

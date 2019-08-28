@@ -192,6 +192,8 @@ namespace BrainCloud.Internal
         private string _killSwitchService;
         private string _killSwitchOperation;
 
+        int waitingCalls = 0;
+
         private bool _isAuthenticated = false;
         public bool Authenticated
         {
@@ -434,7 +436,7 @@ namespace BrainCloud.Internal
             // 1- process existing requests
             // 2- send next request
             // 3- handle heartbeat/timeouts
-            System.Diagnostics.Debug.WriteLine("WE'RE IN COMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMS UPDATE");
+            //System.Diagnostics.Debug.WriteLine("WE'RE IN COMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMS UPDATE");
             if (!_initialized)
             {
                 return;
@@ -871,6 +873,7 @@ namespace BrainCloud.Internal
                 // its a success response
                 if (statusCode == 200)
                 {
+                    System.Diagnostics.Debug.WriteLine("SUCCESS RESPONSE!!!");
                     ResetKillSwitch();
 
                     Dictionary<string, object> responseData = null;
@@ -878,6 +881,7 @@ namespace BrainCloud.Internal
                     {
                         responseData = (Dictionary<string, object>)response[OperationParam.ServiceMessageData.Value];
 
+                        System.Diagnostics.Debug.WriteLine("RESPONSE DATA: " + responseData);
                         // send the data back as not formatted
                         data = JsonWriter.Serialize(response);
 
@@ -1296,8 +1300,10 @@ namespace BrainCloud.Internal
         private RequestState CreateAndSendNextRequestBundle()
         {
             RequestState requestState = null;
+            System.Diagnostics.Debug.WriteLine("GOING TO CREATE AND SEND NEXT BUNDLE");
             lock (_serviceCallsWaiting)
             {
+                System.Diagnostics.Debug.WriteLine("LOOKS LIKE THERE'S CALLS WAITING");
                 if (_blockingQueue)
                 {
                     _serviceCallsInProgress.InsertRange(0, _serviceCallsInTimeoutQueue);
@@ -1307,6 +1313,7 @@ namespace BrainCloud.Internal
                 {
                     if (_serviceCallsWaiting.Count > 0)
                     {
+                        System.Diagnostics.Debug.WriteLine("NUMBER OF CALLS WAITING: " + _serviceCallsWaiting.Count);
 
                         int numMessagesWaiting = _serviceCallsWaiting.Count;
 
@@ -1439,6 +1446,7 @@ namespace BrainCloud.Internal
                         if (_isAuthenticated || isAuth)
                         {
                             _clientRef.Log("SENDING REQUEST");
+                            System.Diagnostics.Debug.WriteLine("Authenticated, SEND REQUEST");
                             InternalSendMessage(requestState);
                         }
                         else
@@ -1505,7 +1513,7 @@ namespace BrainCloud.Internal
             // Unity uses the info stored in the WWW object and it's recreated here so it's not an issue.
             requestState.DotNetRequestStatus = RequestState.eWebRequestStatus.STATUS_PENDING;
 #endif
-
+            System.Diagnostics.Debug.WriteLine("We are in Internal send message");
             // bundle up the data into a string
             Dictionary<string, object> packet = new Dictionary<string, object>();
             packet[OperationParam.ServiceMessagePacketId.Value] = requestState.PacketId;
@@ -1514,6 +1522,7 @@ namespace BrainCloud.Internal
             {
                 packet[OperationParam.ServiceMessageGameId.Value] = AppId;
             }
+            System.Diagnostics.Debug.WriteLine("APPPPP ID" + AppId);
             packet[OperationParam.ServiceMessageMessages.Value] = requestState.MessageList;
 
             string jsonRequestString = JsonWriter.Serialize(packet);
@@ -1586,18 +1595,20 @@ namespace BrainCloud.Internal
 
                 HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, new Uri(ServerURL));
                 req.Content = new ByteArrayContent(byteArray);
+                System.Diagnostics.Debug.WriteLine("REQUEST CONTENT: " + req.Content);
                 req.Headers.Add("X-SIG", sig);
                 if (AppId != null && AppId.Length > 0) 
                 {
                     req.Headers.Add("X-APPID", AppId);
                 }
                 req.Method = HttpMethod.Post;
-
+                System.Diagnostics.Debug.WriteLine("REQUEST METHOD POST: " + req.Method);
                 CancellationTokenSource source = new CancellationTokenSource();
                 requestState.CancelToken = source;
 
                 Task<HttpResponseMessage> httpRequest = _httpClient.SendAsync(req, HttpCompletionOption.ResponseContentRead, source.Token);
                 requestState.WebRequest = httpRequest;
+                System.Diagnostics.Debug.WriteLine("WEB REQUEST: " + requestState.WebRequest);
                 httpRequest.ContinueWith(async (t) =>
                 {
                     await AsyncHttpTaskCallback(t, requestState);
@@ -1779,10 +1790,13 @@ namespace BrainCloud.Internal
         /// <param name="call">The server call to execute</param>
         internal void AddToQueue(ServerCall call)
         {
+            System.Diagnostics.Debug.WriteLine("Adding Call to Queue");
             lock (_serviceCallsWaiting)
             {
                 _serviceCallsWaiting.Add(call);
+                waitingCalls++;
             }
+            System.Diagnostics.Debug.WriteLine("number calls in waiting " + waitingCalls);
         }
 
         /// <summary>
@@ -1817,6 +1831,7 @@ namespace BrainCloud.Internal
 #if (DOT_NET)
         private async Task AsyncHttpTaskCallback(Task<HttpResponseMessage> asyncResult, RequestState requestState)
         {
+            System.Diagnostics.Debug.WriteLine("ASYNC RESULT CANCELLED?: " + asyncResult.IsCanceled);
             if (asyncResult.IsCanceled) return;
 
             HttpResponseMessage message = null;
