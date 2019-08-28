@@ -29,6 +29,7 @@ namespace XamarinExample
         string AppId = "12701";
 
         private bool remote_loading_in_progress = false;
+        private bool is_authorised = false;
 
         void Button_Clicked(object sender, System.EventArgs e)
         {
@@ -63,16 +64,33 @@ namespace XamarinExample
             wrapper.Update();
             return remote_loading_in_progress;
         }
+        private void FetchGlobalProperties()
+        {
+            wrapper.GlobalAppService.ReadProperties(OnConfigSuccess, OnConfigFail);
+        }
 
         public void OnAuthorizationSuccess(string responseData, object cbObject)
-        {  
+        {
+            //takea  look at responseData
+            System.Diagnostics.Debug.WriteLine("AUTH SUCCESS " + responseData);
+            FetchGlobalProperties();
+            is_authorised = true;
         }
 
         public void OnAuthorizationFail(int statusCode, int reasonCode, string statusMessage, object cbObject)
         {
+            System.Diagnostics.Debug.WriteLine("AUTH FAIL " + statusMessage);
+            remote_loading_in_progress = false;
+        }
+        public void OnConfigSuccess(string json_response, object callback_object)
+        {
+            System.Diagnostics.Debug.WriteLine("CONFIG SUCCESS " + json_response);
+        }
+        public void OnConfigFail(int status, int reason_code, string json_error, object callback_object)
+        {
+            System.Diagnostics.Debug.WriteLine("CONFIG FAIL " + json_error);
         }
     }
-
 }
 
 
