@@ -28,6 +28,8 @@ namespace XamarinExample
         string Secret = "f1bbf51b-4fc9-4563-9c2b-24e5e68dd70f";
         string AppId = "12701";
 
+        private bool remote_loading_in_progress = false;
+
         void Button_Clicked(object sender, System.EventArgs e)
         {
             count++;
@@ -38,16 +40,28 @@ namespace XamarinExample
 
         public void InitWrapper()
         {
-            wrapper = new BrainCloudWrapper();
-            wrapper.Init(ServerUrl, Secret, AppId, version);
-            wrapper.AuthenticateAnonymous(OnAuthorizationSuccess, OnAuthorizationFail);
-            wrapper.Update();
+            if (!remote_loading_in_progress)
+            {
+                wrapper = new BrainCloudWrapper();
+                wrapper.Init(ServerUrl, Secret, AppId, version);
+                remote_loading_in_progress = true;
+                wrapper.AuthenticateAnonymous(OnAuthorizationSuccess, OnAuthorizationFail);
+                Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
+            }
+            //wrapper.Update();
+
             Content = new StackLayout
             {
                 Children = { new Label { Text = "TEST1" } }
             };
             Console.WriteLine("woooooooork");
-            System.Diagnostics.Debug.WriteLine("HI!");
+            System.Diagnostics.Debug.WriteLine("Logs work!");
+        }
+
+        public bool RunCallbacks()
+        {
+            wrapper.Update();
+            return remote_loading_in_progress;
         }
 
         public void OnAuthorizationSuccess(string responseData, object cbObject)

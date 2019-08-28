@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample.UWP\\XamarinExample.UWP.csproj": {}
+    "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample.UWP\\XamarinExample.UWP.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample.UWP\\XamarinExample.UWP.csproj": {
+    "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample.UWP\\XamarinExample.UWP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample.UWP\\XamarinExample.UWP.csproj",
+        "projectUniqueName": "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample.UWP\\XamarinExample.UWP.csproj",
         "projectName": "XamarinExample.UWP",
-        "projectPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample.UWP\\XamarinExample.UWP.csproj",
-        "packagesPath": "C:\\Users\\pascalf\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample.UWP\\obj\\",
+        "projectPath": "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample.UWP\\XamarinExample.UWP.csproj",
+        "packagesPath": "C:\\Users\\ryanr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample.UWP\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "fallbackFolders": [
@@ -19,7 +19,7 @@
           "C:\\Program Files (x86)\\Microsoft SDKs\\UWPNuGetPackages\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\pascalf\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ryanr\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -33,8 +33,8 @@
         "frameworks": {
           "uap10.0.16299": {
             "projectReferences": {
-              "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj": {
-                "projectPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj"
+              "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample\\XamarinExample.csproj": {
+                "projectPath": "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample\\XamarinExample.csproj"
               }
             }
           }
@@ -87,21 +87,21 @@
         }
       }
     },
-    "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj": {
+    "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample\\XamarinExample.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj",
+        "projectUniqueName": "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample\\XamarinExample.csproj",
         "projectName": "XamarinExample",
-        "projectPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj",
-        "packagesPath": "C:\\Users\\pascalf\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\obj\\",
+        "projectPath": "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample\\XamarinExample.csproj",
+        "packagesPath": "C:\\Users\\ryanr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ryanr\\Desktop\\xamarinExample\\examples-xamarin\\XamarinExample\\XamarinExample\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\pascalf\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ryanr\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
