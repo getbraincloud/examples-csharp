@@ -54,8 +54,8 @@ mono_aot_mode_name:
 	.section	.rodata..L.str.6,"aMS",@progbits,1
 	.type	.L.str.6, @object
 .L.str.6:
-	.asciz	"info"
-	.size	.L.str.6, 5
+	.asciz	"error"
+	.size	.L.str.6, 6
 	.section	.rodata..L.str.7,"aMS",@progbits,1
 	.type	.L.str.7, @object
 .L.str.7:
@@ -64,7 +64,7 @@ mono_aot_mode_name:
 	.section	.rodata..L.str.8,"aMS",@progbits,1
 	.type	.L.str.8, @object
 .L.str.8:
-	.asciz	"c94818e2-52bf-4260-af10-d81ea96fb71f"
+	.asciz	"8aa882cc-2029-4b1b-8de2-2c41b660227e"
 	.size	.L.str.8, 37
 	.section	.rodata..L.str.9,"aMS",@progbits,1
 	.type	.L.str.9, @object

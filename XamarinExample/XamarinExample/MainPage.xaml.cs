@@ -33,7 +33,7 @@ namespace XamarinExample
 
         void Button_Init(object sender, System.EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("PRESSED UPDATE");
+            System.Diagnostics.Debug.WriteLine("PRESSED INIT");
             InitWrapper();
             client = wrapper.Client;
         }
