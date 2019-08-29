@@ -70,6 +70,10 @@ namespace BrainCloud.Internal
         /// </summary>
         private long _packetId = 0;
 
+        private long _lastPacketId = 0;
+        private long _secondLastPacketId = 0;
+
+
         /// <summary>
         /// The packet id we're expecting
         /// </summary>
@@ -179,7 +183,7 @@ namespace BrainCloud.Internal
         private List<FileUploader> _fileUploads = new List<FileUploader>();
 
 #if DOT_NET
-        private HttpClient _httpClient = new HttpClient(new NativeMessageHandler());
+        private HttpClient _httpClient = new HttpClient();// new NativeMessageHandler());
 #endif
 
         //For handling local session errors
@@ -760,6 +764,7 @@ namespace BrainCloud.Internal
                     {
                         callsToProcess.Add(_serviceCallsWaiting[i]);
                     }
+                    
                     _serviceCallsWaiting.Clear();
                 }
                 lock (_serviceCallsInProgress)
@@ -835,8 +840,13 @@ namespace BrainCloud.Internal
             JsonResponseBundleV2 bundleObj = JsonReader.Deserialize<JsonResponseBundleV2>(jsonData);
             long receivedPacketId = (long)bundleObj.packetId;
 
+            _secondLastPacketId = _lastPacketId;
+            _lastPacketId = receivedPacketId;
+
+            ///////////////////////////
+
             System.Diagnostics.Debug.WriteLine("PACKET ID: " + receivedPacketId);
-            if (_expectedIncomingPacketId == NO_PACKET_EXPECTED || _expectedIncomingPacketId != receivedPacketId)
+            if (_expectedIncomingPacketId == NO_PACKET_EXPECTED || _expectedIncomingPacketId != receivedPacketId && _secondLastPacketId != _lastPacketId)
             {
                 System.Diagnostics.Debug.WriteLine("DROPPING DUPLICATE PACKET");
                 _clientRef.Log("Dropping duplicate packet");
@@ -847,6 +857,8 @@ namespace BrainCloud.Internal
             Dictionary<string, object>[] responseBundle = bundleObj.responses;
             Dictionary<string, object> response = null;
             IList<Exception> exceptions = new List<Exception>();
+
+            System.Diagnostics.Debug.WriteLine("WE'VE DROPPED THE DUPLICATE");
 
             for (int j = 0; j < responseBundle.Length; ++j)
             {
@@ -871,13 +883,18 @@ namespace BrainCloud.Internal
                 // calls this method from another thread, we lock on _serviceCallsWaiting
                 //
                 ServerCall sc = null;
-                lock (_serviceCallsWaiting)
+                lock (_serviceCallsInProgress)
                 {
                     if (_serviceCallsInProgress.Count > 0)
                     {
                         sc = _serviceCallsInProgress[0] as ServerCall;
                         _serviceCallsInProgress.RemoveAt(0);
                     }
+                }
+
+                if (_secondLastPacketId == _lastPacketId)
+                {
+                    UpdateKillSwitch(sc.GetService(), sc.GetOperation(), 400);
                 }
 
                 // its a success response
@@ -1057,13 +1074,14 @@ namespace BrainCloud.Internal
                 }
                 else //if non-200
                 {
-                    object reasonCodeObj = null, statusMessageObj = null;
+                    object reasonCodeObj = null, statusMessageObj = null, statusObj = null;
                     int reasonCode = 0;
                     string errorJson = "";
-
+                    System.Diagnostics.Debug.WriteLine("PLEASE AT LEAST HIT HERE FOR MY SANITY GAWSH");
                     //if it was an authentication call 
-                    if(sc.GetOperation() == "AUTHENTICATE")
+                    if (sc.GetOperation() == "AUTHENTICATE")
                     {
+                        System.Diagnostics.Debug.WriteLine("EHHhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh?");
                         //swap the recent responses, so you have the newest one, and the one last time you came through.
                         _recentResponseJsonData[1] = _recentResponseJsonData[0];
                         _recentResponseJsonData[0] = response;
@@ -1104,8 +1122,9 @@ namespace BrainCloud.Internal
                         //if we haven't already gone above the threshold and are waiting for the timer or a 200 response to reset things
                         if(!tooManyAuthenticationAttempts())
                         {
+                            System.Diagnostics.Debug.WriteLine("CHECK AUTH CALL ATTMEPTS: " + _identicalFailedAuthenticationAttempts);
                             //we either increment the amount of identical failed authentication attempts, or reset it because its not identical. 
-                            if(responsesAreTheSame == true)
+                            if (responsesAreTheSame == true)
                             {
                                 _identicalFailedAuthenticationAttempts++;
                             }
@@ -1310,12 +1329,11 @@ namespace BrainCloud.Internal
         private RequestState CreateAndSendNextRequestBundle()
         {
             RequestState requestState = null;
-            System.Diagnostics.Debug.WriteLine("GOING TO CREATE AND SEND NEXT BUNDLE");
             lock (_serviceCallsWaiting)
             {
-                System.Diagnostics.Debug.WriteLine("LOOKS LIKE THERE'S CALLS WAITING");
                 if (_blockingQueue)
                 {
+                    System.Diagnostics.Debug.WriteLine("Blocking Queue - Service call in timeout queue: " + _serviceCallsInTimeoutQueue);
                     _serviceCallsInProgress.InsertRange(0, _serviceCallsInTimeoutQueue);
                     _serviceCallsInTimeoutQueue.Clear();
                 }
@@ -1389,7 +1407,11 @@ namespace BrainCloud.Internal
                         }
 
                         _serviceCallsInProgress = _serviceCallsWaiting.GetRange(0, numMessagesWaiting);
+                        System.Diagnostics.Debug.WriteLine("NUM MESSAGES WAITING" + numMessagesWaiting);
+                        System.Diagnostics.Debug.WriteLine("SERVICE CALLS WAITING" + _serviceCallsWaiting.Count);
                         _serviceCallsWaiting.RemoveRange(0, numMessagesWaiting);
+                        System.Diagnostics.Debug.WriteLine("AFTER NUM MESSAGES WAITING" + numMessagesWaiting);
+                        System.Diagnostics.Debug.WriteLine("AFTER SERVICE CALLS WAITING" + _serviceCallsWaiting.Count);
                     }
                 }
 
@@ -1810,9 +1832,7 @@ namespace BrainCloud.Internal
             lock (_serviceCallsWaiting)
             {
                 _serviceCallsWaiting.Add(call);
-                waitingCalls++;
             }
-            System.Diagnostics.Debug.WriteLine("number calls in waiting " + waitingCalls);
         }
 
         /// <summary>

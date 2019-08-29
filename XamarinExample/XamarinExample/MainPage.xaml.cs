@@ -42,7 +42,7 @@ namespace XamarinExample
         {
             System.Diagnostics.Debug.WriteLine("PRESSED UPDATE");
             RunCallbacks();
-            //Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
+            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
         }
 
         void Button_Call(object sender, System.EventArgs e)
