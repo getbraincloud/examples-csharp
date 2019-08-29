@@ -1005,39 +1005,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\pascalf\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "/Users/ryanr/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample.iOS\\XamarinExample.iOS.csproj",
+      "projectUniqueName": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample.iOS/XamarinExample.iOS.csproj",
       "projectName": "XamarinExample.iOS",
-      "projectPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample.iOS\\XamarinExample.iOS.csproj",
-      "packagesPath": "C:\\Users\\pascalf\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample.iOS\\obj\\",
+      "projectPath": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample.iOS/XamarinExample.iOS.csproj",
+      "packagesPath": "/Users/ryanr/.nuget/packages/",
+      "outputPath": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample.iOS/obj/",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
-      "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
-      ],
       "configFilePaths": [
-        "C:\\Users\\pascalf\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "/Users/ryanr/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "xamarinios10"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "xamarinios10": {
           "projectReferences": {
-            "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj": {
-              "projectPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj"
+            "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/XamarinExample.csproj": {
+              "projectPath": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/XamarinExample.csproj"
             }
           }
         }

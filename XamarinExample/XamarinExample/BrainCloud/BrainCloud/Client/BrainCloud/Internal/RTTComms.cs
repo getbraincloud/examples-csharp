@@ -110,7 +110,7 @@ namespace BrainCloud.Internal
         /// </summary>
         public void Update()
         {
-            System.Diagnostics.Debug.WriteLine("RTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT UPDATE");
+            //System.Diagnostics.Debug.WriteLine("RTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT UPDATE");
             RTTCommandResponse toProcessResponse;
             lock (m_queuedRTTCommands)
             {

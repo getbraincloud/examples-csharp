@@ -555,33 +555,28 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\pascalf\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "/Users/ryanr/.nuget/packages/": {},
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj",
+      "projectUniqueName": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/XamarinExample.csproj",
       "projectName": "XamarinExample",
-      "projectPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\XamarinExample.csproj",
-      "packagesPath": "C:\\Users\\pascalf\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pascalf\\source\\repos\\XamarinExample\\XamarinExample\\obj\\",
+      "projectPath": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/XamarinExample.csproj",
+      "packagesPath": "/Users/ryanr/.nuget/packages/",
+      "outputPath": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\pascalf\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "/Users/ryanr/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

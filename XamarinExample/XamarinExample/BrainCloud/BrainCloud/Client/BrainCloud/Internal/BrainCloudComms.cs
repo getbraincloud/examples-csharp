@@ -19,6 +19,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading;
+using ModernHttpClient;
 #else
 #if USE_WEB_REQUEST
 #if UNITY_5_3
@@ -178,7 +179,7 @@ namespace BrainCloud.Internal
         private List<FileUploader> _fileUploads = new List<FileUploader>();
 
 #if DOT_NET
-        private HttpClient _httpClient = new HttpClient();
+        private HttpClient _httpClient = new HttpClient(new NativeMessageHandler());
 #endif
 
         //For handling local session errors
@@ -434,7 +435,7 @@ namespace BrainCloud.Internal
             // 1- process existing requests
             // 2- send next request
             // 3- handle heartbeat/timeouts
-            System.Diagnostics.Debug.WriteLine("WE'RE IN COMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMS UPDATE");
+            //System.Diagnostics.Debug.WriteLine("WE'RE IN COMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMS UPDATE");
             if (!_initialized)
             {
                 return;
@@ -473,20 +474,24 @@ namespace BrainCloud.Internal
             // is it time for a retry?
             if (_activeRequest != null)
             {
+                System.Diagnostics.Debug.WriteLine("Active Request not null");
                 if (bypassTimeout || DateTime.Now.Subtract(_activeRequest.TimeSent) >= GetPacketTimeout(_activeRequest))
                 {
                     // grab status/response before cancelling the request as in Unity, the www object
                     // will set internal status fields to null when www object is disposed
                     RequestState.eWebRequestStatus status = GetWebRequestStatus(_activeRequest);
                     string errorResponse = "";
+                    System.Diagnostics.Debug.WriteLine("ERROR RESPONSE?");
                     if (status == RequestState.eWebRequestStatus.STATUS_ERROR)
                     {
+                        System.Diagnostics.Debug.WriteLine("IT WAS AN ERROR");
                         errorResponse = GetWebRequestResponse(_activeRequest);
                     }
                     _activeRequest.CancelRequest();
 
                     if (!ResendMessage(_activeRequest))
                     {
+                        System.Diagnostics.Debug.WriteLine("CANT RESEND MESSAGE");
                         // we've reached the retry limit - send timeout error to all client callbacks
                         if (status == RequestState.eWebRequestStatus.STATUS_ERROR)
                         {
@@ -528,6 +533,7 @@ namespace BrainCloud.Internal
             }
             else // send the next message if we're ready
             {
+                //System.Diagnostics.Debug.WriteLine("CREATE AND SEND ANOTHER REQUEST BUNDLE >:D");
                 _activeRequest = CreateAndSendNextRequestBundle();
             }
 
@@ -732,6 +738,7 @@ namespace BrainCloud.Internal
             if (_blockingQueue)
             {
                 _clientRef.Log("Flushing cached messages");
+                System.Diagnostics.Debug.WriteLine("FLUSHING CACHED MESSAGES");
 
                 // try to cancel if request is in progress (shouldn't happen)
                 if (_activeRequest != null)
@@ -756,6 +763,7 @@ namespace BrainCloud.Internal
                     {
                         callsToProcess.Add(_serviceCallsWaiting[i]);
                     }
+                    
                     _serviceCallsWaiting.Clear();
                 }
                 lock (_serviceCallsInProgress)
@@ -818,6 +826,8 @@ namespace BrainCloud.Internal
         /// <param name="jsonData">The received message bundle.</param>
         private void HandleResponseBundle(string jsonData)
         {
+            System.Diagnostics.Debug.WriteLine("TIME TO HANDLE RESPONSE BINDLE");
+            System.Diagnostics.Debug.WriteLine("DATA: " + jsonData);
             _clientRef.Log(String.Format("{0} - {1}\n{2}", "RESPONSE", DateTime.Now, jsonData));
 
             if (string.IsNullOrEmpty(jsonData))
@@ -828,23 +838,68 @@ namespace BrainCloud.Internal
 
             JsonResponseBundleV2 bundleObj = JsonReader.Deserialize<JsonResponseBundleV2>(jsonData);
             long receivedPacketId = (long)bundleObj.packetId;
+            Dictionary<string, object>[] responseBundle = bundleObj.responses;
+            Dictionary<string, object> response = null;
+
+            System.Diagnostics.Debug.WriteLine("PACKET ID: " + receivedPacketId);
             if (_expectedIncomingPacketId == NO_PACKET_EXPECTED || _expectedIncomingPacketId != receivedPacketId)
             {
+                System.Diagnostics.Debug.WriteLine("DROPPING DUPLICATE PACKET");
                 _clientRef.Log("Dropping duplicate packet");
+                System.Diagnostics.Debug.WriteLine("ServiceCallsInProgress: " + _serviceCallsInProgress.Count);
+                System.Diagnostics.Debug.WriteLine("ServiceCallsWaiting: " + _serviceCallsWaiting.Count);
+                ////////////////////////////////////////////
+                for (int j = 0; j < responseBundle.Length; ++j)
+                {
+                    response = responseBundle[j];
+                    //System.Diagnostics.Debug.WriteLine("RESPONSE: " + response);
+                    int statusCode = (int)response["status"];
+                    //string data = "";
+
+                    System.Diagnostics.Debug.WriteLine("RESPONSE STATUS: " + statusCode);
+                    //
+                    // It's important to note here that a user error callback *might* call
+                    // ResetCommunications() based on the error being returned.
+                    // ResetCommunications will clear the _serviceCallsInProgress List
+                    // effectively removing all registered callbacks for this message bundle.
+                    // It's also likely that the developer will want to call authenticate next.
+                    // We need to ensure that this is supported as it's the best way to 
+                    // reset the brainCloud communications after a session invalid or network
+                    // error is triggered.
+                    //
+                    // This is safe to do from the main thread but just in case someone
+                    // calls this method from another thread, we lock on _serviceCallsWaiting
+                    //
+                    //ServerCall sc = null;
+                    lock (_serviceCallsInProgress)
+                    {
+                        if (_serviceCallsInProgress.Count > 0)
+                        {
+                            _serviceCallsInProgress.RemoveAt(0);
+                        }
+                    }
+                    System.Diagnostics.Debug.WriteLine("ServiceCallsInProgress: " + _serviceCallsInProgress.Count);
+                    System.Diagnostics.Debug.WriteLine("ServiceCallsWaiting: " + _serviceCallsWaiting.Count);
+                }
+
                 return;
             }
             _expectedIncomingPacketId = NO_PACKET_EXPECTED;
 
-            Dictionary<string, object>[] responseBundle = bundleObj.responses;
-            Dictionary<string, object> response = null;
+
             IList<Exception> exceptions = new List<Exception>();
+
+            System.Diagnostics.Debug.WriteLine("WE'VE DROPPED THE DUPLICATE");
 
             for (int j = 0; j < responseBundle.Length; ++j)
             {
                 response = responseBundle[j];
+                System.Diagnostics.Debug.WriteLine("RESPONSE: " + response);
                 int statusCode = (int)response["status"];
                 string data = "";
+                ServerCall sc = null;
 
+                System.Diagnostics.Debug.WriteLine("RESPONSE STATUS: " + statusCode);
                 //
                 // It's important to note here that a user error callback *might* call
                 // ResetCommunications() based on the error being returned.
@@ -858,8 +913,8 @@ namespace BrainCloud.Internal
                 // This is safe to do from the main thread but just in case someone
                 // calls this method from another thread, we lock on _serviceCallsWaiting
                 //
-                ServerCall sc = null;
-                lock (_serviceCallsWaiting)
+                //ServerCall sc = null;
+                lock (_serviceCallsInProgress)
                 {
                     if (_serviceCallsInProgress.Count > 0)
                     {
@@ -871,6 +926,7 @@ namespace BrainCloud.Internal
                 // its a success response
                 if (statusCode == 200)
                 {
+                    System.Diagnostics.Debug.WriteLine("SUCCESS RESPONSE!!!");
                     ResetKillSwitch();
 
                     Dictionary<string, object> responseData = null;
@@ -878,6 +934,7 @@ namespace BrainCloud.Internal
                     {
                         responseData = (Dictionary<string, object>)response[OperationParam.ServiceMessageData.Value];
 
+                        System.Diagnostics.Debug.WriteLine("RESPONSE DATA: " + responseData);
                         // send the data back as not formatted
                         data = JsonWriter.Serialize(response);
 
@@ -1046,10 +1103,11 @@ namespace BrainCloud.Internal
                     object reasonCodeObj = null, statusMessageObj = null;
                     int reasonCode = 0;
                     string errorJson = "";
-
+                    System.Diagnostics.Debug.WriteLine("PLEASE AT LEAST HIT HERE FOR MY SANITY GAWSH");
                     //if it was an authentication call 
-                    if(sc.GetOperation() == "AUTHENTICATE")
+                    if (sc.GetOperation() == "AUTHENTICATE")
                     {
+                        System.Diagnostics.Debug.WriteLine("EHHhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh?");
                         //swap the recent responses, so you have the newest one, and the one last time you came through.
                         _recentResponseJsonData[1] = _recentResponseJsonData[0];
                         _recentResponseJsonData[0] = response;
@@ -1090,8 +1148,9 @@ namespace BrainCloud.Internal
                         //if we haven't already gone above the threshold and are waiting for the timer or a 200 response to reset things
                         if(!tooManyAuthenticationAttempts())
                         {
+                            System.Diagnostics.Debug.WriteLine("CHECK AUTH CALL ATTMEPTS: " + _identicalFailedAuthenticationAttempts);
                             //we either increment the amount of identical failed authentication attempts, or reset it because its not identical. 
-                            if(responsesAreTheSame == true)
+                            if (responsesAreTheSame == true)
                             {
                                 _identicalFailedAuthenticationAttempts++;
                             }
@@ -1300,6 +1359,7 @@ namespace BrainCloud.Internal
             {
                 if (_blockingQueue)
                 {
+                    System.Diagnostics.Debug.WriteLine("Blocking Queue - Service call in timeout queue: " + _serviceCallsInTimeoutQueue);
                     _serviceCallsInProgress.InsertRange(0, _serviceCallsInTimeoutQueue);
                     _serviceCallsInTimeoutQueue.Clear();
                 }
@@ -1307,17 +1367,21 @@ namespace BrainCloud.Internal
                 {
                     if (_serviceCallsWaiting.Count > 0)
                     {
+                        System.Diagnostics.Debug.WriteLine("NUMBER OF CALLS WAITING: " + _serviceCallsWaiting.Count);
 
                         int numMessagesWaiting = _serviceCallsWaiting.Count;
 
                         //put auth first
                         for (int i = 0; i < numMessagesWaiting; ++i)
                         {
+                            System.Diagnostics.Debug.WriteLine("CALL TYPE WAITING " + _serviceCallsWaiting[i].GetOperation());
+
                             if (_serviceCallsWaiting[i].GetType() == typeof(EndOfBundleMarker))
                                 break;
 
                             if (_serviceCallsWaiting[i].GetOperation() == ServiceOperation.Authenticate.Value)
                             {
+                                System.Diagnostics.Debug.WriteLine("IS AN AUTHENTICATION CALL");
                                 if (i != 0)
                                 {
                                     var call = _serviceCallsWaiting[i];
@@ -1369,7 +1433,11 @@ namespace BrainCloud.Internal
                         }
 
                         _serviceCallsInProgress = _serviceCallsWaiting.GetRange(0, numMessagesWaiting);
+                        System.Diagnostics.Debug.WriteLine("NUM MESSAGES WAITING" + numMessagesWaiting);
+                        System.Diagnostics.Debug.WriteLine("SERVICE CALLS WAITING" + _serviceCallsWaiting.Count);
                         _serviceCallsWaiting.RemoveRange(0, numMessagesWaiting);
+                        System.Diagnostics.Debug.WriteLine("AFTER NUM MESSAGES WAITING" + numMessagesWaiting);
+                        System.Diagnostics.Debug.WriteLine("AFTER SERVICE CALLS WAITING" + _serviceCallsWaiting.Count);
                     }
                 }
 
@@ -1439,6 +1507,7 @@ namespace BrainCloud.Internal
                         if (_isAuthenticated || isAuth)
                         {
                             _clientRef.Log("SENDING REQUEST");
+                            System.Diagnostics.Debug.WriteLine("Authenticated, SEND REQUEST");
                             InternalSendMessage(requestState);
                         }
                         else
@@ -1505,18 +1574,22 @@ namespace BrainCloud.Internal
             // Unity uses the info stored in the WWW object and it's recreated here so it's not an issue.
             requestState.DotNetRequestStatus = RequestState.eWebRequestStatus.STATUS_PENDING;
 #endif
-
+            System.Diagnostics.Debug.WriteLine("We are in Internal send message");
+            System.Diagnostics.Debug.WriteLine("REQUEST STATE: " + requestState);
             // bundle up the data into a string
             Dictionary<string, object> packet = new Dictionary<string, object>();
             packet[OperationParam.ServiceMessagePacketId.Value] = requestState.PacketId;
+            System.Diagnostics.Debug.WriteLine("PacketId: " + requestState.PacketId);
             packet[OperationParam.ServiceMessageSessionId.Value] = SessionID;
             if (AppId != null && AppId.Length > 0)
             {
                 packet[OperationParam.ServiceMessageGameId.Value] = AppId;
             }
+            System.Diagnostics.Debug.WriteLine("APPPPP ID" + AppId);
             packet[OperationParam.ServiceMessageMessages.Value] = requestState.MessageList;
 
             string jsonRequestString = JsonWriter.Serialize(packet);
+            System.Diagnostics.Debug.WriteLine("REQUEST STRING: " + jsonRequestString);
             string sig = CalculateMD5Hash(jsonRequestString + SecretKey);
 
 #if UNITY_EDITOR
@@ -1586,18 +1659,20 @@ namespace BrainCloud.Internal
 
                 HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, new Uri(ServerURL));
                 req.Content = new ByteArrayContent(byteArray);
+                System.Diagnostics.Debug.WriteLine("REQUEST CONTENT: " + req.Content);
                 req.Headers.Add("X-SIG", sig);
                 if (AppId != null && AppId.Length > 0) 
                 {
                     req.Headers.Add("X-APPID", AppId);
                 }
                 req.Method = HttpMethod.Post;
-
+                System.Diagnostics.Debug.WriteLine("REQUEST METHOD POST: " + req.Method);
                 CancellationTokenSource source = new CancellationTokenSource();
                 requestState.CancelToken = source;
 
                 Task<HttpResponseMessage> httpRequest = _httpClient.SendAsync(req, HttpCompletionOption.ResponseContentRead, source.Token);
                 requestState.WebRequest = httpRequest;
+                System.Diagnostics.Debug.WriteLine("WEB REQUEST: " + requestState.WebRequest);
                 httpRequest.ContinueWith(async (t) =>
                 {
                     await AsyncHttpTaskCallback(t, requestState);
@@ -1779,6 +1854,7 @@ namespace BrainCloud.Internal
         /// <param name="call">The server call to execute</param>
         internal void AddToQueue(ServerCall call)
         {
+            System.Diagnostics.Debug.WriteLine("Adding Call to Queue");
             lock (_serviceCallsWaiting)
             {
                 _serviceCallsWaiting.Add(call);
@@ -1817,6 +1893,7 @@ namespace BrainCloud.Internal
 #if (DOT_NET)
         private async Task AsyncHttpTaskCallback(Task<HttpResponseMessage> asyncResult, RequestState requestState)
         {
+            System.Diagnostics.Debug.WriteLine("ASYNC RESULT CANCELLED?: " + asyncResult.IsCanceled);
             if (asyncResult.IsCanceled) return;
 
             HttpResponseMessage message = null;

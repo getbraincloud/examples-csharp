@@ -766,7 +766,7 @@ namespace BrainCloud
         /// 
         public void Update(eBrainCloudUpdateType in_updateType = eBrainCloudUpdateType.ALL)
         {
-            System.Diagnostics.Debug.WriteLine("WE'RE IN CLIENT UPDATE YOOOOOO!");
+            //System.Diagnostics.Debug.WriteLine("WE'RE IN CLIENT UPDATE YOOOOOO!");            System.Diagnostics.Debug.WriteLine("WE'RE IN CLIENT UPDATE YOOOOOO!");
             switch (in_updateType)
             {
                 case eBrainCloudUpdateType.REST:
@@ -1325,6 +1325,7 @@ namespace BrainCloud
         /// <param name="serviceMessage">The message to send</param>
         internal void SendRequest(ServerCall serviceMessage)
         {
+            System.Diagnostics.Debug.WriteLine("THIS SHOULD BE ADDING TO QUEUE");
             // pass this directly to the brainCloud Class
             // which will add it to its queue and send back responses accordingly
             _comms.AddToQueue(serviceMessage);
