@@ -17,8 +17,6 @@ namespace XamarinExample
         public MainPage()
         {
             InitializeComponent();
-            InitWrapper();
-            client = wrapper.Client;
         }
         int count = 0;
 
@@ -33,6 +31,13 @@ namespace XamarinExample
         private bool remote_loading_in_progress = false;
         private bool is_authorised = false;
 
+        void Button_Init(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("PRESSED UPDATE");
+            InitWrapper();
+            client = wrapper.Client;
+        }
+
         void Button_Update(object sender, System.EventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("PRESSED UPDATE");
@@ -44,7 +49,6 @@ namespace XamarinExample
         {
             System.Diagnostics.Debug.WriteLine("PRESSED CALL");
             FetchGlobalProperties();
-            //Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
         }
 
         public void InitWrapper()

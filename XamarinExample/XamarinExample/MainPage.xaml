@@ -11,6 +11,7 @@
         <Label Text="Welcome to Xamarin.Forms!" 
            HorizontalOptions="Center"
            VerticalOptions="CenterAndExpand" />
+        <Button Text="Init" Clicked="Button_Init" />
         <Button Text="Update" Clicked="Button_Update" />
         <Button Text="Call" Clicked="Button_Call" />
     </StackLayout>
