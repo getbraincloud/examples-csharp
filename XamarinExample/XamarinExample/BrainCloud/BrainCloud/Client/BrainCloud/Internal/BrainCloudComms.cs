@@ -19,6 +19,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading;
+using ModernHttpClient;
 #else
 #if USE_WEB_REQUEST
 #if UNITY_5_3
@@ -178,7 +179,7 @@ namespace BrainCloud.Internal
         private List<FileUploader> _fileUploads = new List<FileUploader>();
 
 #if DOT_NET
-        private HttpClient _httpClient = new HttpClient();
+        private HttpClient _httpClient = new HttpClient(new NativeMessageHandler());
 #endif
 
         //For handling local session errors

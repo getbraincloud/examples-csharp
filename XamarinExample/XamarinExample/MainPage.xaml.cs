@@ -33,12 +33,18 @@ namespace XamarinExample
         private bool remote_loading_in_progress = false;
         private bool is_authorised = false;
 
-        void Button_Clicked(object sender, System.EventArgs e)
+        void Button_Update(object sender, System.EventArgs e)
         {
-            count++;
-            ((Button)sender).Text = $"You clicked {count} times.";
-            System.Diagnostics.Debug.WriteLine("PRESSED");
-            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
+            System.Diagnostics.Debug.WriteLine("PRESSED UPDATE");
+            RunCallbacks();
+            //Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
+        }
+
+        void Button_Call(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("PRESSED CALL");
+            FetchGlobalProperties();
+            //Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(0.1), RunCallbacks);
         }
 
         public void InitWrapper()
@@ -50,15 +56,6 @@ namespace XamarinExample
                 remote_loading_in_progress = true;
                 wrapper.AuthenticateAnonymous(OnAuthorizationSuccess, OnAuthorizationFail);
             }
-
-            wrapper.Update();
-            //Content = new StackLayout
-            //{
-            //    Children = { new Label { Text = "TEST1" } }
-            //};
-            //Console.WriteLine("woooooooork");
-
-            System.Diagnostics.Debug.WriteLine("Logs work!");
         }
 
         public bool RunCallbacks()
@@ -73,9 +70,8 @@ namespace XamarinExample
 
         public void OnAuthorizationSuccess(string responseData, object cbObject)
         {
-            //takea  look at responseData
             System.Diagnostics.Debug.WriteLine("AUTH SUCCESS " + responseData);
-            FetchGlobalProperties();
+            //FetchGlobalProperties();
             is_authorised = true;
         }
 
