@@ -70,10 +70,6 @@ namespace BrainCloud.Internal
         /// </summary>
         private long _packetId = 0;
 
-        private long _lastPacketId = 0;
-        private long _secondLastPacketId = 0;
-
-
         /// <summary>
         /// The packet id we're expecting
         /// </summary>
@@ -196,8 +192,6 @@ namespace BrainCloud.Internal
         private int _killSwitchErrorCount;
         private string _killSwitchService;
         private string _killSwitchOperation;
-
-        int waitingCalls = 0;
 
         private bool _isAuthenticated = false;
         public bool Authenticated
@@ -1106,7 +1100,7 @@ namespace BrainCloud.Internal
                 }
                 else //if non-200
                 {
-                    object reasonCodeObj = null, statusMessageObj = null, statusObj = null;
+                    object reasonCodeObj = null, statusMessageObj = null;
                     int reasonCode = 0;
                     string errorJson = "";
                     System.Diagnostics.Debug.WriteLine("PLEASE AT LEAST HIT HERE FOR MY SANITY GAWSH");
