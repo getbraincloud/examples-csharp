@@ -846,14 +846,9 @@ namespace BrainCloud.Internal
             long receivedPacketId = (long)bundleObj.packetId;
             Dictionary<string, object>[] responseBundle = bundleObj.responses;
             Dictionary<string, object> response = null;
-            ServerCall sc = null;
-            //_secondLastPacketId = _lastPacketId;
-            //_lastPacketId = receivedPacketId;
-
-            ///////////////////////////
 
             System.Diagnostics.Debug.WriteLine("PACKET ID: " + receivedPacketId);
-            if (_expectedIncomingPacketId == NO_PACKET_EXPECTED || _expectedIncomingPacketId != receivedPacketId /*&& _secondLastPacketId != _lastPacketId*/)
+            if (_expectedIncomingPacketId == NO_PACKET_EXPECTED || _expectedIncomingPacketId != receivedPacketId)
             {
                 System.Diagnostics.Debug.WriteLine("DROPPING DUPLICATE PACKET");
                 _clientRef.Log("Dropping duplicate packet");
@@ -886,7 +881,6 @@ namespace BrainCloud.Internal
                     {
                         if (_serviceCallsInProgress.Count > 0)
                         {
-                            sc = _serviceCallsInProgress[0] as ServerCall;
                             _serviceCallsInProgress.RemoveAt(0);
                         }
                     }
@@ -909,10 +903,9 @@ namespace BrainCloud.Internal
                 System.Diagnostics.Debug.WriteLine("RESPONSE: " + response);
                 int statusCode = (int)response["status"];
                 string data = "";
+                ServerCall sc = null;
 
-                //System.Diagnostics.Debug.WriteLine("RESPONSE STATUS: " + statusCode);
-                //System.Diagnostics.Debug.WriteLine("ServiceCallsInProgress: " + _serviceCallsInProgress.Count);
-                //System.Diagnostics.Debug.WriteLine("ServiceCallsWaiting: " + _serviceCallsWaiting.Count);
+                System.Diagnostics.Debug.WriteLine("RESPONSE STATUS: " + statusCode);
                 //
                 // It's important to note here that a user error callback *might* call
                 // ResetCommunications() based on the error being returned.
@@ -927,19 +920,14 @@ namespace BrainCloud.Internal
                 // calls this method from another thread, we lock on _serviceCallsWaiting
                 //
                 //ServerCall sc = null;
-                //lock (_serviceCallsInProgress)
-                //{
-                 //   if (_serviceCallsInProgress.Count > 0)
-                 //   {
-                 //       sc = _serviceCallsInProgress[0] as ServerCall;
-                 //       _serviceCallsInProgress.RemoveAt(0);
-                 //   }
-                //}
-
-                //if (_secondLastPacketId == _lastPacketId)
-                //{
-                //    UpdateKillSwitch(sc.GetService(), sc.GetOperation(), 400);
-                //}
+                lock (_serviceCallsInProgress)
+                {
+                    if (_serviceCallsInProgress.Count > 0)
+                    {
+                        sc = _serviceCallsInProgress[0] as ServerCall;
+                        _serviceCallsInProgress.RemoveAt(0);
+                    }
+                }
 
                 // its a success response
                 if (statusCode == 200)
