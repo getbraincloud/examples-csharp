@@ -480,20 +480,24 @@ namespace BrainCloud.Internal
             // is it time for a retry?
             if (_activeRequest != null)
             {
+                System.Diagnostics.Debug.WriteLine("Active Request not null");
                 if (bypassTimeout || DateTime.Now.Subtract(_activeRequest.TimeSent) >= GetPacketTimeout(_activeRequest))
                 {
                     // grab status/response before cancelling the request as in Unity, the www object
                     // will set internal status fields to null when www object is disposed
                     RequestState.eWebRequestStatus status = GetWebRequestStatus(_activeRequest);
                     string errorResponse = "";
+                    System.Diagnostics.Debug.WriteLine("ERROR RESPONSE?");
                     if (status == RequestState.eWebRequestStatus.STATUS_ERROR)
                     {
+                        System.Diagnostics.Debug.WriteLine("IT WAS AN ERROR");
                         errorResponse = GetWebRequestResponse(_activeRequest);
                     }
                     _activeRequest.CancelRequest();
 
                     if (!ResendMessage(_activeRequest))
                     {
+                        System.Diagnostics.Debug.WriteLine("CANT RESEND MESSAGE");
                         // we've reached the retry limit - send timeout error to all client callbacks
                         if (status == RequestState.eWebRequestStatus.STATUS_ERROR)
                         {
@@ -535,6 +539,7 @@ namespace BrainCloud.Internal
             }
             else // send the next message if we're ready
             {
+                //System.Diagnostics.Debug.WriteLine("CREATE AND SEND ANOTHER REQUEST BUNDLE >:D");
                 _activeRequest = CreateAndSendNextRequestBundle();
             }
 
@@ -839,23 +844,61 @@ namespace BrainCloud.Internal
 
             JsonResponseBundleV2 bundleObj = JsonReader.Deserialize<JsonResponseBundleV2>(jsonData);
             long receivedPacketId = (long)bundleObj.packetId;
-
-            _secondLastPacketId = _lastPacketId;
-            _lastPacketId = receivedPacketId;
+            Dictionary<string, object>[] responseBundle = bundleObj.responses;
+            Dictionary<string, object> response = null;
+            ServerCall sc = null;
+            //_secondLastPacketId = _lastPacketId;
+            //_lastPacketId = receivedPacketId;
 
             ///////////////////////////
 
             System.Diagnostics.Debug.WriteLine("PACKET ID: " + receivedPacketId);
-            if (_expectedIncomingPacketId == NO_PACKET_EXPECTED || _expectedIncomingPacketId != receivedPacketId && _secondLastPacketId != _lastPacketId)
+            if (_expectedIncomingPacketId == NO_PACKET_EXPECTED || _expectedIncomingPacketId != receivedPacketId /*&& _secondLastPacketId != _lastPacketId*/)
             {
                 System.Diagnostics.Debug.WriteLine("DROPPING DUPLICATE PACKET");
                 _clientRef.Log("Dropping duplicate packet");
+                System.Diagnostics.Debug.WriteLine("ServiceCallsInProgress: " + _serviceCallsInProgress.Count);
+                System.Diagnostics.Debug.WriteLine("ServiceCallsWaiting: " + _serviceCallsWaiting.Count);
+                ////////////////////////////////////////////
+                for (int j = 0; j < responseBundle.Length; ++j)
+                {
+                    response = responseBundle[j];
+                    //System.Diagnostics.Debug.WriteLine("RESPONSE: " + response);
+                    int statusCode = (int)response["status"];
+                    //string data = "";
+
+                    System.Diagnostics.Debug.WriteLine("RESPONSE STATUS: " + statusCode);
+                    //
+                    // It's important to note here that a user error callback *might* call
+                    // ResetCommunications() based on the error being returned.
+                    // ResetCommunications will clear the _serviceCallsInProgress List
+                    // effectively removing all registered callbacks for this message bundle.
+                    // It's also likely that the developer will want to call authenticate next.
+                    // We need to ensure that this is supported as it's the best way to 
+                    // reset the brainCloud communications after a session invalid or network
+                    // error is triggered.
+                    //
+                    // This is safe to do from the main thread but just in case someone
+                    // calls this method from another thread, we lock on _serviceCallsWaiting
+                    //
+                    //ServerCall sc = null;
+                    lock (_serviceCallsInProgress)
+                    {
+                        if (_serviceCallsInProgress.Count > 0)
+                        {
+                            sc = _serviceCallsInProgress[0] as ServerCall;
+                            _serviceCallsInProgress.RemoveAt(0);
+                        }
+                    }
+                    System.Diagnostics.Debug.WriteLine("ServiceCallsInProgress: " + _serviceCallsInProgress.Count);
+                    System.Diagnostics.Debug.WriteLine("ServiceCallsWaiting: " + _serviceCallsWaiting.Count);
+                }
+
                 return;
             }
             _expectedIncomingPacketId = NO_PACKET_EXPECTED;
 
-            Dictionary<string, object>[] responseBundle = bundleObj.responses;
-            Dictionary<string, object> response = null;
+
             IList<Exception> exceptions = new List<Exception>();
 
             System.Diagnostics.Debug.WriteLine("WE'VE DROPPED THE DUPLICATE");
@@ -867,8 +910,9 @@ namespace BrainCloud.Internal
                 int statusCode = (int)response["status"];
                 string data = "";
 
-                System.Diagnostics.Debug.WriteLine("RESPONSE STATUS: " + statusCode);
-
+                //System.Diagnostics.Debug.WriteLine("RESPONSE STATUS: " + statusCode);
+                //System.Diagnostics.Debug.WriteLine("ServiceCallsInProgress: " + _serviceCallsInProgress.Count);
+                //System.Diagnostics.Debug.WriteLine("ServiceCallsWaiting: " + _serviceCallsWaiting.Count);
                 //
                 // It's important to note here that a user error callback *might* call
                 // ResetCommunications() based on the error being returned.
@@ -882,20 +926,20 @@ namespace BrainCloud.Internal
                 // This is safe to do from the main thread but just in case someone
                 // calls this method from another thread, we lock on _serviceCallsWaiting
                 //
-                ServerCall sc = null;
-                lock (_serviceCallsInProgress)
-                {
-                    if (_serviceCallsInProgress.Count > 0)
-                    {
-                        sc = _serviceCallsInProgress[0] as ServerCall;
-                        _serviceCallsInProgress.RemoveAt(0);
-                    }
-                }
+                //ServerCall sc = null;
+                //lock (_serviceCallsInProgress)
+                //{
+                 //   if (_serviceCallsInProgress.Count > 0)
+                 //   {
+                 //       sc = _serviceCallsInProgress[0] as ServerCall;
+                 //       _serviceCallsInProgress.RemoveAt(0);
+                 //   }
+                //}
 
-                if (_secondLastPacketId == _lastPacketId)
-                {
-                    UpdateKillSwitch(sc.GetService(), sc.GetOperation(), 400);
-                }
+                //if (_secondLastPacketId == _lastPacketId)
+                //{
+                //    UpdateKillSwitch(sc.GetService(), sc.GetOperation(), 400);
+                //}
 
                 // its a success response
                 if (statusCode == 200)
