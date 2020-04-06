@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelayExampleApp", "RelayExampleApp.csproj", "{84813AFC-BCFE-434A-8083-AC079ACD96B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainCloudClient", "..\..\unity\BrainCloudClient\solution\vstudio\BrainCloudClient.csproj", "{473EE270-253A-487B-9DD7-896A25C23844}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Unity|Any CPU = Debug_Unity|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release_Unity|Any CPU = Release_Unity|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84813AFC-BCFE-434A-8083-AC079ACD96B5}.Debug_Unity|Any CPU.ActiveCfg = Debug|Any CPU
+		{84813AFC-BCFE-434A-8083-AC079ACD96B5}.Debug_Unity|Any CPU.Build.0 = Debug|Any CPU
+		{84813AFC-BCFE-434A-8083-AC079ACD96B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84813AFC-BCFE-434A-8083-AC079ACD96B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84813AFC-BCFE-434A-8083-AC079ACD96B5}.Release_Unity|Any CPU.ActiveCfg = Release|Any CPU
+		{84813AFC-BCFE-434A-8083-AC079ACD96B5}.Release_Unity|Any CPU.Build.0 = Release|Any CPU
+		{84813AFC-BCFE-434A-8083-AC079ACD96B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84813AFC-BCFE-434A-8083-AC079ACD96B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{473EE270-253A-487B-9DD7-896A25C23844}.Debug_Unity|Any CPU.ActiveCfg = Debug_Unity|Any CPU
+		{473EE270-253A-487B-9DD7-896A25C23844}.Debug_Unity|Any CPU.Build.0 = Debug_Unity|Any CPU
+		{473EE270-253A-487B-9DD7-896A25C23844}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{473EE270-253A-487B-9DD7-896A25C23844}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{473EE270-253A-487B-9DD7-896A25C23844}.Release_Unity|Any CPU.ActiveCfg = Release_Unity|Any CPU
+		{473EE270-253A-487B-9DD7-896A25C23844}.Release_Unity|Any CPU.Build.0 = Release_Unity|Any CPU
+		{473EE270-253A-487B-9DD7-896A25C23844}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{473EE270-253A-487B-9DD7-896A25C23844}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E82E7461-E962-4FE7-AD27-32C59398FB76}
+	EndGlobalSection
+EndGlobal
