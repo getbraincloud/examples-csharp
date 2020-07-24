@@ -20,7 +20,7 @@ namespace RelayExampleApp
 
         static int Main(string[] args)
         {
-            bc = new BrainCloudWrapper("RelayExampleApp");
+            bc = new BrainCloudWrapper("RelayExampleAppProd");
 
             // Comment this line, and uncomment the next one. Fill in you ids
             InitBCFromIdsTXT();
@@ -163,7 +163,7 @@ namespace RelayExampleApp
             short myNetId = bc.RelayService.GetNetIdForProfileId(
                 bc.Client.AuthenticationService.ProfileId);
             byte[] bytes = Encoding.ASCII.GetBytes("Hello World!");
-            bc.RelayService.Send(bytes, myNetId, true, true, 
+            bc.RelayService.Send(bytes, (ulong)myNetId, true, true, 
                                  BrainCloudRelay.CHANNEL_HIGH_PRIORITY_1);
         }
 
@@ -172,7 +172,7 @@ namespace RelayExampleApp
             Console.WriteLine("systemCallback: " + json);
         }
 
-        static void relayCallback(byte[] data)
+        static void relayCallback(short netId, byte[] data)
         {
             string message = Encoding.ASCII.GetString(data, 0, data.Length);
             Console.WriteLine("relayCallback: " + message);
