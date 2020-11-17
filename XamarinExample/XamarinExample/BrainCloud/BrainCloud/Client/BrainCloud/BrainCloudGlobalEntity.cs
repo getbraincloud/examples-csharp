@@ -5,13 +5,14 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
+namespace BrainCloud
+{
+
 using System.Collections.Generic;
-using JsonFx.Json;
+using BrainCloud.JsonFx.Json;
 using BrainCloud.Internal;
 using BrainCloud.Common;
 
-namespace BrainCloud
-{
     public class BrainCloudGlobalEntity
     {
         private BrainCloudClient _client;
@@ -607,6 +608,49 @@ namespace BrainCloud
             _client.SendRequest(serverCall);
         }
         
+        /// <summary>
+        /// Method updates an existing entity's Indexed Id.
+        /// </summary>
+        /// <remarks>
+        /// Service Name - globalEntity
+        /// Service Operation - UPDATE_ENTITY_INDEXED_ID
+        /// </remarks>
+        /// <param name="entityId">
+        /// The entity ID
+        /// </param>
+        /// <param name="version">
+        /// The version of the entity
+        /// </param>
+        /// <param name="entityIndexedId">
+        /// The id index of the entity
+        /// </param>
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void UpdateEntityIndexedId(
+            string entityId,
+            long version,
+            string entityIndexedId,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            var data = new Dictionary<string, object>();
+            data[OperationParam.GlobalEntityServiceEntityId.Value] = entityId;
+            data[OperationParam.GlobalEntityServiceVersion.Value] = version;
+            data[OperationParam.GlobalEntityServiceIndexedId.Value] = entityIndexedId;
+
+            var callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            var serverCall = new ServerCall(ServiceName.GlobalEntity, ServiceOperation.UpdateEntityIndexedId, data, callback);
+            _client.SendRequest(serverCall);
+        }
+
         /// <summary>
         /// Method updates an existing entity's Owner and Acl on the server.
         /// </summary>

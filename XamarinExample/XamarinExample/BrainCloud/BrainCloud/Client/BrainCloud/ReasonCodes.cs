@@ -366,6 +366,8 @@ namespace BrainCloud
         public const int LEADERBOARD_TOURNAMENT_TEMPLATE_ONLY = 40640;
         public const int INVALID_TOURNAMENT_JOB_ID = 40641;
         public const int LEADERBOARD_ROTATION_ERROR = 40642;
+        public const int RECEIVE_ITEM_FROM_SELF = 40660;
+        public const int ITEM_NOT_FOUND = 40663;
         public const int INVALID_STORE_ID = 40700;
         public const int METHOD_DEPRECATED = 40701;
         public const int INVALID_BILLING_PROVIDER_ID = 40702;
@@ -405,13 +407,17 @@ namespace BrainCloud
         public const int RTT_ROOM_CANCELLED = 80102;
         public const int RTT_ERROR_ASSIGNING_ROOM = 80103;
         public const int RTT_ERROR_LAUNCHING_ROOM = 80104;
+        public const int RTT_BY_REQUEST = 80105;
         public const int RTT_NO_LOBBIES_FOUND = 80200;
+        public const int RTT_FIND_REQUEST_CANCELLED = 80201;
+        public const int RTT_CLIENT_ERROR = 80300;
         public const int CLIENT_NETWORK_ERROR_TIMEOUT = 90001;
         public const int CLIENT_UPLOAD_FILE_CANCELLED = 90100;
         public const int CLIENT_UPLOAD_FILE_TIMED_OUT = 90101;
         public const int CLIENT_UPLOAD_FILE_UNKNOWN = 90102;
         public const int CLIENT_DISABLED = 90200;
         public const int CLIENT_DISABLED_FAILED_AUTH = 90201;
+        public const int RS_CLIENT_ERROR = 90300;
         public const int CHILD_USER_MISSING = CHILD_PLAYER_MISSING;
         public const int DISABLED_APP = DISABLED_GAME;
         public const int APPS_NOT_IN_SAME_COMPANY = GAMES_NOT_IN_SAME_COMPANY;

@@ -5,13 +5,14 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-using System.Collections.Generic;
-using BrainCloud.Internal;
-using JsonFx.Json;
-using System;
-
 namespace BrainCloud
 {
+
+using System.Collections.Generic;
+using BrainCloud.Internal;
+using BrainCloud.JsonFx.Json;
+using System;
+
     public class BrainCloudAppStore
     {
         private BrainCloudClient _client;
@@ -85,7 +86,7 @@ namespace BrainCloud
         /// inventory for. This is only used for Steam and Facebook stores.
         /// </param>
         /// <param name="category">
-        /// The product category
+        /// The AppStore category
         /// </param>
         /// <param name="success">
         /// The success callback.

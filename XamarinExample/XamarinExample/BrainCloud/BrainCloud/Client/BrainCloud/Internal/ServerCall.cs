@@ -5,10 +5,12 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-using System.Collections;
-
 namespace BrainCloud.Internal
 {
+
+using System.Collections;
+
+
     internal class ServerCall
     {
         #region Constructors

@@ -34,3 +34,15 @@ C:/Users/ryanr/Desktop/xamarinExample/examples-xamarin/XamarinExample/XamarinExa
 /Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamlC.stamp
 /Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamarinExample.dll
 /Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamarinExample.pdb
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/bin/Debug/netstandard2.0/XamarinExample.deps.json
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/bin/Debug/netstandard2.0/XamarinExample.dll
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/bin/Debug/netstandard2.0/XamarinExample.pdb
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamarinExample.csprojAssemblyReference.cache
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/App.xaml.g.cs
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/MainPage.xaml.g.cs
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamarinExample.csproj.CoreCompileInputs.cache
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamarinExample.AssemblyInfoInputs.cache
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamarinExample.AssemblyInfo.cs
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamlC.stamp
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamarinExample.dll
+/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/obj/Debug/netstandard2.0/XamarinExample.pdb
