@@ -5,12 +5,11 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using BrainCloud;
 using BrainCloud.Entity;
 using BrainCloud.Internal;
-using JsonFx.Json;
+using BrainCloud.JsonFx.Json;
 
 #if !DOT_NET
 using UnityEngine;
@@ -88,7 +87,6 @@ public class BrainCloudWrapper
 
     private WrapperData _wrapperData = new WrapperData();
 
-
     //Getting this error? - "An object reference is required for the non-static field, method, or property 'BrainCloudWrapper.Client'"
     //Switch to BrainCloudWrapper.GetBC();
     public BrainCloudClient Client { get; private set; }
@@ -100,9 +98,16 @@ public class BrainCloudWrapper
 
     private void OnApplicationQuit()
     {
-        Client.DisableRTT();
+        RTTService.DisableRTT();
+        RelayService.Disconnect();
         Client.Update();
     }
+#if !DOT_NET
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+#endif
 
     /// <summary>
     /// Name of this wrapper instance. Used for data loading
@@ -133,11 +138,6 @@ public class BrainCloudWrapper
         get { return Client.GlobalAppService; }
     }
 
-    public BrainCloudProduct ProductService
-    {
-        get { return Client.ProductService; }
-    }
-
     public BrainCloudVirtualCurrency VirtualCurrencyService
     {
         get { return Client.VirtualCurrencyService; }
@@ -161,6 +161,16 @@ public class BrainCloudWrapper
     public BrainCloudIdentity IdentityService
     {
         get { return Client.IdentityService; }
+    }
+
+    public BrainCloudItemCatalog ItemCatalogService
+    {
+        get { return Client.ItemCatalogService; }
+    }
+
+    public BrainCloudUserItems UserItemsService
+    {
+        get { return Client.UserItemsService; }
     }
 
     public BrainCloudScript ScriptService
@@ -233,6 +243,16 @@ public class BrainCloudWrapper
         get { return Client.TournamentService; }
     }
 
+    public BrainCloudGlobalFile GlobalFileService
+    {
+        get { return Client.GlobalFileService; }
+    }
+
+    public BrainCloudCustomEntity CustomEntityService
+    {
+        get { return Client.CustomEntityService; }
+    }
+
     public BrainCloudPushNotification PushNotificationService
     {
         get { return Client.PushNotificationService; }
@@ -297,6 +317,10 @@ public class BrainCloudWrapper
     {
         get { return Client.MessagingService; }
     }
+    public BrainCloudRelay RelayService
+    {
+        get { return Client.RelayService; }
+    }
     #endregion
 
     /// <summary>
@@ -304,7 +328,7 @@ public class BrainCloudWrapper
     /// </summary>
     public BrainCloudWrapper()
     {
-        Client = new BrainCloudClient();
+        Client = new BrainCloudClient(this);
     }
 
     /// <summary>
@@ -314,6 +338,7 @@ public class BrainCloudWrapper
     private BrainCloudWrapper(BrainCloudClient client)
     {
         Client = client;
+        Client.Wrapper = this;
     }
 
     /// <summary>
@@ -323,23 +348,25 @@ public class BrainCloudWrapper
     /// <param name="wrapperName">string value used to differentiate saved wrapper data</param>
     public BrainCloudWrapper(string wrapperName)
     {
-        Client = new BrainCloudClient();
+        Client = new BrainCloudClient(this);
         WrapperName = wrapperName;
     }
 
-    public void Update()
+    public void RunCallbacks()
     {
-        //System.Diagnostics.Debug.WriteLine("WRAPPPPPPPPPPPPPPER UPDATTTTTTE");
         if (Client != null)
         {
-            //System.Diagnostics.Debug.WriteLine("CLIENT IS NOT NULLL!!!!!!!!!!!!!!!!! YESSSSSSS");
-            // MonoBehavior runs every update Tick
             // for further control please review eBrainCloudUpdateType
             // from the direct Client Updates
             Client.Update();
         }
     }
 
+    // MonoBehavior runs every update Tick
+    public void Update()
+    {
+        RunCallbacks();
+    }
 
 #if !DOT_NET
     /// <summary>
@@ -348,13 +375,14 @@ public class BrainCloudWrapper
     /// </summary>
     public void Init()
     {
+        resetWrapper();
         Init(
-            BrainCloudSettings.Instance.DispatcherURL,
-            BrainCloudSettings.Instance.SecretKey,
-            BrainCloudSettings.Instance.AppId,
-            BrainCloudSettings.Instance.GameVersion);
+            BrainCloudSettingsManual.Instance.DispatcherURL,
+            BrainCloudSettingsManual.Instance.SecretKey,
+            BrainCloudSettingsManual.Instance.AppId,
+            BrainCloudSettingsManual.Instance.GameVersion);
 
-        Client.EnableLogging(BrainCloudSettings.Instance.EnableLogging);
+        Client.EnableLogging(BrainCloudSettingsManual.Instance.EnableLogging);
     }
 
     /// <summary>
@@ -363,13 +391,14 @@ public class BrainCloudWrapper
     /// </summary>
     public void InitWithApps()
     {
+        resetWrapper();
         InitWithApps(
-            BrainCloudSettings.Instance.DispatcherURL,
-            BrainCloudSettings.Instance.AppId,
-            BrainCloudSettings.Instance.AppIdSecrets,
-            BrainCloudSettings.Instance.GameVersion);
+            BrainCloudSettingsManual.Instance.DispatcherURL,
+            BrainCloudSettingsManual.Instance.AppId,
+            BrainCloudSettingsManual.Instance.AppIdSecrets,
+            BrainCloudSettingsManual.Instance.GameVersion);
 
-        Client.EnableLogging(BrainCloudSettings.Instance.EnableLogging);
+        Client.EnableLogging(BrainCloudSettingsManual.Instance.EnableLogging);
     }
 #endif
 
@@ -383,6 +412,7 @@ public class BrainCloudWrapper
     /// <param name="version">The app's version</param>
     public void Init(string url, string secretKey, string appId, string version)
     {
+        resetWrapper();
         _lastUrl = url;
         _lastSecretKey = secretKey;
         _lastAppId = appId;
@@ -402,6 +432,7 @@ public class BrainCloudWrapper
     /// <param name="version">The app's version</param>
     public void InitWithApps(string url, string defaultAppId, Dictionary<string, string> appIdSecretMap, string version)
     {
+        resetWrapper();
         _lastUrl = url;
         _lastSecretKey = appIdSecretMap[defaultAppId];
         _lastAppId = defaultAppId;
@@ -409,6 +440,25 @@ public class BrainCloudWrapper
         Client.InitializeWithApps(url, defaultAppId, appIdSecretMap, version);
 
         LoadData();
+    }
+
+    
+    /// <summary>
+    /// Resets the wrapper.
+    /// Since the WrapperName is set upon re-initialization of the wrapper, the name is reset by choice here. As the user
+    /// may want to reset the wrapper's fields without also restting the name. 
+    /// </summary>
+    public void resetWrapper(bool resetWrapperName = false)
+    {
+        _wrapperData = new WrapperData();
+        Client.ResetCommunication(); // just to confirm this is being done on the client when the wrapper is reset. 
+        Client.Wrapper = null;
+        Client = null; 
+        Client = new BrainCloudClient(this);
+        Client.Wrapper = this;
+
+        if(resetWrapperName)
+            WrapperName = "";
     }
 
     /// <summary>
@@ -464,6 +514,81 @@ public class BrainCloudWrapper
 
         Client.AuthenticationService.AuthenticateAnonymous(
             true, AuthSuccessCallback, AuthFailureCallback, aco);
+    }
+
+    /// <summary>
+    /// Authenticate the user using a Pase userid and authentication token
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Service Operation - Authenticate
+    /// </remarks>
+    /// <param name="success">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="handoffId">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="securityToken">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error during authentication
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void AuthenticateHandoff(
+        string handoffId,
+        string securityToken,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        WrapperAuthCallbackObject aco = new WrapperAuthCallbackObject();
+        aco._successCallback = success;
+        aco._failureCallback = failure;
+        aco._cbObject = cbObject;
+
+        InitializeIdentity(true);
+        Client.AuthenticationService.AuthenticateHandoff(
+            handoffId, securityToken, AuthSuccessCallback, AuthFailureCallback, aco);
+
+    }
+
+    /// <summary>
+    /// Authenticate user with handoffCode
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Service Operation - Authenticate
+    /// </remarks>
+    /// <param name="success">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="handoffCode">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error during authentication
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void AuthenticateSettopHandoff(
+        string handoffCode,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        WrapperAuthCallbackObject aco = new WrapperAuthCallbackObject();
+        aco._successCallback = success;
+        aco._failureCallback = failure;
+        aco._cbObject = cbObject;
+
+        InitializeIdentity(true);
+        Client.AuthenticationService.AuthenticateSettopHandoff(
+            handoffCode, AuthSuccessCallback, AuthFailureCallback, aco);
     }
 
     /// <summary>
@@ -651,17 +776,61 @@ public class BrainCloudWrapper
     }
 
     /// <summary>
-    /// Authenticate the user using a google userid(email address) and google authentication token.
+    /// Authenticate the user using an apple id
     /// </summary>
     /// <remarks>
     /// Service Name - Authenticate
     /// Service Operation - Authenticate
     /// </remarks>
-    /// <param name="userid">
-    /// String representation of google+ userid (email)
+    /// <param name="appleUserId">
+    /// This can be the user id OR the email of the user for the account
     /// </param>
-    /// <param name="token">
-    /// The authentication token derived via the google apis.
+    /// <param name="identityToken">
+    /// The token confirming the user's identity
+    /// </param>
+    /// <param name="forceCreate">
+    /// Should a new profile be created for this user if the account does not exist?
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error during authentication
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void AuthenticateApple(
+        string appleUserId,
+        string identityToken,
+        bool forceCreate,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        WrapperAuthCallbackObject aco = new WrapperAuthCallbackObject();
+        aco._successCallback = success;
+        aco._failureCallback = failure;
+        aco._cbObject = cbObject;
+
+        InitializeIdentity();
+
+        Client.AuthenticationService.AuthenticateApple(
+            appleUserId, identityToken, forceCreate, AuthSuccessCallback, AuthFailureCallback, aco);
+    }
+
+    /// <summary>
+    /// Authenticate the user using a google userId and google server authentication code.
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Service Operation - Authenticate
+    /// </remarks>
+    /// <param name="googleUserId">
+    /// String representation of google+ userId. Gotten with calls like RequestUserId
+    /// </param>
+    /// <param name="serverAuthCode">
+    /// The server authentication token derived via the google apis. Gotten with calls like RequestServerAuthCode
     /// </param>
     /// <param name="forceCreate">
     /// Should a new profile be created for this user if the account does not exist?
@@ -676,8 +845,52 @@ public class BrainCloudWrapper
     /// The user supplied callback object
     /// </param>
     public void AuthenticateGoogle(
-        string userid,
-        string token,
+    string googleUserId,
+    string serverAuthCode,
+    bool forceCreate,
+    SuccessCallback success = null,
+    FailureCallback failure = null,
+    object cbObject = null)
+    {
+        WrapperAuthCallbackObject aco = new WrapperAuthCallbackObject();
+        aco._successCallback = success;
+        aco._failureCallback = failure;
+        aco._cbObject = cbObject;
+
+        InitializeIdentity();
+
+        Client.AuthenticationService.AuthenticateGoogle(
+            googleUserId, serverAuthCode, forceCreate, AuthSuccessCallback, AuthFailureCallback, aco);
+    }
+
+    /// <summary>
+    /// Authenticate the user using a google openId.
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Service Operation - Authenticate
+    /// </remarks>
+    /// <param name="googleUserAccountEmail"
+    /// The email associated with the google user
+    /// </param>
+    /// <param name="IdToken">
+    /// The id token of the google account. Can get with calls like requestIdToken
+    /// </param>
+    /// <param name="forceCreate">
+    /// Should a new profile be created for this user if the account does not exist?
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error during authentication
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void AuthenticateGoogleOpenId(
+        string googleUserAccountEmail,
+        string IdToken,
         bool forceCreate,
         SuccessCallback success = null,
         FailureCallback failure = null,
@@ -690,8 +903,8 @@ public class BrainCloudWrapper
 
         InitializeIdentity();
 
-        Client.AuthenticationService.AuthenticateGoogle(
-            userid, token, forceCreate, AuthSuccessCallback, AuthFailureCallback, aco);
+        Client.AuthenticationService.AuthenticateGoogleOpenId(
+            googleUserAccountEmail, IdToken, forceCreate, AuthSuccessCallback, AuthFailureCallback, aco);
     }
 
     /// <summary>
@@ -977,6 +1190,52 @@ public class BrainCloudWrapper
         SmartSwitchAuthentication(authenticateCallback, failure);
     }
 
+        /// <summary>
+    /// Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
+    /// In event the current session was previously an anonymous account, the smart switch will delete that profile.
+    /// Use this function to keep a clean designflow from anonymous to signed profiles
+    /// 
+    /// Authenticate the user with brainCloud using their Apple Credentials
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Service Operation - Authenticate
+    /// </remarks>
+    /// <param name="externalId">
+    /// The apple id of the user
+    /// </param>
+    /// <param name="authenticationToken">
+    /// The validated token from the Apple SDK (that will be further
+    /// validated when sent to the bC service)
+    /// </param>
+    /// <param name="forceCreate">
+    /// Should a new profile be created for this user if the account does not exist?
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error during authentication
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public virtual void SmartSwitchAuthenticateApple(
+        string appleUserId,
+        string appleAuthToken,
+        bool forceCreate,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        SuccessCallback authenticateCallback = (response, o) =>
+        {
+            AuthenticateApple(appleUserId, appleAuthToken, forceCreate, success, failure, cbObject);
+        };
+
+        SmartSwitchAuthentication(authenticateCallback, failure);
+    }
+
     /// <summary>
     /// Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
     /// In event the current session was previously an anonymous account, the smart switch will delete that profile.
@@ -1058,6 +1317,51 @@ public class BrainCloudWrapper
         SuccessCallback authenticateCallback = (response, o) =>
         {
             AuthenticateGoogle(userid, token, forceCreate, success, failure, cbObject);
+        };
+
+        SmartSwitchAuthentication(authenticateCallback, failure);
+    }
+
+        /// <summary>
+    /// Smart Switch Authenticate will logout of the current profile, and switch to the new authentication type.
+    /// In event the current session was previously an anonymous account, the smart switch will delete that profile.
+    /// Use this function to keep a clean designflow from anonymous to signed profiles
+    /// 
+    /// Authenticate the user using a google userid(email address) and google authentication token.
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Service Operation - Authenticate
+    /// </remarks>
+    /// <param name="userid">
+    /// String representation of google+ userid (email)
+    /// </param>
+    /// <param name="token">
+    /// The authentication token derived via the google apis.
+    /// </param>
+    /// <param name="forceCreate">
+    /// Should a new profile be created for this user if the account does not exist?
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of successful login
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error during authentication
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public virtual void SmartSwitchAuthenticateGoogleOpenId(
+        string userid,
+        string token,
+        bool forceCreate,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        SuccessCallback authenticateCallback = (response, o) =>
+        {
+            AuthenticateGoogleOpenId(userid, token, forceCreate, success, failure, cbObject);
         };
 
         SmartSwitchAuthentication(authenticateCallback, failure);
@@ -1369,6 +1673,211 @@ public class BrainCloudWrapper
         Client.AuthenticationService.ResetEmailPasswordAdvanced(emailAddress, serviceParams, success, failure);
     }
 
+    /// <summary>
+    /// Reset Email password - Sends a password reset email to the specified address
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Operation - ResetEmailPassword
+    /// </remarks>
+    /// <param name="externalId">
+    /// The email address to send the reset email to.
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of success
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void ResetEmailPasswordWithExpiry(
+        string externalId,
+        int tokenTtlInMinutes,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        Client.AuthenticationService.ResetEmailPasswordWithExpiry(externalId, tokenTtlInMinutes, success, failure);
+    }
+
+    /// <summary>
+    /// Reset Email password with service parameters - sends a password reset email to 
+    ///the specified addresses.
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Operation - ResetEmailPasswordAdvanced
+    /// </remarks>
+    /// <param name="appId">
+    /// The app id
+    /// </param>
+    /// <param name="emailAddress">
+    /// The email address to send the reset email to
+    /// </param>
+    /// <param name="serviceParams">
+    /// The parameters to send the email service. See documentation for full list
+    /// http://getbraincloud.com/apidocs/apiref/#capi-mail
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of success
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void ResetEmailPasswordAdvancedWithExpiry(
+        string emailAddress,
+        string serviceParams,
+        int tokenTtlInMinutes,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        Client.AuthenticationService.ResetEmailPasswordAdvancedWithExpiry(emailAddress, serviceParams, tokenTtlInMinutes, success, failure);
+    }
+
+  /// <summary>
+    /// Reset Email password - Sends a password reset email to the specified address
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Operation - ResetEmailPassword
+    /// </remarks>
+    /// <param name="externalId">
+    /// The email address to send the reset email to.
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of success
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void ResetUniversalIdPassword(
+        string externalId,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        //WrapperAuthCallbackObject aco = new WrapperAuthCallbackObject();
+        //aco._successCallback = success;
+        //aco._failureCallback = failure;
+        //aco.cbObject = cbObject;
+
+        Client.AuthenticationService.ResetUniversalIdPassword(externalId, success, failure);
+    }
+
+    /// <summary>
+    /// Reset Email password with service parameters - sends a password reset email to 
+    ///the specified addresses.
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Operation - ResetEmailPasswordAdvanced
+    /// </remarks>
+    /// <param name="appId">
+    /// The app id
+    /// </param>
+    /// <param name="emailAddress">
+    /// The email address to send the reset email to
+    /// </param>
+    /// <param name="serviceParams">
+    /// The parameters to send the email service. See documentation for full list
+    /// http://getbraincloud.com/apidocs/apiref/#capi-mail
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of success
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void ResetUniversalIdPasswordAdvanced(
+        string emailAddress,
+        //Dictionary<string, object> serviceParams,
+        string serviceParams,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        Client.AuthenticationService.ResetUniversalIdPasswordAdvanced(emailAddress, serviceParams, success, failure);
+    }
+
+    /// <summary>
+    /// Reset Email password - Sends a password reset email to the specified address
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Operation - ResetEmailPassword
+    /// </remarks>
+    /// <param name="externalId">
+    /// The email address to send the reset email to.
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of success
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void ResetUniversalIdPasswordWithExpiry(
+        string externalId,
+        int tokenTtlInMinutes,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        Client.AuthenticationService.ResetUniversalIdPasswordWithExpiry(externalId, tokenTtlInMinutes, success, failure);
+    }
+
+    /// <summary>
+    /// Reset Email password with service parameters - sends a password reset email to 
+    ///the specified addresses.
+    /// </summary>
+    /// <remarks>
+    /// Service Name - Authenticate
+    /// Operation - ResetEmailPasswordAdvanced
+    /// </remarks>
+    /// <param name="appId">
+    /// The app id
+    /// </param>
+    /// <param name="emailAddress">
+    /// The email address to send the reset email to
+    /// </param>
+    /// <param name="serviceParams">
+    /// The parameters to send the email service. See documentation for full list
+    /// http://getbraincloud.com/apidocs/apiref/#capi-mail
+    /// </param>
+    /// <param name="success">
+    /// The method to call in event of success
+    /// </param>
+    /// <param name="failure">
+    /// The method to call in the event of an error
+    /// </param>
+    /// <param name="cbObject">
+    /// The user supplied callback object
+    /// </param>
+    public void ResetUniversalIdPasswordAdvancedWithExpiry(
+        string emailAddress,
+        string serviceParams,
+        int tokenTtlInMinutes,
+        SuccessCallback success = null,
+        FailureCallback failure = null,
+        object cbObject = null)
+    {
+        Client.AuthenticationService.ResetUniversalIdPasswordAdvancedWithExpiry(emailAddress, serviceParams, tokenTtlInMinutes, success, failure);
+    }
+
     #endregion
 
     /// <summary>
@@ -1497,8 +2006,8 @@ public class BrainCloudWrapper
             }
         }
 
-#if UNITY_EDITOR
-        BrainCloudUnity.BrainCloudPlugin.ResponseEvent.OnAuthenticateSuccess(json);
+#if BC_DEBUG_LOG_ENABLED && UNITY_EDITOR
+        BrainCloudUnity.BrainCloudSettingsDLL.ResponseEvent.OnAuthenticateSuccess(json);
 #endif
     }
 
@@ -1520,8 +2029,8 @@ public class BrainCloudWrapper
             }
         }
 
-#if UNITY_EDITOR
-        BrainCloudUnity.BrainCloudPlugin.ResponseEvent.OnAuthenticateFailed(string.Format("statusCode[{0}] reasonCode[{1}] errorJson[{2}]", statusCode, reasonCode, errorJson));
+#if BC_DEBUG_LOG_ENABLED && UNITY_EDITOR
+        BrainCloudUnity.BrainCloudSettingsDLL.ResponseEvent.OnAuthenticateFailed(string.Format("statusCode[{0}] reasonCode[{1}] errorJson[{2}]", statusCode, reasonCode, errorJson));
 #endif
     }
 
@@ -1546,6 +2055,7 @@ public class BrainCloudWrapper
         PlayerPrefs.SetString(prefix + PREFS_PROFILE_ID, _wrapperData.ProfileId);
         PlayerPrefs.SetString(prefix + PREFS_ANONYMOUS_ID, _wrapperData.AnonymousId);
         PlayerPrefs.SetString(prefix + PREFS_AUTHENTICATION_TYPE, _wrapperData.AuthenticationType);
+        PlayerPrefs.Save();
 #endif
     }
 

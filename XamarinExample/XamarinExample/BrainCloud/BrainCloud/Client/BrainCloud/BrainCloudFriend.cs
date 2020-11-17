@@ -5,13 +5,14 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
+namespace BrainCloud
+{
+
 using System.Collections.Generic;
 using BrainCloud.Internal;
 using BrainCloud.Common;
 using System;
 
-namespace BrainCloud
-{
     public class BrainCloudFriend
     {
         public enum FriendPlatform
@@ -26,45 +27,6 @@ namespace BrainCloud
         public BrainCloudFriend(BrainCloudClient client)
         {
             _client = client;
-        }
-        
-        /// <summary>
-        /// Retrieves profile information for the partial matches of the specified text.
-        /// </summary>
-        /// <remarks>
-        /// Service Name - Friend
-        /// Service Operation - FIND_PLAYER_BY_UNIVERSAL_ID
-        /// </remarks>
-        /// <param name="searchText">
-        /// Universal ID text on which to search.
-        /// </param>
-        /// <param name="maxResults">
-        /// Maximum number of results to return.
-        /// </param>
-        /// <param name="success">
-        /// The success callback.
-        /// </param>
-        /// <param name="failure">
-        /// The failure callback.
-        /// </param>
-        /// <param name="cbObject">
-        /// The user object sent to the callback.
-        /// </param>
-        [Obsolete("Use findUserByExactUniversalId instead")]
-        public void FindUserByUniversalId(
-            string searchText,
-            int maxResults,
-            SuccessCallback success = null,
-            FailureCallback failure = null,
-            object cbObject = null)
-        {
-            Dictionary<string, object> data = new Dictionary<string, object>();
-            data[OperationParam.FriendServiceSearchText.Value] = searchText;
-            data[OperationParam.FriendServiceMaxResults.Value] = maxResults;
-
-            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
-            ServerCall sc = new ServerCall(ServiceName.Friend, ServiceOperation.FindPlayerByUniversalId, data, callback);
-            _client.SendRequest(sc);
         }
 
         /// <summary>

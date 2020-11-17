@@ -5,10 +5,13 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
+namespace BrainCloud
+{
+
 using System;
 using System.Collections.Generic;
 using System.Text;
-using JsonFx.Json;
+using BrainCloud.JsonFx.Json;
 using BrainCloud.Internal;
 
 #if !(DOT_NET)
@@ -16,8 +19,6 @@ using UnityEngine.SocialPlatforms;
 using UnityEngine;
 #endif
 
-namespace BrainCloud
-{
     public class BrainCloudGamification
     {
         private BrainCloudClient _client;
@@ -550,40 +551,6 @@ namespace BrainCloud
             ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
             ServerCall sc = new ServerCall(ServiceName.Gamification, ServiceOperation.ReadQuestsByCategory, data, callback);
             _client.SendRequest(sc);
-        }
-
-        /// <summary>
-        /// Sets the specified milestones' statuses to LOCKED.
-        /// </summary>
-        /// <remarks>
-        /// Service Name - Gamification
-        /// Service Operation - ResetMilestones
-        /// </remarks>
-        /// <param name="milestoneIds">
-        /// List of milestones to reset
-        /// </param>
-        /// <param name="success">
-        /// The success callback
-        /// </param>
-        /// <param name="failure">
-        /// The failure callback
-        /// </param>
-        /// <param name="cbObject">
-        /// The callback object
-        /// </param>
-        public void ResetMilestones(
-            IList<string> milestoneIds,
-            SuccessCallback success = null,
-            FailureCallback failure = null,
-            object cbObject = null)
-        {
-            Dictionary<string, object> data = new Dictionary<string, object>();
-            data[OperationParam.GamificationServiceMilestones.Value] = milestoneIds;
-
-            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
-            ServerCall sc = new ServerCall(ServiceName.Gamification, ServiceOperation.ResetMilestones, data, callback);
-            _client.SendRequest(sc);
-
         }
     }
 }

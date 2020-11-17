@@ -5,10 +5,12 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-using System;
-
 namespace BrainCloud.Internal
 {
+
+using System;
+
+
     /**
      * List of all available service operations. The values are mapped to server keys which represent that operation.
      */
@@ -19,12 +21,22 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation Merge = new ServiceOperation("MERGE");
         public static readonly ServiceOperation Detach = new ServiceOperation("DETACH");
         public static readonly ServiceOperation ResetEmailPassword = new ServiceOperation("RESET_EMAIL_PASSWORD");
+        public static readonly ServiceOperation ResetEmailPasswordWithExpiry = new ServiceOperation("RESET_EMAIL_PASSWORD_WITH_EXPIRY");
         public static readonly ServiceOperation ResetEmailPasswordAdvanced = new ServiceOperation("RESET_EMAIL_PASSWORD_ADVANCED");
+        public static readonly ServiceOperation ResetEmailPasswordAdvancedWithExpiry = new ServiceOperation("RESET_EMAIL_PASSWORD_ADVANCED_WITH_EXPIRY");
+        public static readonly ServiceOperation ResetUniversalIdPassword = new ServiceOperation("RESET_UNIVERSAL_ID_PASSWORD");
+        public static readonly ServiceOperation ResetUniversalIdPasswordWithExpiry = new ServiceOperation("RESET_UNIVERSAL_ID_PASSWORD_WITH_EXPIRY");
+        public static readonly ServiceOperation ResetUniversalIdPasswordAdvanced = new ServiceOperation("RESET_UNIVERSAL_ID_PASSWORD_ADVANCED");
+        public static readonly ServiceOperation ResetUniversalIdPasswordAdvancedWithExpiry = new ServiceOperation("RESET_UNIVERSAL_ID_PASSWORD_ADVANCED_WITH_EXPIRY");
         public static readonly ServiceOperation SwitchToChildProfile = new ServiceOperation("SWITCH_TO_CHILD_PROFILE");
         public static readonly ServiceOperation SwitchToParentProfile = new ServiceOperation("SWITCH_TO_PARENT_PROFILE");
         public static readonly ServiceOperation DetachParent = new ServiceOperation("DETACH_PARENT");
         public static readonly ServiceOperation AttachParentWithIdentity = new ServiceOperation("ATTACH_PARENT_WITH_IDENTITY");
+        public static readonly ServiceOperation AttachNonLoginUniversalId = new ServiceOperation("ATTACH_NONLOGIN_UNIVERSAL");
+        public static readonly ServiceOperation UpdateUniversalIdLogin = new ServiceOperation("UPDATE_UNIVERSAL_LOGIN");
 
+        public static readonly ServiceOperation AttachBlockChain = new ServiceOperation("ATTACH_BLOCKCHAIN_IDENTITY");
+        public static readonly ServiceOperation DetachBlockChain = new ServiceOperation("DETACH_BLOCKCHAIN_IDENTITY");
         public static readonly ServiceOperation Create = new ServiceOperation("CREATE");
         public static readonly ServiceOperation CreateWithIndexedId = new ServiceOperation("CREATE_WITH_INDEXED_ID");
         public static readonly ServiceOperation Reset = new ServiceOperation("RESET");
@@ -34,6 +46,7 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation Verify = new ServiceOperation("VERIFY");
         public static readonly ServiceOperation ReadShared = new ServiceOperation("READ_SHARED");
         public static readonly ServiceOperation ReadSharedEntity = new ServiceOperation("READ_SHARED_ENTITY");
+        public static readonly ServiceOperation UpdateEntityIndexedId = new ServiceOperation("UPDATE_INDEXED_ID");
         public static readonly ServiceOperation UpdateEntityOwnerAndAcl = new ServiceOperation("UPDATE_ENTITY_OWNER_AND_ACL");
         public static readonly ServiceOperation MakeSystemEntity = new ServiceOperation("MAKE_SYSTEM_ENTITY");
 
@@ -100,6 +113,7 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation GetGlobalLeaderboardVersions = new ServiceOperation("GET_GLOBAL_LEADERBOARD_VERSIONS");
         public static readonly ServiceOperation PostScore = new ServiceOperation("POST_SCORE");
         public static readonly ServiceOperation PostScoreDynamic = new ServiceOperation("POST_SCORE_DYNAMIC");
+        public static readonly ServiceOperation PostScoreToDynamicGroupLeaderboard = new ServiceOperation("POST_GROUP_SCORE_DYNAMIC");
         public static readonly ServiceOperation RemovePlayerScore = new ServiceOperation("REMOVE_PLAYER_SCORE");
         public static readonly ServiceOperation GetCompletedTournament = new ServiceOperation("GET_COMPLETED_TOURNAMENT");
         public static readonly ServiceOperation RewardTournament = new ServiceOperation("REWARD_TOURNAMENT");
@@ -111,6 +125,9 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation GetGlobalLeaderboardEntryCount = new ServiceOperation("GET_GLOBAL_LEADERBOARD_ENTRY_COUNT");
         public static readonly ServiceOperation GetPlayerScore = new ServiceOperation("GET_PLAYER_SCORE");
         public static readonly ServiceOperation GetPlayerScoresFromLeaderboards = new ServiceOperation("GET_PLAYER_SCORES_FROM_LEADERBOARDS");
+        public static readonly ServiceOperation PostScoreToGroupLeaderboard = new ServiceOperation("POST_GROUP_SCORE");
+        public static readonly ServiceOperation RemoveGroupScore = new ServiceOperation("REMOVE_GROUP_SCORE");
+        public static readonly ServiceOperation GetGroupLeaderboardView = new ServiceOperation("GET_GROUP_LEADERBOARD_VIEW");
 
         public static readonly ServiceOperation ReadFriendsPlayerState = new ServiceOperation("READ_FRIEND_PLAYER_STATE");
 
@@ -151,6 +168,12 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation SetXpPoints = new ServiceOperation("SET_XPPOINTS");
         public static readonly ServiceOperation ReadSubset = new ServiceOperation("READ_SUBSET");
 
+        //GlobalFile
+        public static readonly ServiceOperation GetFileInfo = new ServiceOperation("GET_FILE_INFO");
+        public static readonly ServiceOperation GetFileInfoSimple = new ServiceOperation("GET_FILE_INFO_SIMPLE");
+        public static readonly ServiceOperation GetGlobalCDNUrl = new ServiceOperation("GET_GLOBAL_CDN_URL");
+        public static readonly ServiceOperation GetGlobalFileList = new ServiceOperation("GET_GLOBAL_FILE_LIST");
+
         public static readonly ServiceOperation Run = new ServiceOperation("RUN");
         public static readonly ServiceOperation Tweet = new ServiceOperation("TWEET");
 
@@ -173,6 +196,8 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation SubmitTurn = new ServiceOperation("SUBMIT_TURN");
         public static readonly ServiceOperation UpdateMatchSummary = new ServiceOperation("UPDATE_SUMMARY");
         public static readonly ServiceOperation Abandon = new ServiceOperation("ABANDON");
+        public static readonly ServiceOperation AbandonMatchWithSummaryData = new ServiceOperation("ABANDON_MATCH_WITH_SUMMARY_DATA");
+        public static readonly ServiceOperation CompleteMatchWithSummaryData = new ServiceOperation("COMPLETE_MATCH_WITH_SUMMARY_DATA");
         public static readonly ServiceOperation Complete = new ServiceOperation("COMPLETE");
         public static readonly ServiceOperation ReadMatch = new ServiceOperation("READ_MATCH");
         public static readonly ServiceOperation ReadMatchHistory = new ServiceOperation("READ_MATCH_HISTORY");
@@ -245,7 +270,12 @@ namespace BrainCloud.Internal
 
         public static readonly ServiceOperation UpdatePictureUrl = new ServiceOperation("UPDATE_PICTURE_URL");
         public static readonly ServiceOperation UpdateContactEmail = new ServiceOperation("UPDATE_CONTACT_EMAIL");
-
+        public static readonly ServiceOperation UpdateLanguageCode = new ServiceOperation("UPDATE_LANGUAGE_CODE");
+        public static readonly ServiceOperation UpdateTimeZoneOffset = new ServiceOperation("UPDATE_TIMEZONE_OFFSET");
+        public static readonly ServiceOperation SetUserStatus = new ServiceOperation("SET_USER_STATUS");        
+        public static readonly ServiceOperation GetUserStatus = new ServiceOperation("GET_USER_STATUS");
+        public static readonly ServiceOperation ClearUserStatus = new ServiceOperation("CLEAR_USER_STATUS");
+        public static readonly ServiceOperation ExtendUserStatus = new ServiceOperation("EXTEND_USER_STATUS");
         public static readonly ServiceOperation GetAttributes = new ServiceOperation("GET_ATTRIBUTES");
         public static readonly ServiceOperation UpdateAttributes = new ServiceOperation("UPDATE_ATTRIBUTES");
         public static readonly ServiceOperation RemoveAttributes = new ServiceOperation("REMOVE_ATTRIBUTES");
@@ -264,6 +294,8 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation GetFileList = new ServiceOperation("GET_FILE_LIST");
 
         public static readonly ServiceOperation ScheduleCloudScript = new ServiceOperation("SCHEDULE_CLOUD_SCRIPT");
+        public static readonly ServiceOperation GetScheduledCloudScripts = new ServiceOperation("GET_SCHEDULED_CLOUD_SCRIPTS");
+        public static readonly ServiceOperation GetRunningOrQueuedCloudScripts = new ServiceOperation("GET_RUNNING_OR_QUEUED_CLOUD_SCRIPTS");
         public static readonly ServiceOperation RunParentScript = new ServiceOperation("RUN_PARENT_SCRIPT");
         public static readonly ServiceOperation CancelScheduledScript = new ServiceOperation("CANCEL_SCHEDULED_SCRIPT");
         public static readonly ServiceOperation RunPeerScript = new ServiceOperation("RUN_PEER_SCRIPT");
@@ -277,6 +309,7 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation CustomPageEvent = new ServiceOperation("CUSTOM_PAGE_EVENT");
         public static readonly ServiceOperation CustomScreenEvent = new ServiceOperation("CUSTOM_SCREEN_EVENT");
         public static readonly ServiceOperation CustomTrackEvent = new ServiceOperation("CUSTOM_TRACK_EVENT");
+        public static readonly ServiceOperation SubmitCrashReport = new ServiceOperation("SEND_CRASH_REPORT");
 
         //Profanity
         public static readonly ServiceOperation ProfanityCheck = new ServiceOperation("PROFANITY_CHECK");
@@ -295,6 +328,7 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation AddGroupMember = new ServiceOperation("ADD_GROUP_MEMBER");
         public static readonly ServiceOperation ApproveGroupJoinRequest = new ServiceOperation("APPROVE_GROUP_JOIN_REQUEST");
         public static readonly ServiceOperation AutoJoinGroup = new ServiceOperation("AUTO_JOIN_GROUP");
+        public static readonly ServiceOperation AutoJoinGroupMulti = new ServiceOperation("AUTO_JOIN_GROUP_MULTI");
         public static readonly ServiceOperation CancelGroupInvitation = new ServiceOperation("CANCEL_GROUP_INVITATION");
         public static readonly ServiceOperation CreateGroup = new ServiceOperation("CREATE_GROUP");
         public static readonly ServiceOperation CreateGroupEntity = new ServiceOperation("CREATE_GROUP_ENTITY");
@@ -324,6 +358,8 @@ namespace BrainCloud.Internal
         public static readonly ServiceOperation UpdateGroupMember = new ServiceOperation("UPDATE_GROUP_MEMBER");
         public static readonly ServiceOperation UpdateGroupName = new ServiceOperation("UPDATE_GROUP_NAME");
         public static readonly ServiceOperation SetGroupOpen = new ServiceOperation("SET_GROUP_OPEN");
+        public static readonly ServiceOperation GetRandomGroupsMatching = new ServiceOperation("GET_RANDOM_GROUPS_MATCHING");
+        public static readonly ServiceOperation UpdateGroupSummaryData = new ServiceOperation("UPDATE_GROUP_SUMMARY_DATA");
 
         //mail
         public static readonly ServiceOperation SendBasicEmail = new ServiceOperation("SEND_BASIC_EMAIL");
@@ -390,16 +426,67 @@ namespace BrainCloud.Internal
 
         // lobby
         public static readonly ServiceOperation FindLobby = new ServiceOperation("FIND_LOBBY");
+        public static readonly ServiceOperation FindLobbyWithPingData = new ServiceOperation("FIND_LOBBY_WITH_PING_DATA");
         public static readonly ServiceOperation CreateLobby = new ServiceOperation("CREATE_LOBBY");
+        public static readonly ServiceOperation CreateLobbyWithPingData = new ServiceOperation("CREATE_LOBBY_WITH_PING_DATA");
         public static readonly ServiceOperation FindOrCreateLobby = new ServiceOperation("FIND_OR_CREATE_LOBBY");
+        public static readonly ServiceOperation FindOrCreateLobbyWithPingData = new ServiceOperation("FIND_OR_CREATE_LOBBY_WITH_PING_DATA");
         public static readonly ServiceOperation GetLobbyData = new ServiceOperation("GET_LOBBY_DATA");
         public static readonly ServiceOperation UpdateReady = new ServiceOperation("UPDATE_READY");
-        public static readonly ServiceOperation UpdateLobbyConfig = new ServiceOperation("UPDATE_SETTINGS");
+        public static readonly ServiceOperation UpdateSettings = new ServiceOperation("UPDATE_SETTINGS");
         public static readonly ServiceOperation SwitchTeam = new ServiceOperation("SWITCH_TEAM");
         public static readonly ServiceOperation SendSignal = new ServiceOperation("SEND_SIGNAL");
         public static readonly ServiceOperation JoinLobby = new ServiceOperation("JOIN_LOBBY");
+        public static readonly ServiceOperation JoinLobbyWithPingData = new ServiceOperation("JOIN_LOBBY_WITH_PING_DATA");
         public static readonly ServiceOperation LeaveLobby = new ServiceOperation("LEAVE_LOBBY");
         public static readonly ServiceOperation RemoveMember = new ServiceOperation("REMOVE_MEMBER");
+        public static readonly ServiceOperation CancelFindRequest = new ServiceOperation("CANCEL_FIND_REQUEST");
+        public static readonly ServiceOperation GetRegionsForLobbies = new ServiceOperation("GET_REGIONS_FOR_LOBBIES");
+        
+        //ItemCatalog
+        public static readonly ServiceOperation GetCatalogItemDefinition = new ServiceOperation("GET_CATALOG_ITEM_DEFINITION");
+        public static readonly ServiceOperation GetCatalogItemsPage = new ServiceOperation("GET_CATALOG_ITEMS_PAGE");
+        public static readonly ServiceOperation GetCatalogItemsPageOffset = new ServiceOperation("GET_CATALOG_ITEMS_PAGE_OFFSET");
+
+        //CustomEntity
+
+        public static readonly ServiceOperation DeleteEntities = new ServiceOperation("DELETE_ENTITIES");
+        public static readonly ServiceOperation CreateCustomEntity = new ServiceOperation("CREATE_ENTITY");
+        public static readonly ServiceOperation GetCustomEntityPage = new ServiceOperation("GET_PAGE");
+        public static readonly ServiceOperation GetCustomEntityPageOffset = new ServiceOperation("GET_ENTITY_PAGE_OFFSET");
+        public static readonly ServiceOperation GetEntityPage = new ServiceOperation("GET_ENTITY_PAGE");
+        public static readonly ServiceOperation ReadCustomEntity = new ServiceOperation("READ_ENTITY");
+        public static readonly ServiceOperation IncrementData = new ServiceOperation("INCREMENT_DATA");
+        public static readonly ServiceOperation UpdateCustomEntity = new ServiceOperation("UPDATE_ENTITY");
+        public static readonly ServiceOperation UpdateCustomEntityFields = new ServiceOperation("UPDATE_ENTITY_FIELDS");
+        public static readonly ServiceOperation DeleteCustomEntity = new ServiceOperation("DELETE_ENTITY");
+        public static readonly ServiceOperation GetCount = new ServiceOperation("GET_COUNT");
+        public static readonly ServiceOperation UpdateSingletonFields = new ServiceOperation("UPDATE_SINGLETON_FIELDS");
+
+        //UserItemsService
+
+        public static readonly ServiceOperation AwardUserItem = new ServiceOperation("AWARD_USER_ITEM");
+        public static readonly ServiceOperation DropUserItem = new ServiceOperation("DROP_USER_ITEM");
+        public static readonly ServiceOperation GetUserItemsPage = new ServiceOperation("GET_USER_ITEMS_PAGE");
+        public static readonly ServiceOperation GetUserItemsPageOffset = new ServiceOperation("GET_USER_ITEMS_PAGE_OFFSET");
+        public static readonly ServiceOperation GetUserItem = new ServiceOperation("GET_USER_ITEM");
+        public static readonly ServiceOperation GiveUserItemTo = new ServiceOperation("GIVE_USER_ITEM_TO");
+        public static readonly ServiceOperation PurchaseUserItem = new ServiceOperation("PURCHASE_USER_ITEM");
+        public static readonly ServiceOperation ReceiveUserItemFrom = new ServiceOperation("RECEIVE_USER_ITEM_FROM");
+        public static readonly ServiceOperation SellUserItem = new ServiceOperation("SELL_USER_ITEM");
+        public static readonly ServiceOperation UpdateUserItemData = new ServiceOperation("UPDATE_USER_ITEM_DATA");
+        public static readonly ServiceOperation UseUserItem = new ServiceOperation("USE_USER_ITEM");
+        public static readonly ServiceOperation PublishUserItemToBlockchain = new ServiceOperation("PUBLISH_USER_ITEM_TO_BLOCKCHAIN");
+        public static readonly ServiceOperation RefreshBlockchainUserItems = new ServiceOperation("REFRESH_BLOCKCHAIN_USER_ITEMS");
+        public static readonly ServiceOperation RemoveUserItemFromBlockchain = new ServiceOperation("REMOVE_USER_ITEM_FROM_BLOCKCHAIN");
+
+
+
+
+
+
+
+
 
         private ServiceOperation(string value)
         {

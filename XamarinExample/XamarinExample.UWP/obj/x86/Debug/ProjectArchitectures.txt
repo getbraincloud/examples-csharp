@@ -1,1 +1,0 @@
-C:\Users\ryanr\Desktop\xamarinExample\examples-xamarin\XamarinExample\XamarinExample.UWP\XamarinExample.UWP.csproj;x86

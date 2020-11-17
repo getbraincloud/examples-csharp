@@ -5,13 +5,14 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using JsonFx.Json;
-using BrainCloud.Internal;
-
 namespace BrainCloud
 {
+
+using System;
+using System.Collections.Generic;
+using BrainCloud.JsonFx.Json;
+using BrainCloud.Internal;
+
     public class BrainCloudPlayerState
     {
         private BrainCloudClient _client;
@@ -48,17 +49,6 @@ namespace BrainCloud
         {
             ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
             ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.Read, null, callback);
-            _client.SendRequest(sc);
-        }
-
-        [Obsolete("This has been deprecated. Use DeleteUser instead - removal after September 1 2017")]
-        public void DeletePlayer(
-            SuccessCallback success = null,
-            FailureCallback failure = null,
-            object cbObject = null)
-        {
-            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
-            ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.FullReset, null, callback);
             _client.SendRequest(sc);
         }
 
@@ -166,7 +156,41 @@ namespace BrainCloud
         /// <param name="cbObject">
         /// The user object sent to the callback.
         /// </param>
+        [Obsolete("This has been deprecated use UpdateName instead - removal after September 1 2021")]
         public void UpdateUserName(
+            string userName,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.PlayerStateServiceUpdateNameData.Value] = userName;
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.UpdateName, data, callback);
+            _client.SendRequest(sc);
+        }
+
+        /// <summary>
+        /// Sets the user name.
+        /// </summary>
+        /// <remarks>
+        /// Service Name - playerState
+        /// Service Operation - UPDATE_NAME
+        /// </remarks>
+        /// <param name="userName">
+        /// The name of the user
+        /// </param>
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void UpdateName(
             string userName,
             SuccessCallback success = null,
             FailureCallback failure = null,
@@ -395,5 +419,216 @@ namespace BrainCloud
             ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.UpdateContactEmail, data, callback);
             _client.SendRequest(sc);
         }
+
+        /// <summary>
+        /// Clear the user's status.
+        /// </summary>
+        /// <remarks>
+        /// Service Name - PlayerState
+        /// Service Operation - ClearUserStatus
+        /// </remarks>
+        /// <param name="statusName">
+        /// The name of the status.
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void ClearUserStatus(
+            string statusName,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.PlayerStateServiceStatusName.Value] = statusName;
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.ClearUserStatus, data, callback);
+            _client.SendRequest(sc);
+        }
+
+        /// <summary>
+        /// Extends the Status.
+        /// </summary>
+        /// <remarks>
+        /// Service Name - PlayerState
+        /// Service Operation - ExtendUserStatus
+        /// </remarks>
+        /// <param name="statusName">
+        /// The name of the status.
+        /// <param name="additionalSecs">
+        /// The number of seconds to add.
+        /// <param name="details">
+        /// The details of the status.
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void ExtendUserStatus(
+            string statusName,
+            int additionalSecs,
+            string details,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> detailsInfo = JsonReader.Deserialize<Dictionary<string,object>>(details);
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.PlayerStateServiceStatusName.Value] = statusName;
+            data[OperationParam.PlayerStateServiceAdditionalSecs.Value] =additionalSecs;
+            data[OperationParam.PlayerStateServiceDetails.Value] =detailsInfo;
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.ExtendUserStatus, data, callback);
+            _client.SendRequest(sc);
+        }
+
+        /// <summary>
+        /// Gets the Status.
+        /// </summary>
+        /// <remarks>
+        /// Service Name - PlayerState
+        /// Service Operation - GetUserStatus
+        /// </remarks>
+        /// <param name="statusName">
+        /// The name of the status.
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void GetUserStatus(
+            string statusName,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.PlayerStateServiceStatusName.Value] = statusName;
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.GetUserStatus, data, callback);
+            _client.SendRequest(sc);
+        }
+
+        /// <summary>
+        /// Sets the Status.
+        /// </summary>
+        /// <remarks>
+        /// Service Name - PlayerState
+        /// Service Operation - SetUserStatus
+        /// </remarks>
+        /// <param name="statusName">
+        /// The name of the status.
+        /// <param name="durationSecs">
+        /// The number of seconds to add.
+        /// <param name="details">
+        /// The details of the status.
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void SetUserStatus(
+            string statusName,
+            int durationSecs,
+            string details,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> detailsInfo = JsonReader.Deserialize<Dictionary<string,object>>(details);
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.PlayerStateServiceStatusName.Value] = statusName;
+            data[OperationParam.PlayerStateServiceDurationSecs.Value] =durationSecs;
+            data[OperationParam.PlayerStateServiceDetails.Value] =detailsInfo;
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.SetUserStatus, data, callback);
+            _client.SendRequest(sc);
+        }
+
+                /// <summary>
+        /// Gets the Status.
+        /// </summary>
+        /// <remarks>
+        /// Service Name - PlayerState
+        /// Service Operation - UpdateLanguageCode
+        /// </remarks>
+        /// <param name="statusName">
+        /// The name of the status.
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void UpdateLanguageCode(
+            string languageCode,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.PlayerStateServiceLanguageCode.Value] = languageCode;
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.UpdateLanguageCode, data, callback);
+            _client.SendRequest(sc);
+        }
+
+                        /// <summary>
+        /// Gets the Status.
+        /// </summary>
+        /// <remarks>
+        /// Service Name - PlayerState
+        /// Service Operation - UpdateLanguageCode
+        /// </remarks>
+        /// <param name="statusName">
+        /// The name of the status.
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void UpdateTimeZoneOffset(
+            string timeZoneOffset,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.PlayerStateServiceTimeZoneOffset.Value] = timeZoneOffset;
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.PlayerState, ServiceOperation.UpdateTimeZoneOffset, data, callback);
+            _client.SendRequest(sc);
+        }
+
     }
 }

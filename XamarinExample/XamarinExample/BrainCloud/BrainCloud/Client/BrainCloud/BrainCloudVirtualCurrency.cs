@@ -5,12 +5,13 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
+namespace BrainCloud
+{
+
 using System.Collections.Generic;
 using BrainCloud.Internal;
 using System;
 
-namespace BrainCloud
-{
 
     public class BrainCloudVirtualCurrency
     {
@@ -131,6 +132,34 @@ namespace BrainCloud
 
             ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
             ServerCall sc = new ServerCall(ServiceName.VirtualCurrency, ServiceOperation.GetPeerVC, data, callback);
+            _client.SendRequest(sc);
+        }
+
+        /// <summary>
+        /// Resets player currency to zero
+        /// </summary>
+        /// <remarks>
+        /// Service Name - VirtalCurrency
+        /// Service Operation - ResetCurrency
+        /// </remarks>
+        /// <param name="success">
+        /// The success callback.
+        /// </param>
+        /// <param name="failure">
+        /// The failure callback.
+        /// </param>
+        /// <param name="cbObject">
+        /// The user object sent to the callback.
+        /// </param>
+        public void ResetCurrency(
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.VirtualCurrency, ServiceOperation.ResetPlayerVC, data, callback);
             _client.SendRequest(sc);
         }
 

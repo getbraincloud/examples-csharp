@@ -1,16 +1,11 @@
 ﻿<Properties StartupConfiguration="{9C29F2D3-484A-412A-B9F7-145E81DAEADD}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="XamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/Internal/FileUploader.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="XamarinExample/MainPage.xaml.cs">
     <Files>
       <File FileName="XamarinExample/MainPage.xaml" Line="20" Column="1" />
       <File FileName="XamarinExample/AssemblyInfo.cs" />
-      <File FileName="XamarinExample/MainPage.xaml.cs" Line="67" Column="27" />
-      <File FileName="XamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/BrainCloudClient.cs" Line="788" Column="58" />
-      <File FileName="XamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/BrainCloudClient.cs" Line="1377" Column="1" />
-      <File FileName="XamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/BrainCloudWrapper.cs" Line="339" Column="22" />
-      <File FileName="XamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/BrainCloudAuthentication.cs" Line="632" Column="27" />
-      <File FileName="XamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/Internal/BrainCloudComms.cs" Line="1818" Column="10" />
-      <File FileName="XamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/Internal/RTTComms.cs" Line="103" Column="10" />
-      <File FileName="XamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/Internal/FileUploader.cs" Line="13" Column="17" />
+      <File FileName="XamarinExample/MainPage.xaml.cs" Line="17" Column="26" />
+      <File FileName="XamarinExample/obj/Debug/netstandard2.0/XamarinExample.AssemblyInfo.cs" />
+      <File FileName="XamarinExample.Android/MainActivity.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -21,9 +16,7 @@
                 <Node name="BrainCloud" expanded="True">
                   <Node name="Client" expanded="True">
                     <Node name="BrainCloud" expanded="True">
-                      <Node name="Internal" expanded="True">
-                        <Node name="FileUploader.cs" selected="True" />
-                      </Node>
+                      <Node name="BrainCloudAppStore.cs" selected="True" />
                     </Node>
                   </Node>
                 </Node>
@@ -32,7 +25,6 @@
               <Node name="MainPage.xaml" expanded="True" />
             </Node>
             <Node name="XamarinExample.Android" expanded="True" />
-            <Node name="XamarinExample.iOS" expanded="True" />
           </Node>
         </State>
       </Pad>

@@ -5,14 +5,15 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
+namespace BrainCloud
+{
+
 using System;
 using System.Collections.Generic;
 using System.Text;
-using JsonFx.Json;
+using BrainCloud.JsonFx.Json;
 using BrainCloud.Internal;
 
-namespace BrainCloud
-{
     public class BrainCloudScript
     {
         private BrainCloudClient _client;
@@ -66,6 +67,7 @@ namespace BrainCloud
 
         /// <summary>
         /// Allows cloud script executions to be scheduled
+        /// takes in local time instead of UTC
         /// </summary>
         /// <remarks>
         /// Service Name - Script
@@ -73,14 +75,16 @@ namespace BrainCloud
         /// </remarks>
         /// <param name="scriptName"> Name of script </param>
         /// <param name="jsonScriptData"> JSON bundle to pass to script </param>
-        /// <param name="startDateInUTC">  The start date as a DateTime object </param>
+        /// <param name="startDateLocal">  The start date as a DateTime object </param>
         /// <param name="success"> The success callback. </param>
         /// <param name="failure"> The failure callback. </param>
         /// <param name="cbObject"> The user object sent to the callback. </param>
+
+        [Obsolete("Will be removed March 2021, Please use ScheduleRunScriptMillisUTC")]
         public void ScheduleRunScriptUTC(
             string scriptName,
             string jsonScriptData,
-            DateTime startDateInUTC,
+            DateTime startDateLocal,
             SuccessCallback success = null,
             FailureCallback failure = null,
             object cbObject = null)
@@ -94,7 +98,44 @@ namespace BrainCloud
                 data[OperationParam.ScriptServiceRunScriptData.Value] = scriptData;
             }
 
-            data[OperationParam.ScriptServiceStartDateUTC.Value] = Util.DateTimeToBcTimestamp(startDateInUTC);
+            data[OperationParam.ScriptServiceStartDateUTC.Value] = Util.DateTimeToBcTimestamp(startDateLocal);
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.Script, ServiceOperation.ScheduleCloudScript, data, callback);
+            _client.SendRequest(sc);
+        }
+
+        /// <summary>
+        /// Allows cloud script executions to be scheduled
+        /// </summary>
+        /// <remarks>
+        /// Service Name - Script
+        /// Service Operation - ScheduleCloudScriptMillisUTC
+        /// </remarks>
+        /// <param name="scriptName"> Name of script </param>
+        /// <param name="jsonScriptData"> JSON bundle to pass to script </param>
+        /// <param name="roundStartTimeUTC">  use UTC time in milliseconds since epoch </param>
+        /// <param name="success"> The success callback. </param>
+        /// <param name="failure"> The failure callback. </param>
+        /// <param name="cbObject"> The user object sent to the callback. </param>
+        public void ScheduleRunScriptMillisUTC(
+            string scriptName,
+            string jsonScriptData,
+            UInt64 roundStartTimeUTC,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.ScriptServiceRunScriptName.Value] = scriptName;
+
+            if (Util.IsOptionalParameterValid(jsonScriptData))
+            {
+                Dictionary<string, object> scriptData = JsonReader.Deserialize<Dictionary<string, object>>(jsonScriptData);
+                data[OperationParam.ScriptServiceRunScriptData.Value] = scriptData;
+            }
+
+            data[OperationParam.ScriptServiceStartDateUTC.Value] = roundStartTimeUTC;
 
             ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
             ServerCall sc = new ServerCall(ServiceName.Script, ServiceOperation.ScheduleCloudScript, data, callback);
@@ -199,6 +240,53 @@ namespace BrainCloud
             ServerCall sc = new ServerCall(ServiceName.Script, ServiceOperation.CancelScheduledScript, data, callback);
             _client.SendRequest(sc);
         }
+
+        /// <summary>
+        /// get a scheduled cloud code script
+        /// </summary>
+        /// <remarks>
+        /// Service Name - Script
+        /// Service Operation - GET_SCHEDULED_CLOUD_SCRIPTS
+        /// </remarks>
+        /// <param name="startDateUTC"> ID of script job to cancel </param>
+        /// <param name="success"> The success callback. </param>
+        /// <param name="failure"> The failure callback. </param>
+        /// <param name="cbObject"> The user object sent to the callback. </param>
+        public void GetScheduledCloudScripts(
+            DateTime startDateUTC,
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data[OperationParam.ScriptServiceStartDateUTC.Value] = startDateUTC;
+
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.Script, ServiceOperation.GetScheduledCloudScripts, data, callback);
+            _client.SendRequest(sc);
+        }
+
+                /// <summary>
+        /// get a scheduled cloud code script
+        /// </summary>
+        /// <remarks>
+        /// Service Name - Script
+        /// Service Operation - GET_RUNNING_OR_QUEUED_CLOUD_SCRIPTS
+        /// </remarks>
+        /// <param name="startDateUTC"> ID of script job to cancel </param>
+        /// <param name="success"> The success callback. </param>
+        /// <param name="failure"> The failure callback. </param>
+        /// <param name="cbObject"> The user object sent to the callback. </param>
+        public void GetRunningOrQueuedCloudScripts(
+            SuccessCallback success = null,
+            FailureCallback failure = null,
+            object cbObject = null)
+        {
+            ServerCallback callback = BrainCloudClient.CreateServerCallback(success, failure, cbObject);
+            ServerCall sc = new ServerCall(ServiceName.Script, ServiceOperation.GetRunningOrQueuedCloudScripts, null, callback);
+            _client.SendRequest(sc);
+        }
+
 
         /// <summary>
         /// Runs a script from the context of a peer

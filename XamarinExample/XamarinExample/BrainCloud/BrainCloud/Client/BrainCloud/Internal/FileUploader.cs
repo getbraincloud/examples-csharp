@@ -5,21 +5,23 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-#if (UNITY_5_3_OR_NEWER) && !UNITY_WEBPLAYER && (!UNITY_IOS || ENABLE_IL2CPP)
+#if ((UNITY_5_3_OR_NEWER) && !UNITY_WEBPLAYER && (!UNITY_IOS || ENABLE_IL2CPP)) || UNITY_2018_3_OR_NEWER
 #define USE_WEB_REQUEST //Comment out to force use of old WWW class on Unity 5.3+
 #endif
 
-using System;
-using System.IO;
+namespace BrainCloud.Internal
+{
+    using System;
+    using System.IO;
 
 #if !DOT_NET
-using UnityEngine;
-using JsonFx.Json;
+    using UnityEngine;
+    using BrainCloud.JsonFx.Json;
 #if USE_WEB_REQUEST
 #if UNITY_5_3
 using UnityEngine.Experimental.Networking;
 #else
-using UnityEngine.Networking;
+    using UnityEngine.Networking;
 #endif
 #endif
 #else
@@ -28,9 +30,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 #endif
-
-namespace BrainCloud.Internal
-{
     /*
      * FileUploader is not supported in WebPlayer && WebGL
      */
@@ -114,9 +113,6 @@ namespace BrainCloud.Internal
         {
             _client = client;
 
-#if UNITY_WEBPLAYER || UNITY_WEBGL
-            throw new Exception("File upload API is not supported on Web builds");
-#else
             UploadId = uploadId;
             _localPath = localPath;
             _serverUrl = serverUrl;
@@ -137,20 +133,28 @@ namespace BrainCloud.Internal
             TotalBytesToTransfer = info.Length;
 
             Status = FileUploaderStatus.Pending;
-#endif
         }
 
         public void Start()
         {
 #if !UNITY_WEBPLAYER
 #if !DOT_NET
-            byte[] file = File.ReadAllBytes(_localPath);
+            FileInfo info = new FileInfo(_localPath);
+            byte[] file;
+            if (info.Exists)
+            {
+                file = File.ReadAllBytes(_localPath);
+            }
+            else
+            {
+                file = System.Convert.FromBase64String(_localPath);
+            }
             WWWForm postForm = new WWWForm();
             postForm.AddField("sessionId", _sessionId);
 
             if (_peerCode != "") postForm.AddField("peerCode", _peerCode);
             postForm.AddField("uploadId", UploadId);
-            postForm.AddField("fileSize", TotalBytesToTransfer.ToString());
+            postForm.AddField("fileSize", file.Length);
             postForm.AddBinaryData("uploadFile", file, _fileName);
 
 #if USE_WEB_REQUEST

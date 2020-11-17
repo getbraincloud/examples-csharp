@@ -5,24 +5,24 @@
 // Copyright 2016 bitHeads, inc.
 //----------------------------------------------------
 
-using System.Collections.Generic;
-using BrainCloud.Internal;
-using BrainCloud.Common;
+namespace BrainCloud
+{
+
+    using System.Collections.Generic;
+    using BrainCloud.Internal;
+    using BrainCloud.Common;
 #if !XAMARIN
-using BrainCloud.Entity;
-using System;
+    using BrainCloud.Entity;
+    using System;
 #endif
 
 #if !(DOT_NET)
-using UnityEngine;
-using UnityEngine.Assertions;
+    using UnityEngine;
+    using UnityEngine.Assertions;
 #else
 using System.Globalization;
-using System;
 #endif
 
-namespace BrainCloud
-{
     #region Enums
     public enum eBrainCloudUpdateType
     {
@@ -30,6 +30,7 @@ namespace BrainCloud
         REST,
         RTT,
         RS,
+        PING,
 
         MAX
     }
@@ -81,16 +82,16 @@ namespace BrainCloud
     public delegate void RTTCallback(string jsonResponse);
 
     /// <summary>
-    /// Success callback for a Room Server response method.
+    /// Relay callback.
     /// </summary>
-    /// <param name="jsonResponse">The JSON response from the server</param>
-    public delegate void RSCallback(string jsonResponse);
+    /// <param name="data">The data send from netId user</param>
+    public delegate void RelayCallback(short netId, byte[] data);
 
     /// <summary>
-    /// Success callback for a Room Server response method.
+    /// Relay system callback.
     /// </summary>
     /// <param name="jsonResponse">The JSON response from the server</param>
-    public delegate void RSDataCallback(byte[] jsonResponse);
+    public delegate void RelaySystemCallback(string jsonResponse);
 
     /// <summary>
     /// Method called when a file upload has completed.
@@ -111,10 +112,10 @@ namespace BrainCloud
 
     public class BrainCloudClient
     {
-       #region Private Data
+        #region Private Data
 
         private string s_defaultServerURL = "https://sharedprod.braincloudservers.com/dispatcherv2";
-        private static BrainCloudClient s_instance;
+
 
         private string _appVersion = "";
         private Platform _platform;
@@ -131,16 +132,19 @@ namespace BrainCloud
 #endif
         private BrainCloudComms _comms;
         private RTTComms _rttComms;
+        private RelayComms _rsComms;
+
         private BrainCloudEntity _entityService;
         private BrainCloudGlobalEntity _globalEntityService;
         private BrainCloudGlobalApp _globalAppService;
         private BrainCloudPresence _presenceService;
-        private BrainCloudProduct _productService;
         private BrainCloudVirtualCurrency _virtualCurrencyService;
         private BrainCloudAppStore _appStore;
         private BrainCloudPlayerStatistics _playerStatisticsService;
         private BrainCloudGlobalStatistics _globalStatisticsService;
         private BrainCloudIdentity _identityService;
+        private BrainCloudItemCatalog _itemCatalogService;
+        private BrainCloudUserItems _userItemsService;
         private BrainCloudScript _scriptService;
         private BrainCloudMatchMaking _matchMakingService;
         private BrainCloudOneWayMatch _oneWayMatchService;
@@ -153,6 +157,8 @@ namespace BrainCloud
         private BrainCloudAsyncMatch _asyncMatchService;
         private BrainCloudTime _timeService;
         private BrainCloudTournament _tournamentService;
+        private BrainCloudGlobalFile _globalFileService;
+        private BrainCloudCustomEntity _customEntityService;
         private BrainCloudAuthentication _authenticationService;
         private BrainCloudPushNotification _pushNotificationService;
         private BrainCloudPlayerStatisticsEvent _playerStatisticsEventService;
@@ -169,6 +175,7 @@ namespace BrainCloud
         private BrainCloudLobby _lobbyService;
         private BrainCloudChat _chatService;
         private BrainCloudRTT _rttService;
+        private BrainCloudRelay _rsService;
 
         #endregion Private Data
 
@@ -187,11 +194,22 @@ namespace BrainCloud
         #endregion
 
         #region Constructors
-
         public BrainCloudClient()
+        {
+            init();
+        }
+
+        public BrainCloudClient(BrainCloudWrapper in_wrapper)
+        {
+            Wrapper = in_wrapper;
+            init();
+        }
+
+        private void init()
         {
             _comms = new BrainCloudComms(this);
             _rttComms = new RTTComms(this);
+            _rsComms = new RelayComms(this);
 
             _entityService = new BrainCloudEntity(this);
 #if !XAMARIN
@@ -201,7 +219,6 @@ namespace BrainCloud
 
             _globalAppService = new BrainCloudGlobalApp(this);
             _presenceService = new BrainCloudPresence(this);
-            _productService = new BrainCloudProduct(this);
             _virtualCurrencyService = new BrainCloudVirtualCurrency(this);
             _appStore = new BrainCloudAppStore(this);
 
@@ -209,6 +226,8 @@ namespace BrainCloud
             _globalStatisticsService = new BrainCloudGlobalStatistics(this);
 
             _identityService = new BrainCloudIdentity(this);
+            _itemCatalogService = new BrainCloudItemCatalog(this);
+            _userItemsService = new BrainCloudUserItems(this);
             _scriptService = new BrainCloudScript(this);
             _matchMakingService = new BrainCloudMatchMaking(this);
             _oneWayMatchService = new BrainCloudOneWayMatch(this);
@@ -223,6 +242,8 @@ namespace BrainCloud
             _asyncMatchService = new BrainCloudAsyncMatch(this);
             _timeService = new BrainCloudTime(this);
             _tournamentService = new BrainCloudTournament(this);
+            _globalFileService = new BrainCloudGlobalFile(this);
+            _customEntityService = new BrainCloudCustomEntity(this);
 
             _authenticationService = new BrainCloudAuthentication(this);
             _pushNotificationService = new BrainCloudPushNotification(this);
@@ -240,8 +261,11 @@ namespace BrainCloud
             // RTT 
             _lobbyService = new BrainCloudLobby(this);
             _chatService = new BrainCloudChat(this);
-            _rttService = new BrainCloudRTT(this);
+            _rttService = new BrainCloudRTT(_rttComms, this);
+            _rsService = new BrainCloudRelay(_rsComms, this);
         }
+        //---------------------------------------------------------------
+
         #endregion
 
         #region Properties
@@ -254,6 +278,11 @@ namespace BrainCloud
         public bool Initialized
         {
             get { return _initialized; }
+        }
+
+        public void EnableCompression(bool compress)
+        {
+            _comms.EnableCompression(compress);
         }
 
         /// <summary>Returns the sessionId or empty string if no session present.</summary>
@@ -313,6 +342,12 @@ namespace BrainCloud
 
         #region Service Properties
 
+        public BrainCloudWrapper Wrapper
+        {
+            get;
+            set;
+        }
+
         internal BrainCloudComms Comms
         {
             get { return _comms; }
@@ -345,11 +380,6 @@ namespace BrainCloud
             get { return _presenceService; }
         }
 
-        public BrainCloudProduct ProductService
-        {
-            get { return _productService; }
-        }
-
         public BrainCloudVirtualCurrency VirtualCurrencyService
         {
             get { return _virtualCurrencyService; }
@@ -373,6 +403,16 @@ namespace BrainCloud
         public BrainCloudIdentity IdentityService
         {
             get { return _identityService; }
+        }
+
+        public BrainCloudItemCatalog ItemCatalogService
+        {
+            get { return _itemCatalogService; }
+        }
+
+        public BrainCloudUserItems UserItemsService
+        {
+            get { return _userItemsService; }
         }
 
         public BrainCloudScript ScriptService
@@ -438,6 +478,16 @@ namespace BrainCloud
         public BrainCloudTournament TournamentService
         {
             get { return _tournamentService; }
+        }
+
+        public BrainCloudGlobalFile GlobalFileService
+        {
+            get { return _globalFileService; }
+        }
+
+        public BrainCloudCustomEntity CustomEntityService
+        {
+            get { return _customEntityService; }
         }
 
         public BrainCloudAuthentication AuthenticationService
@@ -509,6 +559,11 @@ namespace BrainCloud
         {
             get { return _messagingService; }
         }
+
+        public BrainCloudRelay RelayService
+        {
+            get { return _rsService; }
+        }
         #endregion
 
         #region Service Getters
@@ -540,11 +595,6 @@ namespace BrainCloud
             return PresenceService;
         }
 
-        public BrainCloudProduct GetProductService()
-        {
-            return ProductService;
-        }
-
         public BrainCloudPlayerStatistics GetPlayerStatisticsService()
         {
             return PlayerStatisticsService;
@@ -558,6 +608,15 @@ namespace BrainCloud
         public BrainCloudIdentity GetIdentityService()
         {
             return IdentityService;
+        }
+
+        public BrainCloudItemCatalog GetItemCatalogService()
+        {
+            return ItemCatalogService;
+        }
+        public BrainCloudUserItems GetUserItemsService()
+        {
+            return UserItemsService;
         }
 
         public BrainCloudScript GetScriptService()
@@ -618,6 +677,16 @@ namespace BrainCloud
         public BrainCloudTournament GetTournamentService()
         {
             return _tournamentService;
+        }
+
+        public BrainCloudGlobalFile GetGlobalFileService()
+        {
+            return _globalFileService;
+        }
+
+        public BrainCloudCustomEntity GetCustomEntityService()
+        {
+            return _customEntityService;
         }
 
         public BrainCloudAuthentication GetAuthenticationService()
@@ -683,6 +752,11 @@ namespace BrainCloud
         public bool IsAuthenticated()
         {
             return Authenticated;
+        }
+
+        public long GetReceivedPacketId()
+        {
+            return _comms.GetReceivedPacketId();
         }
 
         /// <summary>
@@ -766,7 +840,6 @@ namespace BrainCloud
         /// 
         public void Update(eBrainCloudUpdateType in_updateType = eBrainCloudUpdateType.ALL)
         {
-            //System.Diagnostics.Debug.WriteLine("WE'RE IN CLIENT UPDATE YOOOOOO!");            System.Diagnostics.Debug.WriteLine("WE'RE IN CLIENT UPDATE YOOOOOO!");
             switch (in_updateType)
             {
                 case eBrainCloudUpdateType.REST:
@@ -781,47 +854,28 @@ namespace BrainCloud
                     }
                     break;
 
+                case eBrainCloudUpdateType.RS:
+                    {
+                        if (_rsComms != null) _rsComms.Update();
+                    }
+                    break;
+
+                case eBrainCloudUpdateType.PING:
+                    {
+                        if (_lobbyService != null) _lobbyService.Update();
+                    }
+                    break;
+
                 default:
                 case eBrainCloudUpdateType.ALL:
                     {
                         if (_rttComms != null) _rttComms.Update();
                         if (_comms != null) _comms.Update();
+                        if (_rsComms != null) _rsComms.Update();
+                        if (_lobbyService != null) _lobbyService.Update();
                     }
                     break;
             }
-        }
-
-        /// <summary>
-        /// Enables Real Time event for this session.
-        /// Real Time events are disabled by default. Usually events
-        /// need to be polled using GET_EVENTS. By enabling this, events will
-        /// be received instantly when they happen through a TCP connection to an Event Server.
-        ///
-        ///This function will first call requestClientConnection, then connect to the address
-        /// </summary>
-        /// <param name="in_connectionType"></param>
-        /// <param name="in_success"></param>
-        /// <param name="in_failure"></param>
-        /// <param name="cb_object"></param>
-        public void EnableRTT(eRTTConnectionType in_connectionType = eRTTConnectionType.WEBSOCKET, SuccessCallback in_success = null, FailureCallback in_failure = null, object cb_object = null)
-        {
-            _rttComms.EnableRTT(in_connectionType, in_success, in_failure, cb_object);
-        }
-
-        /// <summary>
-        /// Disables Real Time event for this session.
-        /// </summary>
-        public void DisableRTT()
-        {
-            _rttComms.DisableRTT();
-        }
-
-        /// <summary>
-        /// Returns true if RTT is enabled
-        /// </summary>
-        public bool IsRTTEnabled()
-        {
-            return _rttComms.IsRTTEnabled();
         }
 
         /// <summary>
@@ -923,119 +977,6 @@ namespace BrainCloud
             _comms.DeregisterNetworkErrorCallback();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void RegisterRTTEventCallback(RTTCallback in_callback)
-        {
-            _rttComms.RegisterRTTCallback(ServiceName.Event, in_callback);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void DeregisterRTTEventCallback()
-        {
-            _rttComms.DeregisterRTTCallback(ServiceName.Event);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void RegisterRTTChatCallback(RTTCallback in_callback)
-        {
-            _rttComms.RegisterRTTCallback(ServiceName.Chat, in_callback);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void DeregisterRTTChatCallback()
-        {
-            _rttComms.DeregisterRTTCallback(ServiceName.Chat);
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void RegisterRTTPresenceCallback(RTTCallback in_callback)
-        {
-            _rttComms.RegisterRTTCallback(ServiceName.Presence, in_callback);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void DeregisterRTTPresenceCallback()
-        {
-            _rttComms.DeregisterRTTCallback(ServiceName.Presence);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void RegisterRTTMessagingCallback(RTTCallback in_callback)
-        {
-            _rttComms.RegisterRTTCallback(ServiceName.Messaging, in_callback);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void DeregisterRTTMessagingCallback()
-        {
-            _rttComms.DeregisterRTTCallback(ServiceName.Messaging);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void RegisterRTTLobbyCallback(RTTCallback in_callback)
-        {
-            _rttComms.RegisterRTTCallback(ServiceName.Lobby, in_callback);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void DeregisterRTTLobbyCallback()
-        {
-            _rttComms.DeregisterRTTCallback(ServiceName.Lobby);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void RegisterRTTAsyncMatchCallback(RTTCallback in_callback)
-        {
-            _rttComms.RegisterRTTCallback(ServiceName.AsyncMatch, in_callback);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void DeregisterRTTAsyncMatchCallback()
-        {
-            _rttComms.DeregisterRTTCallback(ServiceName.AsyncMatch);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void DeregisterAllRTTCallbacks()
-        {
-            _rttComms.DeregisterAllRTTCallbacks();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void SetRTTHeartBeatSeconds(int in_value)
-        {
-            _rttComms.SetRTTHeartBeatSeconds(in_value);
-        }
-
         /// <summary> Enable logging of brainCloud transactions (comms etc)</summary>
         /// <param name="enable">True if logging is to be enabled</param>
         public void EnableLogging(bool enable)
@@ -1061,6 +1002,7 @@ namespace BrainCloud
         {
             _comms.ResetCommunication();
             _rttComms.DisableRTT();
+            _rsComms.Disconnect();
             Update();
             AuthenticationService.ClearSavedProfileID();
         }
@@ -1081,7 +1023,7 @@ namespace BrainCloud
         /// The number of entries in this array determines how many packet
         /// retries will occur.
         ///
-        /// By default, the packet timeout array is {10, 10, 10}
+        /// By default, the packet timeout array is {15, 20, 35, 50}
         ///
         /// Note that this method does not change the timeout for authentication
         /// packets (use SetAuthenticationPacketTimeout method).
@@ -1294,15 +1236,16 @@ namespace BrainCloud
         }
 
         /// <summary>Method writes log if logging is enabled</summary>
+        /// 
+        [System.Diagnostics.Conditional("BC_DEBUG_LOG_ENABLED")]
         internal void Log(string log)
         {
-#if UNITY_EDITOR
-            BrainCloudUnity.BrainCloudPlugin.ResponseEvent.AppendLog(log);
+#if BC_DEBUG_LOG_ENABLED && UNITY_EDITOR
+            BrainCloudUnity.BrainCloudSettingsDLL.ResponseEvent.AppendLog(log);
 #endif
-
             if (_loggingEnabled)
             {
-                string formattedLog = "#BCC " + (log.Length < 14000 ? log : log.Substring(0, 14000) + " << (LOG TRUNCATED)");
+                string formattedLog = DateTime.Now.ToString("HH:mm:ss.fff") + " #BCC " + (log.Length < 14000 ? log : log.Substring(0, 14000) + " << (LOG TRUNCATED)");
                 lock (_loggingMutex)
                 {
                     if (_logDelegate != null)
@@ -1325,7 +1268,6 @@ namespace BrainCloud
         /// <param name="serviceMessage">The message to send</param>
         internal void SendRequest(ServerCall serviceMessage)
         {
-            System.Diagnostics.Debug.WriteLine("THIS SHOULD BE ADDING TO QUEUE");
             // pass this directly to the brainCloud Class
             // which will add it to its queue and send back responses accordingly
             _comms.AddToQueue(serviceMessage);
