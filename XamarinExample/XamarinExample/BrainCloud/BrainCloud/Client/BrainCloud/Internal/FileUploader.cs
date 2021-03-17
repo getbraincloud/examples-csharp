@@ -191,7 +191,10 @@ using System.Threading.Tasks;
             });
 #endif
             Status = FileUploaderStatus.Uploading;
-            _client.Log("Started upload of " + _fileName);
+            if (_client.LoggingEnabled)
+            {
+                _client.Log("Started upload of " + _fileName);
+            }
             _lastTime = DateTime.Now;
 #endif
         }
@@ -214,7 +217,10 @@ using System.Threading.Tasks;
                 Response = await content.ReadAsStringAsync();
                 StatusCode = (int)message.StatusCode;
                 Status = FileUploaderStatus.CompleteSuccess;
-                _client.Log("Uploaded " + _fileName + " in " + _elapsedTime.ToString("0.0##") + " seconds");
+                if (_client.LoggingEnabled)
+                {
+                    _client.Log("Uploaded " + _fileName + " in " + _elapsedTime.ToString("0.0##") + " seconds");
+                }
             }
             catch (WebException wex)
             {
@@ -255,7 +261,11 @@ using System.Threading.Tasks;
             StatusCode = StatusCodes.CLIENT_NETWORK_ERROR;
             ReasonCode = ReasonCodes.CLIENT_UPLOAD_FILE_CANCELLED;
             Response = CreateErrorString(StatusCode, ReasonCode, "Upload of " + _fileName + " cancelled by user");
-            _client.Log("Upload of " + _fileName + " cancelled by user");
+            
+            if (_client.LoggingEnabled)
+            {
+                _client.Log("Upload of " + _fileName + " cancelled by user");
+            }
         }
 
         public void Update()
@@ -314,7 +324,13 @@ using System.Threading.Tasks;
                 JsonErrorMessage resp = null;
 
                 try { resp = JsonReader.Deserialize<JsonErrorMessage>(Response); }
-                catch (JsonDeserializationException e) { _client.Log(e.Message); }
+                catch (JsonDeserializationException e)
+                {
+                    if (_client.LoggingEnabled)
+                    {
+                        _client.Log(e.Message);
+                    }
+                }
 
                 if (resp != null)
                     ReasonCode = resp.reason_code;
@@ -333,7 +349,10 @@ using System.Threading.Tasks;
 #else
                 Response = _request.text;
 #endif
-                _client.Log("Uploaded " + _fileName + " in " + _elapsedTime.ToString("0.0##") + " seconds");
+                if (_client.LoggingEnabled)
+                {
+                    _client.Log("Uploaded " + _fileName + " in " + _elapsedTime.ToString("0.0##") + " seconds");
+                }
             }
 
 #if USE_WEB_REQUEST

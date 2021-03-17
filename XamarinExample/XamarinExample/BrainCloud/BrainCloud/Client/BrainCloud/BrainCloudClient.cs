@@ -296,6 +296,8 @@ using System.Globalization;
             get { return _comms != null ? _comms.AppId : ""; }
         }
 
+        public string GetAppId() { return AppId; }
+
         public string ProfileId
         {
             get { return AuthenticationService != null ? AuthenticationService.ProfileId : ""; }
@@ -315,6 +317,8 @@ using System.Globalization;
         {
             get { return _appVersion; }
         }
+        
+        public string GetAppVersion() { return AppVersion; }
 
         public string BrainCloudClientVersion
         {
@@ -838,6 +842,15 @@ using System.Globalization;
         /// to process incoming and outgoing messages.
         /// </summary>
         /// 
+        public void RunCallbacks(eBrainCloudUpdateType in_updateType = eBrainCloudUpdateType.ALL)
+        {
+            Update(in_updateType);
+        }
+
+        /// <summary>Update method needs to be called regularly in order
+        /// to process incoming and outgoing messages.
+        /// </summary>
+        /// 
         public void Update(eBrainCloudUpdateType in_updateType = eBrainCloudUpdateType.ALL)
         {
             switch (in_updateType)
@@ -927,10 +940,22 @@ using System.Globalization;
             _comms.DeregisterRewardCallback();
         }
 
+        [Obsolete("This has been deprecated, use RegisterFileUploadCallback instead")]
+        public void RegisterFileUploadCallbacks(FileUploadSuccessCallback success, FileUploadFailedCallback failure)
+        {
+            _comms.RegisterFileUploadCallbacks(success, failure);
+        }
+
+        [Obsolete("This has been deprecated, use DeregisterFileUploadCallback instead")]
+        public void DeregisterFileUploadCallbacks()
+        {
+            _comms.DeregisterFileUploadCallbacks();
+        }
+
         /// <summary>
         /// Registers the file upload callbacks.
         /// </summary>
-        public void RegisterFileUploadCallbacks(FileUploadSuccessCallback success, FileUploadFailedCallback failure)
+        public void RegisterFileUploadCallback(FileUploadSuccessCallback success, FileUploadFailedCallback failure)
         {
             _comms.RegisterFileUploadCallbacks(success, failure);
         }
@@ -938,7 +963,7 @@ using System.Globalization;
         /// <summary>
         /// De-registers the file upload callbacks.
         /// </summary>
-        public void DeregisterFileUploadCallbacks()
+        public void DeregisterFileUploadCallback()
         {
             _comms.DeregisterFileUploadCallbacks();
         }
@@ -983,6 +1008,9 @@ using System.Globalization;
         {
             _loggingEnabled = enable;
         }
+
+        /// <summary> Check if logging of brainCloud transactions is enabled</summary>
+        public bool LoggingEnabled { get { return _loggingEnabled; } }
 
         /// <summary>Allow developers to register their own log handling routine</summary>
         /// <param name="logDelegate">The log delegate</param>
@@ -1237,12 +1265,8 @@ using System.Globalization;
 
         /// <summary>Method writes log if logging is enabled</summary>
         /// 
-        [System.Diagnostics.Conditional("BC_DEBUG_LOG_ENABLED")]
         internal void Log(string log)
         {
-#if BC_DEBUG_LOG_ENABLED && UNITY_EDITOR
-            BrainCloudUnity.BrainCloudSettingsDLL.ResponseEvent.AppendLog(log);
-#endif
             if (_loggingEnabled)
             {
                 string formattedLog = DateTime.Now.ToString("HH:mm:ss.fff") + " #BCC " + (log.Length < 14000 ? log : log.Substring(0, 14000) + " << (LOG TRUNCATED)");
