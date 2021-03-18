@@ -12,24 +12,14 @@
         <State name="__root__">
           <Node name="XamarinExample" expanded="True">
             <Node name="XamarinExample" expanded="True">
-              <Node name="BrainCloud" expanded="True">
-                <Node name="BrainCloud" expanded="True">
-                  <Node name="Client" expanded="True">
-                    <Node name="BrainCloud" expanded="True">
-                      <Node name="BrainCloudAppStore.cs" selected="True" />
-                    </Node>
-                  </Node>
-                </Node>
-              </Node>
               <Node name="ModernHttpClient" expanded="True" />
-              <Node name="MainPage.xaml" expanded="True" />
+              <Node name="MainPage.xaml" expanded="True">
+                <Node name="MainPage.xaml.cs" selected="True" />
+              </Node>
             </Node>
             <Node name="XamarinExample.Android" expanded="True" />
           </Node>
         </State>
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>

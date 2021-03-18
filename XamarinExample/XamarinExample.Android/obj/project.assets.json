@@ -2004,11 +2004,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample.Android/XamarinExample.Android.csproj",
+      "projectUniqueName": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample.Android/XamarinExample.Android.csproj",
       "projectName": "XamarinExample.Android",
-      "projectPath": "/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample.Android/XamarinExample.Android.csproj",
+      "projectPath": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample.Android/XamarinExample.Android.csproj",
       "packagesPath": "/Users/ryanr/.nuget/packages/",
-      "outputPath": "/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample.Android/obj/",
+      "outputPath": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample.Android/obj/",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [
@@ -2023,8 +2023,8 @@
       "frameworks": {
         "monoandroid90": {
           "projectReferences": {
-            "/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/XamarinExample.csproj": {
-              "projectPath": "/Users/ryanr/Desktop/xam/examples-csharp/XamarinExample/XamarinExample/XamarinExample.csproj"
+            "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/XamarinExample.csproj": {
+              "projectPath": "/Users/ryanr/Desktop/Xamarin/examples-xamarin/XamarinExample/XamarinExample/XamarinExample.csproj"
             }
           }
         }
