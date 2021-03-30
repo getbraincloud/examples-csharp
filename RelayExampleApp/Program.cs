@@ -21,6 +21,7 @@ namespace RelayExampleApp
         static int Main(string[] args)
         {
             bc = new BrainCloudWrapper("RelayExampleAppProd");
+            bc.ResetStoredProfileId();
 
             // Comment this line, and uncomment the next one. Fill in you ids
             InitBCFromIdsTXT();
