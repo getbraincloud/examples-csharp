@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RelayExampleApp", "RelayExampleApp.csproj", "{84813AFC-BCFE-434A-8083-AC079ACD96B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainCloudClient", "..\..\unity\BrainCloudClient\solution\vstudio\BrainCloudClient.csproj", "{473EE270-253A-487B-9DD7-896A25C23844}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainCloudClient", "..\..\csharp\BrainCloudClient\solution\vstudio\BrainCloudClient.csproj", "{473EE270-253A-487B-9DD7-896A25C23844}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
