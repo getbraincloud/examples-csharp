@@ -99,7 +99,7 @@
     <Content Include="arrow7.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\unity\BrainCloudClient\solution\vstudio\BrainCloudClient.csproj">
+    <ProjectReference Include="..\braincloud-csharp\BrainCloudClient\solution\vstudio\BrainCloudClient.csproj">
       <Project>{473ee270-253a-487b-9dd7-896a25c23844}</Project>
       <Name>BrainCloudClient</Name>
     </ProjectReference>

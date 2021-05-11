@@ -395,11 +395,7 @@ namespace RelayTestApp
                     case "DISBANDED":
                     {
                         var reason = jsonData["reason"] as Dictionary<string, object>;
-                        if ((int)reason["code"] == BrainCloud.ReasonCodes.RTT_ROOM_READY)
-                        {
-                            ConnectRelay();
-                        }
-                        else
+                        if ((int)reason["code"] != BrainCloud.ReasonCodes.RTT_ROOM_READY)
                         {
                             // Disbanded for any other reason than ROOM_READY, means we failed to launch the game.
                             CloseGame();
@@ -416,6 +412,7 @@ namespace RelayTestApp
                         break;
                     case "ROOM_READY":
                         State.server = new Server(jsonData);
+                        ConnectRelay();
                         break;
                 }
             }

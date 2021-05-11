@@ -15,8 +15,8 @@ namespace RelayExampleApp
         static RelayConnectOptions connectOptions = 
             new RelayConnectOptions();
         // Change this to try different connection type
-        static RelayConnectionType connectionType = RelayConnectionType.UDP;
-        static int returnCode = 0;
+        static RelayConnectionType connectionType = RelayConnectionType.TCP;
+        static int returnCode = 1;
 
         static int Main(string[] args)
         {
@@ -101,7 +101,7 @@ namespace RelayExampleApp
             ranges.Add(1000);
             algo["ranges"] = ranges;
             bc.LobbyService.FindOrCreateLobby(
-                "READY_START", 0, 1, algo, 
+                "READY_START_V2", 0, 1, algo, 
                 new Dictionary<string, object>(), 0, true, 
                 new Dictionary<string, object>(), "all", 
                 new Dictionary<string, object>(), null, null, onFailed);
@@ -119,14 +119,11 @@ namespace RelayExampleApp
                     var reason = data["reason"] 
                         as Dictionary<string, object>;
                     var reasonCode = (int)reason["code"];
-                    if (reasonCode == ReasonCodes.RTT_ROOM_READY)
-                        connectToRelay();
-                    else
+                    if (reasonCode != ReasonCodes.RTT_ROOM_READY) // Disbanded for another reason than room ready
                         onFailed(0, 0, "DISBANDED != RTT_ROOM_READY", null);
                     break;
 
-                // ROOM_READY contains information on how to connect to the 
-                // relay server.
+                // ROOM_READY, connect to the server
                 case "ROOM_READY":
                     var connectData = data["connectData"] 
                         as Dictionary<string, object>;
@@ -145,6 +142,8 @@ namespace RelayExampleApp
 
                     connectOptions.passcode = data["passcode"] as string;
                     connectOptions.lobbyId = data["lobbyId"] as string;
+
+                    connectToRelay();
                     break;
             }
         }
@@ -177,6 +176,8 @@ namespace RelayExampleApp
         {
             string message = Encoding.ASCII.GetString(data, 0, data.Length);
             Console.WriteLine("relayCallback: " + message);
+
+            returnCode = 0; // We succeeded the test
         }
     }
 }

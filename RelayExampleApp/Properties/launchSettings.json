@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RelayExampleApp": {
+      "commandName": "Project",
+      "workingDirectory": "F:\\git\\braincloud-client-master\\repositories\\examples-csharp\\RelayExampleApp"
+    }
+  }
+}
