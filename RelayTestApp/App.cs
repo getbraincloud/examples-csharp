@@ -131,7 +131,7 @@ namespace RelayTestApp
             State.user.colorIndex = colorIndex;
             foreach (var member in State.lobby.members)
             {
-                if (State.user.id == member.id)
+                if (State.user.cxId == member.cxId)
                 {
                     member.colorIndex = colorIndex;
                     break;
@@ -154,7 +154,7 @@ namespace RelayTestApp
             User myUser = null;
             foreach (var user in State.lobby.members)
             {
-                if (State.user.id == user.id)
+                if (State.user.cxId == user.cxId)
                 {
                     user.isAlive = true;
                     user.pos = pos;
@@ -253,7 +253,6 @@ namespace RelayTestApp
             var data = response["data"] as Dictionary<string, object>;
 
             State.user = new User();
-            State.user.id = data["profileId"] as string;
 
             // If no username is set for this user, ask for it
             if (!data.ContainsKey("playerName"))
@@ -336,6 +335,7 @@ namespace RelayTestApp
             List<int> ranges = new List<int>();
             ranges.Add(1000);
             algo["ranges"] = ranges;
+            State.user.cxId = m_bcWrapper.RTTService.getRTTConnectionID();
 
             //
             var extra = new Dictionary<string, object>();
@@ -452,13 +452,13 @@ namespace RelayTestApp
 
         void OnRelayMessage(short netId, byte[] jsonResponse)
         {
-            var memberProfileId = m_bcWrapper.RelayService.GetProfileIdForNetId(netId);
+            var memberCxId = m_bcWrapper.RelayService.GetCxIdForNetId(netId);
             string jsonMessage = Encoding.ASCII.GetString(jsonResponse);
             var json = JsonReader.Deserialize<Dictionary<string, object>>(jsonMessage);
 
             foreach (var member in State.lobby.members)
             {
-                if (member.id == memberProfileId)
+                if (member.cxId == memberCxId)
                 {
                     var op = json["op"] as string;
                     if (op == "move")
@@ -490,10 +490,10 @@ namespace RelayTestApp
             var json = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
             if (json["op"] as string == "DISCONNECT")
             {
-                var profileId = json["profileId"] as string;
+                var cxId = json["cxId"] as string;
                 foreach (var member in State.lobby.members)
                 {
-                    if (member.id == profileId)
+                    if (member.cxId == cxId)
                     {
                         member.isAlive = false;
                         break;
