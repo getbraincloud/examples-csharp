@@ -9,7 +9,7 @@ namespace RelayTestApp
 {
     public class User
     {
-        public string id;
+        public string cxId;
         public string name;
         public int colorIndex = 7;
         public bool isReady = false;
@@ -21,7 +21,7 @@ namespace RelayTestApp
 
         public User(Dictionary<string, object> userJson)
         {
-            id = userJson["profileId"] as string;
+            cxId = userJson["cxId"] as string;
             name = userJson["name"] as string;
 
             var extra = userJson["extra"] as Dictionary<string, object>;
