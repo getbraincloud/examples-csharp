@@ -24,7 +24,7 @@ namespace XamarinExample
         private BrainCloudClient client;
 
         private static string version = "1.0.0";
-        string ServerUrl = "https://sharedprod.braincloudservers.com/dispatcherv2";
+        string ServerUrl = "https://api.braincloudservers.com/dispatcherv2";
         string Secret = "f1bbf51b-4fc9-4563-9c2b-24e5e68dd70f";
         string AppId = "12701";
 
