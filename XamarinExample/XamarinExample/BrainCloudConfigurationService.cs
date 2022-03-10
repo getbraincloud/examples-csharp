@@ -22,7 +22,7 @@
 //        public BrainCloudConfigurationService()
 //        {
 //            /*
-//            string server_url = "https://sharedprod.braincloudservers.com/dispatcherv2";
+//            string server_url = "https://api.braincloudservers.com/dispatcherv2";
 //            string secret = "79c8b3d1-0b6d-47cd-93aa-c6631bf01c75";
 //            string app_id = "12450";
 //            */
@@ -69,9 +69,9 @@
 //            get
 //            {
 //                if (UseDebugServer)
-//                    return "https://sharedprod.braincloudservers.com/dispatcherv2";
+//                    return "https://api.braincloudservers.com/dispatcherv2";
 //                else
-//                    return "https://sharedprod.braincloudservers.com/dispatcherv2";
+//                    return "https://api.braincloudservers.com/dispatcherv2";
 //            }
 //        }
 

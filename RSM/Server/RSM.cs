@@ -62,7 +62,7 @@ namespace Server
             GameServer gameServer = new GameServer("appId",
                                                    "serverName",
                                                    "serverSecret",
-                                                   "https://sharedprod.braincloudservers.com/s2sdispatcher",
+                                                   "https://api.braincloudservers.com/s2sdispatcher",
                                                    lobbyId);
             gameServer.Run();
 
