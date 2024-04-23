@@ -91,6 +91,7 @@ namespace RelayTestApp
                 lblLobbyPlayers[i] = label;
             }
             lblPlayer.Visible = false;
+            State.app.CheckReconnect();
         }
 
         public void UpdateLobby()
@@ -170,6 +171,11 @@ namespace RelayTestApp
                     panelPlayers.Controls.Add(checkbox);
                 }
             }
+        }
+
+        public bool GetRememberMeStatus()
+        {
+            return chkRememberMe.Checked;
         }
 
         public void SetCursor(User user, Point pos)
