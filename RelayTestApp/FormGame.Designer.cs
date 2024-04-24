@@ -70,6 +70,7 @@
             this.screenGame = new System.Windows.Forms.TabPage();
             this.picViewport = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkRememberMe = new System.Windows.Forms.CheckBox();
             this.chkOrdered = new System.Windows.Forms.CheckBox();
             this.chkReliable = new System.Windows.Forms.CheckBox();
             this.cboChannels = new System.Windows.Forms.ComboBox();
@@ -117,19 +118,19 @@
             // 
             this.logOutToolStripMenuItem.Enabled = false;
             this.logOutToolStripMenuItem.Name = "logOutToolStripMenuItem";
-            this.logOutToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.logOutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.logOutToolStripMenuItem.Text = "Log Out";
             this.logOutToolStripMenuItem.Click += new System.EventHandler(this.logOutToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(114, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -145,7 +146,7 @@
             // 
             this.leaveToolStripMenuItem.Enabled = false;
             this.leaveToolStripMenuItem.Name = "leaveToolStripMenuItem";
-            this.leaveToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+            this.leaveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.leaveToolStripMenuItem.Text = "Leave";
             this.leaveToolStripMenuItem.Click += new System.EventHandler(this.leaveToolStripMenuItem_Click);
             // 
@@ -174,15 +175,28 @@
             this.screenLogin.Controls.Add(this.label4);
             this.screenLogin.Controls.Add(this.txtUsername);
             this.screenLogin.Controls.Add(this.label5);
+            this.screenLogin.Controls.Add(this.chkRememberMe);
             this.screenLogin.Location = new System.Drawing.Point(4, 22);
             this.screenLogin.Name = "screenLogin";
             this.screenLogin.Size = new System.Drawing.Size(942, 549);
             this.screenLogin.TabIndex = 1;
             this.screenLogin.Text = "Login";
             // 
+            // chkRememberMe
+            // 
+            this.chkRememberMe.AutoSize = true;
+            this.chkRememberMe.Checked = true;
+            this.chkRememberMe.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRememberMe.Location = new System.Drawing.Point(338, 300);
+            this.chkRememberMe.Name = "chkRememberMe";
+            this.chkRememberMe.Size = new System.Drawing.Size(64, 17);
+            this.chkRememberMe.TabIndex = 1;
+            this.chkRememberMe.Text = "Remember me";
+            this.chkRememberMe.UseVisualStyleBackColor = true;
+            // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(338, 297);
+            this.btnLogin.Location = new System.Drawing.Point(338, 323);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 17;
@@ -644,6 +658,7 @@
         private System.Windows.Forms.ToolStripMenuItem leaveToolStripMenuItem;
         private System.Windows.Forms.TabPage screenGame;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox chkRememberMe;
         private System.Windows.Forms.CheckBox chkOrdered;
         private System.Windows.Forms.CheckBox chkReliable;
         private System.Windows.Forms.ComboBox cboChannels;

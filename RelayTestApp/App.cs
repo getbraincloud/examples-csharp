@@ -57,6 +57,7 @@ namespace RelayTestApp
         // Logs out the current user and goes back to login screen
         public void LogOut()
         {
+            m_bcWrapper.Logout(true);
             UninitBC();
             ResetState();
         }
@@ -70,13 +71,20 @@ namespace RelayTestApp
         // Attempt login with the specific username/password
         public void Login(string username, string password)
         {
-            InitBC();
-
             // Show loading screen
             ChangeScreen(ScreenState.LoggingIn);
 
             // Authenticate with brainCloud
             m_bcWrapper.AuthenticateUniversal(username, password, true, HandlePlayerState, DieWithMessage, "Login Failed");
+        }
+
+        public void CheckReconnect()
+        {
+            InitBC();
+            if (m_bcWrapper.CanReconnect())
+            {
+                m_bcWrapper.Reconnect(HandlePlayerState, DieWithMessage);
+            }
         }
 
         // Find lobby
@@ -90,7 +98,7 @@ namespace RelayTestApp
 
             // Enable RTT
             m_bcWrapper.RTTService.RegisterRTTLobbyCallback(OnLobbyEvent);
-            m_bcWrapper.RTTService.EnableRTT(BrainCloud.RTTConnectionType.WEBSOCKET, OnRTTConnected, OnRTTDisconnected);
+            m_bcWrapper.RTTService.EnableRTT(OnRTTConnected, OnRTTDisconnected);
         }
 
         // Cleanly close the game. Go back to main menu but don't log 
@@ -263,6 +271,10 @@ namespace RelayTestApp
             {
                 State.user.name = data["playerName"] as string;
                 OnLoggedIn(jsonResponse, cbObject);
+            }
+            if(!State.form.GetRememberMeStatus())
+            {
+                m_bcWrapper.ResetStoredProfileId();
             }
         }
 
