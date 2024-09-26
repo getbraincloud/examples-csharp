@@ -269,8 +269,16 @@ namespace RelayTestApp
             }
             else
             {
-                State.user.name = data["playerName"] as string;
-                OnLoggedIn(jsonResponse, cbObject);
+                string playerName = data["playerName"] as string;
+                if (string.IsNullOrEmpty(playerName))
+                {
+                    SubmitName(Settings.username);
+                }
+                else
+                {
+                    State.user.name = playerName;
+                    OnLoggedIn(jsonResponse, cbObject);
+                }
             }
             if(!State.form.GetRememberMeStatus())
             {
