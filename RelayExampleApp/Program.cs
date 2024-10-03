@@ -25,7 +25,6 @@ namespace RelayExampleApp
 
             // Comment this line, and uncomment the next one. Fill in you ids
             InitBCFromIdsTXT();
-            //bc.Init("https://sharedprod.braincloudservers.com/dispatcherv2", "your app secret", "your app id", "1.0");
 
             bc.Client.EnableLogging(true);
             bc.AuthenticateAnonymous(onAuthenticated, onFailed);
@@ -88,8 +87,7 @@ namespace RelayExampleApp
         static void onAuthenticated(string jsonResponse, object cbObject)
         {
             bc.RTTService.RegisterRTTLobbyCallback(onLobbyEvent);
-            bc.RTTService.EnableRTT(RTTConnectionType.WEBSOCKET, 
-                                    onRTTEnabled, onFailed);
+            bc.RTTService.EnableRTT(onRTTEnabled, onFailed, RTTConnectionType.WEBSOCKET);
         }
 
         static void onRTTEnabled(string jsonResponse, object cbObject)
@@ -101,7 +99,7 @@ namespace RelayExampleApp
             ranges.Add(1000);
             algo["ranges"] = ranges;
             bc.LobbyService.FindOrCreateLobby(
-                "READY_START_V2", 0, 1, algo, 
+                "CursorPartyV2", 0, 1, algo, 
                 new Dictionary<string, object>(), 0, true, 
                 new Dictionary<string, object>(), "all", 
                 new Dictionary<string, object>(), null, null, onFailed);
