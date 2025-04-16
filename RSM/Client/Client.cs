@@ -21,7 +21,7 @@ namespace Client
 
             // Comment this line, and uncomment the next one. Fill in you ids
             InitBCFromIdsTXT();
-            //bc.Init("https://sharedprod.braincloudservers.com/dispatcherv2", "your app secret", "your app id", "1.0");
+            //bc.Init("https://api.braincloudservers.com/dispatcherv2", "your app secret", "your app id", "1.0");
 
             bc.Client.EnableLogging(true);
             bc.AuthenticateAnonymous(onAuthenticated, onFailed);
