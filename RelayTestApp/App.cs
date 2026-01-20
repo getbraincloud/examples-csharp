@@ -306,7 +306,7 @@ namespace RelayTestApp
             State.user.name = username;
 
             // Update name
-            m_bcWrapper.PlayerStateService.UpdateUserName(username, OnLoggedIn, DieWithMessage, "Failed to update username to braincloud");
+            m_bcWrapper.PlayerStateService.UpdateName(username, OnLoggedIn, DieWithMessage, "Failed to update username to braincloud");
         }
 
         void OnRTTDisconnected(int status, int reasonCode, string jsonError, object cbObject)
@@ -374,7 +374,6 @@ namespace RelayTestApp
                 1,              // max steps
                 algo,           // algorithm
                 filters,        // filters
-                0,              // Timeout
                 false,          // ready
                 extra,          // extra
                 "all",          // team code

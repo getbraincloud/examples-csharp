@@ -100,7 +100,7 @@ namespace RelayExampleApp
             algo["ranges"] = ranges;
             bc.LobbyService.FindOrCreateLobby(
                 "CursorPartyV2", 0, 1, algo, 
-                new Dictionary<string, object>(), 0, true, 
+                new Dictionary<string, object>(), true, 
                 new Dictionary<string, object>(), "all", 
                 new Dictionary<string, object>(), null, null, onFailed);
         }
