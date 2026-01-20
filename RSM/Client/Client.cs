@@ -86,7 +86,7 @@ namespace Client
         static void onAuthenticated(string jsonResponse, object cbObject)
         {
             bc.RTTService.RegisterRTTLobbyCallback(onLobbyEvent);
-            bc.RTTService.EnableRTT(RTTConnectionType.WEBSOCKET, onRTTEnabled, onFailed);
+            bc.RTTService.EnableRTT(onRTTEnabled, onFailed, RTTConnectionType.WEBSOCKET);
         }
 
         static void onRTTEnabled(string jsonResponse, object cbObject)
@@ -99,7 +99,7 @@ namespace Client
             algo["ranges"] = ranges;
             bc.LobbyService.FindOrCreateLobby(
                 "LocalDebugging", 0, 1, algo,
-                new Dictionary<string, object>(), 0, true,
+                new Dictionary<string, object>(), true,
                 new Dictionary<string, object>(), "all",
                 new Dictionary<string, object>(), null, null, onFailed);
         }

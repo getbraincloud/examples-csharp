@@ -49,7 +49,7 @@ namespace Server
                 {
                     { "roomId", lobbyId },
                     { "url", req.Url.Host }, // Host should contain our IP
-                    { "tcpPort", port }
+                    //{ "tcpPort", port }
                 }}
             };
             string responseString = JsonWriter.Serialize(responseJson);
