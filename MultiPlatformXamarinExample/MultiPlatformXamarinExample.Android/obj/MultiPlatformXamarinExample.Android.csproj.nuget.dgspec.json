@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj": {}
+    "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj": {}
   },
   "projects": {
-    "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj": {
+    "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj",
+        "projectUniqueName": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj",
         "projectName": "MultiPlatformXamarinExample.Android",
-        "projectPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj",
+        "projectPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj",
         "packagesPath": "/Users/lagowizard/.nuget/packages/",
-        "outputPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/obj/",
+        "outputPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/obj/",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
@@ -26,8 +26,8 @@
         "frameworks": {
           "monoandroid13.0": {
             "projectReferences": {
-              "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
-                "projectPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj"
+              "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
+                "projectPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj"
               }
             }
           }
@@ -48,14 +48,14 @@
         }
       }
     },
-    "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
+    "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
+        "projectUniqueName": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
         "projectName": "MultiPlatformXamarinExample",
-        "projectPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
+        "projectPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
         "packagesPath": "/Users/lagowizard/.nuget/packages/",
-        "outputPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/",
+        "outputPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/lagowizard/.config/NuGet/NuGet.Config"

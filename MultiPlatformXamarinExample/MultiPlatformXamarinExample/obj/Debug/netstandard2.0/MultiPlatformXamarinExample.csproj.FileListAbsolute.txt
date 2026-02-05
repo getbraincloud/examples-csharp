@@ -1,0 +1,7 @@
+/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.csproj.AssemblyReference.cache
+/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.GeneratedMSBuildEditorConfig.editorconfig
+/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/App.xaml.g.cs
+/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MainPage.xaml.g.cs
+/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.AssemblyInfoInputs.cache
+/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.AssemblyInfo.cs
+/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.csproj.CoreCompileInputs.cache

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "vda7FVqQj/+e+2vjSYSvbRKh+3mXYSDaTzlISHwX9wRfZ31AI60aqR+1ovAF+2ybz1g+C9eAjz4Zj1Ew+NjUrg==",
+  "dgSpecHash": "+uecLO9KShOaJlu79E5X0WRY5DOMxF/BNQLczzMIJI56jFZxP6S+h1y4xYXjxvJ7DSB9d49NXKh2zHZYaAqEjQ==",
   "success": true,
-  "projectFilePath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
+  "projectFilePath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
   "expectedPackageFiles": [
     "/Users/lagowizard/.nuget/packages/system.numerics.vectors/4.5.0/system.numerics.vectors.4.5.0.nupkg.sha512",
     "/Users/lagowizard/.nuget/packages/xamarin.essentials/1.8.1/xamarin.essentials.1.8.1.nupkg.sha512",

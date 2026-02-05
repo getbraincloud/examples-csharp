@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+R9VcdOtB+W9k6wRckyyHY1dVXCL+PnP+VmEOWEzFHfKVEgZXmub8XG94yR/lnd1o8Bm6/vKX5DEwurmvqWEJw==",
+  "dgSpecHash": "GTHJhWGCFcA0XuReOSKGSgpCISm8xPNd4XY8I/ATIWNyQz3bBfIo016VjFRIYMUqT/o3nwTF8WYBSdNBEhsp9w==",
   "success": true,
-  "projectFilePath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
+  "projectFilePath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
   "expectedPackageFiles": [
     "/Users/lagowizard/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "/Users/lagowizard/.nuget/packages/netstandard.library/2.0.3/netstandard.library.2.0.3.nupkg.sha512",

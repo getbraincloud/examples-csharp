@@ -1069,11 +1069,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
+      "projectUniqueName": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
       "projectName": "MultiPlatformXamarinExample.iOS",
-      "projectPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
+      "projectPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
       "packagesPath": "/Users/lagowizard/.nuget/packages/",
-      "outputPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/obj/",
+      "outputPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/obj/",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [
@@ -1088,8 +1088,8 @@
       "frameworks": {
         "xamarinios10": {
           "projectReferences": {
-            "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
-              "projectPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj"
+            "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
+              "projectPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj"
             }
           }
         }

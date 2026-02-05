@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HxMg2y4fom66qKKgR4vQ4cQhz/LUrvW6zvyTSVa+FGDE88+rc/nhSOHCg4C+K4xcyfZBoP513/8ojAQPL2X6Fg==",
+  "dgSpecHash": "GUjbVVz3+8X753OaSSImU9ABTgHx/2KU4bMibD42e2KQGgXC2kLxTE8kKneAd5lHltLoIh4ekpuF/Htg5lmxlg==",
   "success": true,
-  "projectFilePath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj",
+  "projectFilePath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj",
   "expectedPackageFiles": [
     "/Users/lagowizard/.nuget/packages/system.numerics.vectors/4.5.0/system.numerics.vectors.4.5.0.nupkg.sha512",
     "/Users/lagowizard/.nuget/packages/xamarin.androidx.activity/1.2.4.1/xamarin.androidx.activity.1.2.4.1.nupkg.sha512",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj": {}
+    "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj": {}
   },
   "projects": {
-    "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj": {
+    "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
+        "projectUniqueName": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
         "projectName": "MultiPlatformXamarinExample.iOS",
-        "projectPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
+        "projectPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj",
         "packagesPath": "/Users/lagowizard/.nuget/packages/",
-        "outputPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/obj/",
+        "outputPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample.iOS/obj/",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
@@ -26,8 +26,8 @@
         "frameworks": {
           "xamarinios10": {
             "projectReferences": {
-              "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
-                "projectPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj"
+              "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
+                "projectPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj"
               }
             }
           }
@@ -59,14 +59,14 @@
         }
       }
     },
-    "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
+    "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
+        "projectUniqueName": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
         "projectName": "MultiPlatformXamarinExample",
-        "projectPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
+        "projectPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
         "packagesPath": "/Users/lagowizard/.nuget/packages/",
-        "outputPath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/",
+        "outputPath": "/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/lagowizard/.config/NuGet/NuGet.Config"
