@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "+R9VcdOtB+W9k6wRckyyHY1dVXCL+PnP+VmEOWEzFHfKVEgZXmub8XG94yR/lnd1o8Bm6/vKX5DEwurmvqWEJw==",
+  "success": true,
+  "projectFilePath": "/Users/lagowizard/Projects/MultiPlatformXamarinExample/MultiPlatformXamarinExample/MultiPlatformXamarinExample.csproj",
+  "expectedPackageFiles": [
+    "/Users/lagowizard/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "/Users/lagowizard/.nuget/packages/netstandard.library/2.0.3/netstandard.library.2.0.3.nupkg.sha512",
+    "/Users/lagowizard/.nuget/packages/system.numerics.vectors/4.5.0/system.numerics.vectors.4.5.0.nupkg.sha512",
+    "/Users/lagowizard/.nuget/packages/xamarin.essentials/1.8.1/xamarin.essentials.1.8.1.nupkg.sha512",
+    "/Users/lagowizard/.nuget/packages/xamarin.forms/5.0.0.2662/xamarin.forms.5.0.0.2662.nupkg.sha512"
+  ],
+  "logs": []
+}
