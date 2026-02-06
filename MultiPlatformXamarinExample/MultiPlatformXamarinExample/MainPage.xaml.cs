@@ -1,53 +1,66 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-using BrainCloud;
 
 namespace MultiPlatformXamarinExample
 {
     public partial class MainPage : ContentPage
     {
-        private BrainCloudWrapper _bc;
+        private BCService _bcService;
 
         public MainPage()
         {
             InitializeComponent();
-
-            _bc = new BrainCloudWrapper();
+            _bcService = BCService.Instance;
+            Logger.Log("App started");
         }
-
 
         private void OnInitClicked(object sender, EventArgs e)
         {
-            // Use BrainCloud here
-            string appId = "22319";//"your-app-id";
-            string secret = "d528be92-c147-4c55-b041-f655d7018c0c";//"your-secret-id";
-            string appVersion = "1.0.0";
-            string url = "https://api.internal.braincloudservers.com/dispatcherv2";
+            try
+            {
+                Logger.Log("Initializing BrainCloud...");
 
-            _bc.Init(url, appId, secret, appVersion);
-            PrintResult("BrainCloud initialized!");
+                string appId = "your-app-id";
+                string secret = "your-secret";
+                string appVersion = "1.0.0";
+
+                _bcService.Initialize(appId, secret, appVersion);
+
+                PrintResult("BrainCloud initialized!");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Init failed", ex);
+                PrintResult($"Init Error: {ex.Message}");
+            }
         }
 
         private void OnAuthenticateClicked(object sender, EventArgs e)
         {
-            // Use BrainCloud here
-            _bc.AuthenticateAnonymous(OnAuthSuccess, OnAuthFailure);
-            PrintResult("Authenticating...");
+            try
+            {
+                Logger.Log("Starting authentication...");
+                PrintResult("Authenticating...");
+
+                _bcService.BrainCloud.AuthenticateAnonymous(OnAuthSuccess, OnAuthFailure);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Authentication request failed", ex);
+                PrintResult($"Auth Error: {ex.Message}");
+            }
         }
 
         private void OnAuthSuccess(string jsonResponse, object cbObject)
         {
-            PrintResult($"Success: {jsonResponse}");
+            Logger.Log($"Authentication SUCCESS: {jsonResponse}");
+            PrintResult($"✓ Authentication successful!\n{jsonResponse}");
         }
 
         private void OnAuthFailure(int statusCode, int reasonCode, string message, object cbObject)
         {
-            PrintResult($"Failed: {message}");
+            Logger.LogError($"Authentication FAILED - Status: {statusCode}, Reason: {reasonCode}, Message: {message}");
+            PrintResult($"✗ Auth failed: [{statusCode}] {message}");
         }
 
         private void PrintResult(string message)

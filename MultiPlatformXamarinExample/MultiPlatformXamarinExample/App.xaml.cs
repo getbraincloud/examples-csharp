@@ -19,6 +19,8 @@ namespace MultiPlatformXamarinExample
 
         protected override void OnSleep ()
         {
+            // Stop update loop when app goes to background
+            BCService.Instance.StopUpdateLoop();
         }
 
         protected override void OnResume ()
