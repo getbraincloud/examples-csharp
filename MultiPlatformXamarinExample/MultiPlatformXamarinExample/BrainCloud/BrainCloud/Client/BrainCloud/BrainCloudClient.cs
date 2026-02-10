@@ -14,6 +14,9 @@ namespace BrainCloud
 #if !XAMARIN
     using BrainCloud.Entity;
     using System;
+#elif XAMARIN
+    using System;
+    using Xamarin.Forms;
 #endif
 
 #if !(DOT_NET || GODOT)
@@ -975,18 +978,6 @@ using System.Globalization;
             _comms.DeregisterRewardCallback();
         }
 
-        [Obsolete("This has been deprecated, use RegisterFileUploadCallback instead")]
-        public void RegisterFileUploadCallbacks(FileUploadSuccessCallback success, FileUploadFailedCallback failure)
-        {
-            _comms.RegisterFileUploadCallbacks(success, failure);
-        }
-
-        [Obsolete("This has been deprecated, use DeregisterFileUploadCallback instead")]
-        public void DeregisterFileUploadCallbacks()
-        {
-            _comms.DeregisterFileUploadCallbacks();
-        }
-
         /// <summary>
         /// Registers the file upload callbacks.
         /// </summary>
@@ -1368,10 +1359,23 @@ using System.Globalization;
                 return;
             }
 
-            // TODO: what is our default c# platform?
+
             Platform platform = Platform.Windows;
 #if !(DOT_NET || GODOT)
-            platform = Platform.FromUnityRuntime();
+            //platform = Platform.FromUnityRuntime();
+#elif XAMARIN
+            switch (Device.RuntimePlatform)
+            {
+                case Device.iOS:
+                    platform = Platform.iOS;
+                    break;
+                case Device.macOS:
+                    platform = Platform.Mac;
+                    break;
+                case Device.Android:
+                    platform = Platform.GooglePlayAndroid;
+                    break;
+            }
 #endif
 
             _appVersion = appVersion;

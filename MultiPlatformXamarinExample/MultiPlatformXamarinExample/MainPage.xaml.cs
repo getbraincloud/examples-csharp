@@ -20,13 +20,15 @@ namespace MultiPlatformXamarinExample
             {
                 Logger.Log("Initializing BrainCloud...");
 
-                string appId = "your-app-id";
-                string secret = "your-secret";
+                string appId = "22319";//"your-app-id";
+                string secret = "d528be92-c147-4c55-b041-f655d7018c0c";//"your-secret";
                 string appVersion = "1.0.0";
 
                 _bcService.Initialize(appId, secret, appVersion);
 
                 PrintResult("BrainCloud initialized!");
+
+                PrintResult("Platform: " + _bcService.BrainCloud.Client.ReleasePlatform);
             }
             catch (Exception ex)
             {

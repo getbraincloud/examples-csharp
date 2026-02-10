@@ -10,8 +10,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
-    <DefineConstants>DEBUG;DOT_NET</DefineConstants> 
+    <DefineConstants>DOT_NET;XAMARIN;DEBUG</DefineConstants> 
     <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>TRACE; DOT_NET; XAMARIN</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

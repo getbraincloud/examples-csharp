@@ -3,11 +3,10 @@
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/bin/Debug/netstandard2.0/ref/MultiPlatformXamarinExample.dll
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/bin/Debug/netstandard2.0/MultiPlatformXamarinExample.pdb
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.csproj.AssemblyReference.cache
-/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.GeneratedMSBuildEditorConfig.editorconfig
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/App.xaml.g.cs
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MainPage.xaml.g.cs
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.csproj.CoreCompileInputs.cache
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/XamlC.stamp
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.dll
-/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/refint/MultiPlatformXamarinExample.dll
 /Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/MultiPlatformXamarinExample.pdb
+/Users/lagowizard/Documents/GitHub/examples-csharp/MultiPlatformXamarinExample/MultiPlatformXamarinExample/obj/Debug/netstandard2.0/ref/MultiPlatformXamarinExample.dll
