@@ -16,7 +16,6 @@ namespace BrainCloud
     using System;
 #elif XAMARIN
     using System;
-    using Xamarin.Forms;
 #endif
 
 #if !(DOT_NET || GODOT)
@@ -1362,20 +1361,9 @@ using System.Globalization;
 
             Platform platform = Platform.Windows;
 #if !(DOT_NET || GODOT)
-            //platform = Platform.FromUnityRuntime();
+            platform = Platform.FromUnityRuntime();
 #elif XAMARIN
-            switch (Device.RuntimePlatform)
-            {
-                case Device.iOS:
-                    platform = Platform.iOS;
-                    break;
-                case Device.macOS:
-                    platform = Platform.Mac;
-                    break;
-                case Device.Android:
-                    platform = Platform.GooglePlayAndroid;
-                    break;
-            }
+            platform = Platform.FromRuntime();
 #endif
 
             _appVersion = appVersion;

@@ -1,32 +1,36 @@
-﻿<Properties StartupConfiguration="{EA1249AF-9EAF-461B-9F8E-F38F639332CA}|Default">
-  <MonoDevelop.Ide.ItemProperties.MultiPlatformXamarinExample.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.Generic" />
-  <Xamarin.Addins.Core.Project ActiveDebugTarget="Android.SelectDevice" />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="MultiPlatformXamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/BrainCloudClient.cs">
+﻿<Properties StartupConfiguration="{58892158-632C-4AC1-96C6-7B26CA5D3E26}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="MultiPlatformXamarinExample.Mac/AppDelegate.cs">
     <Files>
-      <File FileName="MultiPlatformXamarinExample/MainPage.xaml.cs" />
-      <File FileName="MultiPlatformXamarinExample.Android/MainActivity.cs" />
-      <File FileName="MultiPlatformXamarinExample/Logger.cs" />
-      <File FileName="MultiPlatformXamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/BrainCloudClient.cs" Line="1308" Column="54" />
-      <File FileName="MultiPlatformXamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/Common/Platform.cs" />
+      <File FileName="MultiPlatformXamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/Common/Platform.cs" Line="179" Column="27" />
+      <File FileName="MultiPlatformXamarinExample/BrainCloud/BrainCloud/Client/BrainCloud/BrainCloudClient.cs" />
+      <File FileName="MultiPlatformXamarinExample.Mac/AppDelegate.cs" Line="35" Column="1" />
+      <File FileName="packages/Xamarin.Essentials.1.8.1/readme.txt" Line="1" Column="1" />
+      <File FileName="MultiPlatformXamarinExample.Mac/MultiPlatformXamarinExample.Mac.csproj" Line="35" Column="41" />
+      <File FileName="MultiPlatformXamarinExample.Mac/Main.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="MultiPlatformXamarinExample" expanded="True">
-            <Node name="MultiPlatformXamarinExample" selected="True">
+            <Node name="MultiPlatformXamarinExample">
               <Node name="App.xaml" expanded="True" />
-              <Node name="MainPage.xaml" expanded="True" />
             </Node>
+            <Node name="MultiPlatformXamarinExample.Mac" selected="True" />
           </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.MultiPlatformXamarinExample.Android PreferredExecutionTarget="Android.SelectDevice" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.MultiPlatformXamarinExample.Mac PreferredExecutionTarget="MyMacID" FirstBuild="True" />
+  <Xamarin.Addins.Core.Project ActiveDebugTarget="Android.SelectDevice" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <DisabledProjects>
+    <String>MultiPlatformXamarinExample.iOS/MultiPlatformXamarinExample.iOS.csproj</String>
+    <String>MultiPlatformXamarinExample.Android/MultiPlatformXamarinExample.Android.csproj</String>
+  </DisabledProjects>
 </Properties>
