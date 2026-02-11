@@ -14,19 +14,20 @@
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;DOT_NET;XAMARIN</DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <CodesigningKey>Mac Developer</CodesigningKey>
-    <IncludeMonoRuntime>false</IncludeMonoRuntime>
-    <UseSGen>true</UseSGen>
-    <UseRefCounting>true</UseRefCounting>
-    <HttpClientHandler>HttpClientHandler</HttpClientHandler>
-    <LinkMode>None</LinkMode>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <PlatformTarget>x86</PlatformTarget>
-    <NoStdLib>true</NoStdLib>
+      <DebugType>full</DebugType>
+      <Optimize>false</Optimize>
+      <OutputPath>bin\Debug</OutputPath>
+      <DefineConstants>DEBUG;DOT_NET;XAMARIN;__MACOS__</DefineConstants>
+      <WarningLevel>4</WarningLevel>
+      <CodesigningKey>Mac Developer</CodesigningKey>
+      <IncludeMonoRuntime>false</IncludeMonoRuntime>
+      <UseSGen>true</UseSGen>
+      <UseRefCounting>true</UseRefCounting>
+      <HttpClientHandler>HttpClientHandler</HttpClientHandler>
+      <LinkMode>None</LinkMode>
+      <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+      <PlatformTarget>x86</PlatformTarget>
+      <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,7 +46,7 @@
     <LinkMode>SdkOnly</LinkMode>
     <HttpClientHandler>HttpClientHandler</HttpClientHandler>
     <XamMacArch>x86_64</XamMacArch>
-    <NoStdLib>true</NoStdLib>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
