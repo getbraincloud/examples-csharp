@@ -1,6 +1,8 @@
 ### XamarinStudio ###
 bin/
 obj/
+.vs/
+.idea/
 *.userprefs
 .packages
 
