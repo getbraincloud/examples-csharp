@@ -1,7 +1,0 @@
-{
-  "profiles": {
-    "MultiPlatformXamarinExample.UWP": {
-      "commandName": "MsixPackage"
-    }
-  }
-}
