@@ -56,13 +56,13 @@ namespace MultiPlatformXamarinExample
         private void OnAuthSuccess(string jsonResponse, object cbObject)
         {
             Logger.Log($"Authentication SUCCESS: {jsonResponse}");
-            PrintResult($"✓ Authentication successful!\n{jsonResponse}");
+            PrintResult($"Authentication successful!\n{jsonResponse}");
         }
 
         private void OnAuthFailure(int statusCode, int reasonCode, string message, object cbObject)
         {
             Logger.LogError($"Authentication FAILED - Status: {statusCode}, Reason: {reasonCode}, Message: {message}");
-            PrintResult($"✗ Auth failed: [{statusCode}] {message}");
+            PrintResult($"Auth failed: [{statusCode}] {message}");
         }
 
         private void PrintResult(string message)
@@ -71,6 +71,33 @@ namespace MultiPlatformXamarinExample
             {
                 ResultLabel.Text = $"[{DateTime.Now:HH:mm:ss}] {message}\n\n{ResultLabel.Text}";
             });
+        }
+
+        private void OnAPICallClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                PrintResult("Sending request...");
+
+                _bcService.BrainCloud.IdentityService.GetIdentities(OnAPICallSuccess, OnAPICallFailure);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("API request failed", ex);
+                PrintResult($"API request failed: {ex.Message}");
+            }
+        }
+
+        private void OnAPICallSuccess(string jsonResponse, object cbObject)
+        {
+            Logger.Log($"API Call Success: {jsonResponse}");
+            PrintResult($"API Call Success: \n{jsonResponse}");
+        }
+
+        private void OnAPICallFailure(int statusCode, int reasonCode, string message, object cbObject)
+        {
+            Logger.Log($"API Call Failure: {message}");
+            PrintResult($"API Call Failure: \n{message}");
         }
     }
 }

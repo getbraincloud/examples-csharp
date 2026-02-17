@@ -83,6 +83,11 @@ namespace MultiPlatformXamarinExample
             StopUpdateLoop();
             _cancellationTokenSource?.Dispose();
         }
+
+        public void Dispose()
+        {
+            Shutdown();
+        }
     }
 }
 
