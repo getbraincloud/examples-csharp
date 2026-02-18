@@ -6,7 +6,7 @@
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <ProduceReferenceAssemblyInOutDir>true</ProduceReferenceAssemblyInOutDir>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>AnyCPU;x86;x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -34,5 +34,1449 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2662" />
     <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client.meta">
+      <Link>BrainCloud\Client.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx.meta">
+      <Link>BrainCloud\JsonFx.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Nintendo.meta">
+      <Link>BrainCloud\Nintendo.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient.meta">
+      <Link>BrainCloud\ModernHttpClient.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Resources.meta">
+      <Link>BrainCloud\Resources.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\brainCloud.asmdef">
+      <Link>BrainCloud\brainCloud.asmdef</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\brainCloud.asmdef.meta">
+      <Link>BrainCloud\brainCloud.asmdef.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity.meta">
+      <Link>BrainCloud\Unity.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor.meta">
+      <Link>BrainCloud\Unity\Editor.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\BrainCloudPlugin.dll.meta">
+      <Link>BrainCloud\Unity\BrainCloudPlugin.dll.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\BrainCloudPlugin.dll">
+      <Link>BrainCloud\Unity\BrainCloudPlugin.dll</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BrainCloudPluginEditor.dll">
+      <Link>BrainCloud\Unity\Editor\BrainCloudPluginEditor.dll</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BrainCloudPluginEditor.dll.meta">
+      <Link>BrainCloud\Unity\Editor\BrainCloudPluginEditor.dll.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\dm_braincloud_settings_skin.guiskin">
+      <Link>BrainCloud\Unity\Editor\BCResources\dm_braincloud_settings_skin.guiskin</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\dm_braincloud_settings_skin.guiskin.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\dm_braincloud_settings_skin.guiskin.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\braincloud_settings_skin.guiskin">
+      <Link>BrainCloud\Unity\Editor\BCResources\braincloud_settings_skin.guiskin</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\braincloud_settings_skin.guiskin.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\braincloud_settings_skin.guiskin.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactive_normal.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactive_normal.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_header.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_header.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactivate_hover.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactivate_hover.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactivate_hover.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactivate_hover.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_logo_small.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_logo_small.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_logo.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_logo.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_logo_small.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_logo_small.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_logo.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_logo.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_header.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_header.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_underline.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_underline.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_refresh.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_refresh.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_icon.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_icon.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_plus.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_plus.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_panel.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_panel.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_logo.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_logo.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_container.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_container.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_panel.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_panel.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_selected.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_selected.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactivate_active.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactivate_active.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_underline.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_underline.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_underline.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_underline.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_refresh.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_refresh.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_panel.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_panel.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_refresh.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_refresh.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_icon.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_icon.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactivate_hover.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactivate_hover.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_icon.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_icon.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_selected.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_selected.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_plus.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_plus.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_minus.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_minus.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_container.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_container.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_container.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_container.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_plus.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_plus.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_minus.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_minus.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_delete.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_delete.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactive_normal.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactive_normal.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_minus.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_minus.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_debug_image.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_debug_image.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_selected.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_selected.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_plus.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_plus.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_icon.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_icon.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_container.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_container.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactive_normal.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactive_normal.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_minus.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_minus.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_refresh.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_refresh.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_delete.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_delete.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_delete.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_delete.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_selected.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_selected.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactivate_hover.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactivate_hover.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactivate_active.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactivate_active.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactive_normal.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactive_normal.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactivate_active.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_tab_deactivate_active.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_header.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_background_header.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_panel.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_panel.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_header.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_header.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_delete.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_delete.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_logo_small.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_logo_small.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_logo.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_logo.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactivate_active.png.meta">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_tab_deactivate_active.png.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_underline.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_background_underline.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_logo_small.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\dm_braincloud_logo_small.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Unity\Editor\BCResources\Images\braincloud_debug_image.png">
+      <Link>BrainCloud\Unity\Editor\BCResources\Images\braincloud_debug_image.png</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Nintendo\README-Nintendo.txt.meta">
+      <Link>BrainCloud\Nintendo\README-Nintendo.txt.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Nintendo\README-Nintendo.txt">
+      <Link>BrainCloud\Nintendo\README-Nintendo.txt</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\websocket-native.jslib">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\websocket-native.jslib</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\websocket-native.jslib.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\websocket-native.jslib.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\NativeWebSocket.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\NativeWebSocket.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CloseStatusCode.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CloseStatusCode.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\AssemblyInfo.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\AssemblyInfo.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\ErrorEventArgs.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\ErrorEventArgs.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\MessageEventArgs.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\MessageEventArgs.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketFrame.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketFrame.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpResponse.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpResponse.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\websocket-sharp.snk">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\websocket-sharp.snk</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketException.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketException.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Logger.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Logger.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Mask.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Mask.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\doc.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\doc.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Ext.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Ext.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\PayloadData.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\PayloadData.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CompressionMethod.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CompressionMethod.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Opcode.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Opcode.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Rsv.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Rsv.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CloseEventArgs.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CloseEventArgs.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpBase.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpBase.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\websocket-sharp.snk.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\websocket-sharp.snk.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\LogData.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\LogData.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketState.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketState.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\LogLevel.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\LogLevel.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpRequest.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpRequest.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\ByteOrder.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\ByteOrder.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocket.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocket.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Fin.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Fin.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpConnection.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpConnection.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListener.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListener.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpUtility.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpUtility.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationChallenge.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationChallenge.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\Chunk.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\Chunk.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerRequest.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerRequest.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ResponseStream.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ResponseStream.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpVersion.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpVersion.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\EndPointListener.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\EndPointListener.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpRequestHeader.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpRequestHeader.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\CookieCollection.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\CookieCollection.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationResponse.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationResponse.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\NetworkCredential.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\NetworkCredential.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpStreamAsyncResult.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpStreamAsyncResult.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpHeaderInfo.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpHeaderInfo.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\LineState.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\LineState.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\EndPointManager.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\EndPointManager.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerException.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerException.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerPrefix.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerPrefix.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpResponseHeader.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpResponseHeader.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerResponse.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerResponse.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\InputChunkState.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\InputChunkState.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ChunkStream.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ChunkStream.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\InputState.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\InputState.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\RequestStream.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\RequestStream.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ChunkedRequestStream.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ChunkedRequestStream.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\CookieException.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\CookieException.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\Cookie.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\Cookie.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\QueryStringCollection.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\QueryStringCollection.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ClientSslConfiguration.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ClientSslConfiguration.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpStatusCode.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpStatusCode.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpHeaderType.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpHeaderType.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerPrefixCollection.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerPrefixCollection.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationBase.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationBase.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpBasicIdentity.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpBasicIdentity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebHeaderCollection.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebHeaderCollection.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationSchemes.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationSchemes.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpDigestIdentity.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpDigestIdentity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerContext.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerContext.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerAsyncResult.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerAsyncResult.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ServerSslConfiguration.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ServerSslConfiguration.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ReadBufferState.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ReadBufferState.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\TcpListenerWebSocketContext.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\TcpListenerWebSocketContext.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\WebSocketContext.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\WebSocketContext.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\HttpListenerWebSocketContext.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\HttpListenerWebSocketContext.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServer.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServer.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketBehavior.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketBehavior.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\HttpRequestEventArgs.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\HttpRequestEventArgs.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceHost`1.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceHost`1.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\HttpServer.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\HttpServer.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketSessionManager.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketSessionManager.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceManager.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceManager.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\IWebSocketSession.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\IWebSocketSession.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\ServerState.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\ServerState.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceHost.cs.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceHost.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\doc\doc.sh">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\doc\doc.sh</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\doc\doc.sh.meta">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\doc\doc.sh.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\XmlDataReader.cs.meta">
+      <Link>BrainCloud\JsonFx\XmlDataReader.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\IDataReader.cs.meta">
+      <Link>BrainCloud\JsonFx\IDataReader.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\EcmaScriptIdentifier.cs.meta">
+      <Link>BrainCloud\JsonFx\EcmaScriptIdentifier.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\DataWriterProvider.cs.meta">
+      <Link>BrainCloud\JsonFx\DataWriterProvider.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonDataWriter.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonDataWriter.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonReaderSettings.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonReaderSettings.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonReader.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonReader.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\License.txt.meta">
+      <Link>BrainCloud\JsonFx\License.txt.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonToken.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonToken.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonSpecifiedPropertyAttribute.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonSpecifiedPropertyAttribute.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\XmlDataWriter.cs.meta">
+      <Link>BrainCloud\JsonFx\XmlDataWriter.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\TypeCoercionUtility.cs.meta">
+      <Link>BrainCloud\JsonFx\TypeCoercionUtility.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\IDataWriter.cs.meta">
+      <Link>BrainCloud\JsonFx\IDataWriter.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonDataReader.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonDataReader.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\About.cs.meta">
+      <Link>BrainCloud\JsonFx\About.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonWriter.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonWriter.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonNameAttribute.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonNameAttribute.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\Readme.txt">
+      <Link>BrainCloud\JsonFx\Readme.txt</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonIgnoreAttribute.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonIgnoreAttribute.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\IJsonSerializable.cs.meta">
+      <Link>BrainCloud\JsonFx\IJsonSerializable.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\License.txt">
+      <Link>BrainCloud\JsonFx\License.txt</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\Readme.txt.meta">
+      <Link>BrainCloud\JsonFx\Readme.txt.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonSerializationException.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonSerializationException.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\EcmaScriptWriter.cs.meta">
+      <Link>BrainCloud\JsonFx\EcmaScriptWriter.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonWriterSettings.cs.meta">
+      <Link>BrainCloud\JsonFx\JsonWriterSettings.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\DataReaderProvider.cs.meta">
+      <Link>BrainCloud\JsonFx\DataReaderProvider.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud.meta">
+      <Link>BrainCloud\Client\BrainCloud.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGlobalEntity.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGlobalEntity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\ServiceName.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\ServiceName.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudFriend.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudFriend.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudUserItems.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudUserItems.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudS3Handling.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudS3Handling.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Version.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Version.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudScript.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudScript.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudMessaging.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudMessaging.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPresence.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPresence.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudFile.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudFile.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudLobby.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudLobby.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPushNotification.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPushNotification.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPlayerStatistics.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPlayerStatistics.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\ReasonCodes.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\ReasonCodes.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudDataStream.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudDataStream.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudCustomEntity.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudCustomEntity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\OperationParam.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\OperationParam.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudVirtualCurrency.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudVirtualCurrency.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPlayerStatisticsEvent.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPlayerStatisticsEvent.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGlobalFile.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGlobalFile.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGlobalApp.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGlobalApp.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGlobalStatistics.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGlobalStatistics.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudWrapper.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudWrapper.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudItemCatalog.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudItemCatalog.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudBlockchain.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudBlockchain.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\ServiceOperation.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\ServiceOperation.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\StatusCodes.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\StatusCodes.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudRTT.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudRTT.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudTime.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudTime.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudRelay.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudRelay.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPlayerState.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPlayerState.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudRedemptionCode.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudRedemptionCode.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGroup.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGroup.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPlaybackStream.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPlaybackStream.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudEvent.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudEvent.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudProfanity.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudProfanity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGroupFile.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGroupFile.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudMatchMaking.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudMatchMaking.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudClient.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudClient.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\RegionLocale.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\RegionLocale.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common.meta">
+      <Link>BrainCloud\Client\BrainCloud\Common.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudMail.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudMail.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudAsyncMatch.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudAsyncMatch.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudEntity.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudEntity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\MD5Unity.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\MD5Unity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudAuthentication.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudAuthentication.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGamification.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGamification.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudSocialLeaderboard.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudSocialLeaderboard.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudTournament.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudTournament.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudOneWayMatch.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudOneWayMatch.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudChat.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudChat.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\TimeUtil.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\TimeUtil.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudIdentity.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudIdentity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Util.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Util.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\ServerCallback.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\ServerCallback.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudAppStore.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudAppStore.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\BCEntityFactory.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\BCEntityFactory.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\BCEntity.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\BCEntity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\BCUserEntity.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\BCUserEntity.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\ListWrapper.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\ListWrapper.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\EntityUtil.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\EntityUtil.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\DictionaryWrapperEnumerator.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\DictionaryWrapperEnumerator.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\DictionaryWrapper.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\DictionaryWrapper.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\AutoCreateAOTCompileHelper.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\AutoCreateAOTCompileHelper.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\ListWrapperEnumerator.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\ListWrapperEnumerator.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\WrapperAuthCallbackObject.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\WrapperAuthCallbackObject.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\RequestState.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\RequestState.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\ProgressStream.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\ProgressStream.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\RTTComms.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\RTTComms.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\EndOfBundleMarker.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\EndOfBundleMarker.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\BrainCloudWebSocket.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\BrainCloudWebSocket.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\RelayComms.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\RelayComms.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\BrainCloudComms.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\BrainCloudComms.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\JsonFxAOT.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\JsonFxAOT.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\ServerCall.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\ServerCall.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\FileUploader.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Internal\FileUploader.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\AuthenticationIds.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Common\AuthenticationIds.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\AuthenticationType.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Common\AuthenticationType.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\GroupACL.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Common\GroupACL.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\Platform.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Common\Platform.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\ACL.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Common\ACL.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\TLSConfig.cs.meta">
+      <Link>BrainCloud\ModernHttpClient\TLSConfig.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\ProgressStreamContent.cs.meta">
+      <Link>BrainCloud\ModernHttpClient\ProgressStreamContent.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\ReasonPhrases.cs.meta">
+      <Link>BrainCloud\ModernHttpClient\ReasonPhrases.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\CaptiveNetworkException.cs.meta">
+      <Link>BrainCloud\ModernHttpClient\CaptiveNetworkException.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\NativeMessageHandler.cs.meta">
+      <Link>BrainCloud\ModernHttpClient\NativeMessageHandler.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\NativeCookieHandler.cs.meta">
+      <Link>BrainCloud\ModernHttpClient\NativeCookieHandler.cs.meta</Link>
+    </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\FailureMessages.cs.meta">
+      <Link>BrainCloud\ModernHttpClient\FailureMessages.cs.meta</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\NativeWebSocket.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\NativeWebSocket.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\LogLevel.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\LogLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketFrame.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketFrame.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\AssemblyInfo.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Logger.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CompressionMethod.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CompressionMethod.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\MessageEventArgs.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\MessageEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Mask.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Mask.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketState.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\PayloadData.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\PayloadData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Opcode.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Opcode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Rsv.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Rsv.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpResponse.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpBase.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CloseStatusCode.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CloseStatusCode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CloseEventArgs.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\CloseEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Ext.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Ext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\LogData.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\LogData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\ErrorEventArgs.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\ErrorEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpRequest.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\HttpRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketException.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocketException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Fin.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Fin.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocket.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\WebSocket.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\ByteOrder.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\ByteOrder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpConnection.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpConnection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\InputChunkState.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\InputChunkState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\CookieCollection.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\CookieCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerRequest.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerAsyncResult.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerAsyncResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListener.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ResponseStream.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ResponseStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationResponse.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerPrefixCollection.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerPrefixCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\EndPointListener.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\EndPointListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\Chunk.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\Chunk.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\EndPointManager.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\EndPointManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ServerSslConfiguration.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ServerSslConfiguration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\QueryStringCollection.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\QueryStringCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpDigestIdentity.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpDigestIdentity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ClientSslConfiguration.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ClientSslConfiguration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpBasicIdentity.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpBasicIdentity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpRequestHeader.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpRequestHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerException.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpHeaderInfo.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpHeaderInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\InputState.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\InputState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationSchemes.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationSchemes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpUtility.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ChunkStream.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ChunkStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerResponse.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpStatusCode.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpStatusCode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebHeaderCollection.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebHeaderCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\LineState.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\LineState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ReadBufferState.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ReadBufferState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ChunkedRequestStream.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\ChunkedRequestStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationBase.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationChallenge.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\AuthenticationChallenge.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\Cookie.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\Cookie.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpResponseHeader.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpResponseHeader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpHeaderType.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpHeaderType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerPrefix.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerPrefix.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\NetworkCredential.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\NetworkCredential.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\CookieException.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\CookieException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpStreamAsyncResult.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpStreamAsyncResult.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerContext.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpListenerContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\RequestStream.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\RequestStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpVersion.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\HttpVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\TcpListenerWebSocketContext.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\TcpListenerWebSocketContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\WebSocketContext.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\WebSocketContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\HttpListenerWebSocketContext.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Net\WebSockets\HttpListenerWebSocketContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceHost.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceHost.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\HttpServer.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\HttpServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceManager.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketBehavior.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketBehavior.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\IWebSocketSession.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\IWebSocketSession.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServer.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketSessionManager.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketSessionManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\HttpRequestEventArgs.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\HttpRequestEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\ServerState.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\ServerState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceHost`1.cs">
+      <Link>BrainCloud\UnityWebSocketsForWebGL\WebSocketSharp\Server\WebSocketServiceHost`1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonReaderSettings.cs">
+      <Link>BrainCloud\JsonFx\JsonReaderSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\XmlDataReader.cs">
+      <Link>BrainCloud\JsonFx\XmlDataReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\XmlDataWriter.cs">
+      <Link>BrainCloud\JsonFx\XmlDataWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\About.cs">
+      <Link>BrainCloud\JsonFx\About.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\EcmaScriptWriter.cs">
+      <Link>BrainCloud\JsonFx\EcmaScriptWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonToken.cs">
+      <Link>BrainCloud\JsonFx\JsonToken.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonSpecifiedPropertyAttribute.cs">
+      <Link>BrainCloud\JsonFx\JsonSpecifiedPropertyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\IJsonSerializable.cs">
+      <Link>BrainCloud\JsonFx\IJsonSerializable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonWriterSettings.cs">
+      <Link>BrainCloud\JsonFx\JsonWriterSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\DataReaderProvider.cs">
+      <Link>BrainCloud\JsonFx\DataReaderProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\EcmaScriptIdentifier.cs">
+      <Link>BrainCloud\JsonFx\EcmaScriptIdentifier.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\IDataReader.cs">
+      <Link>BrainCloud\JsonFx\IDataReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonWriter.cs">
+      <Link>BrainCloud\JsonFx\JsonWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonNameAttribute.cs">
+      <Link>BrainCloud\JsonFx\JsonNameAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonDataWriter.cs">
+      <Link>BrainCloud\JsonFx\JsonDataWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonSerializationException.cs">
+      <Link>BrainCloud\JsonFx\JsonSerializationException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonReader.cs">
+      <Link>BrainCloud\JsonFx\JsonReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\TypeCoercionUtility.cs">
+      <Link>BrainCloud\JsonFx\TypeCoercionUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonDataReader.cs">
+      <Link>BrainCloud\JsonFx\JsonDataReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\JsonIgnoreAttribute.cs">
+      <Link>BrainCloud\JsonFx\JsonIgnoreAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\DataWriterProvider.cs">
+      <Link>BrainCloud\JsonFx\DataWriterProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\JsonFx\IDataWriter.cs">
+      <Link>BrainCloud\JsonFx\IDataWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPlaybackStream.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPlaybackStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGamification.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGamification.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Util.cs">
+      <Link>BrainCloud\Client\BrainCloud\Util.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudDataStream.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudDataStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPlayerStatisticsEvent.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPlayerStatisticsEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudTime.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudTime.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudProfanity.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudProfanity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPlayerStatistics.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPlayerStatistics.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudMail.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudMail.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudLobby.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudLobby.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudEntity.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\ServerCallback.cs">
+      <Link>BrainCloud\Client\BrainCloud\ServerCallback.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPresence.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPresence.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\ServiceOperation.cs">
+      <Link>BrainCloud\Client\BrainCloud\ServiceOperation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudS3Handling.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudS3Handling.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\RegionLocale.cs">
+      <Link>BrainCloud\Client\BrainCloud\RegionLocale.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGlobalStatistics.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGlobalStatistics.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudAsyncMatch.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudAsyncMatch.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudOneWayMatch.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudOneWayMatch.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGlobalEntity.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGlobalEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudSocialLeaderboard.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudSocialLeaderboard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudMessaging.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudMessaging.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudRelay.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudRelay.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPushNotification.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPushNotification.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGlobalFile.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGlobalFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudWrapper.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudPlayerState.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudPlayerState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGlobalApp.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGlobalApp.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Version.cs">
+      <Link>BrainCloud\Client\BrainCloud\Version.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGroup.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGroup.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\TimeUtil.cs">
+      <Link>BrainCloud\Client\BrainCloud\TimeUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudAuthentication.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudAuthentication.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudScript.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudScript.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\OperationParam.cs">
+      <Link>BrainCloud\Client\BrainCloud\OperationParam.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudChat.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudChat.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudFile.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\ReasonCodes.cs">
+      <Link>BrainCloud\Client\BrainCloud\ReasonCodes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudItemCatalog.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudItemCatalog.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudMatchMaking.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudMatchMaking.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudIdentity.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudIdentity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudBlockchain.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudBlockchain.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudUserItems.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudUserItems.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudFriend.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudFriend.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\ServiceName.cs">
+      <Link>BrainCloud\Client\BrainCloud\ServiceName.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudRTT.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudRTT.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudEvent.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudAppStore.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudAppStore.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudCustomEntity.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudCustomEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudVirtualCurrency.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudVirtualCurrency.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudRedemptionCode.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudRedemptionCode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudGroupFile.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudGroupFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudTournament.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudTournament.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\StatusCodes.cs">
+      <Link>BrainCloud\Client\BrainCloud\StatusCodes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\MD5Unity.cs">
+      <Link>BrainCloud\Client\BrainCloud\MD5Unity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\BrainCloudClient.cs">
+      <Link>BrainCloud\Client\BrainCloud\BrainCloudClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\BCUserEntity.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\BCUserEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\BCEntityFactory.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\BCEntityFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\BCEntity.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\BCEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\EntityUtil.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\EntityUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\AutoCreateAOTCompileHelper.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\AutoCreateAOTCompileHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\ListWrapper.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\ListWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\ListWrapperEnumerator.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\ListWrapperEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\DictionaryWrapper.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\DictionaryWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Entity\Internal\DictionaryWrapperEnumerator.cs">
+      <Link>BrainCloud\Client\BrainCloud\Entity\Internal\DictionaryWrapperEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\WrapperAuthCallbackObject.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\WrapperAuthCallbackObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\ProgressStream.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\ProgressStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\FileUploader.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\FileUploader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\RequestState.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\RequestState.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\BrainCloudWebSocket.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\BrainCloudWebSocket.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\ServerCall.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\ServerCall.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\EndOfBundleMarker.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\EndOfBundleMarker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\JsonFxAOT.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\JsonFxAOT.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\RelayComms.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\RelayComms.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\RTTComms.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\RTTComms.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Internal\BrainCloudComms.cs">
+      <Link>BrainCloud\Client\BrainCloud\Internal\BrainCloudComms.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\GroupACL.cs">
+      <Link>BrainCloud\Client\BrainCloud\Common\GroupACL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\AuthenticationType.cs">
+      <Link>BrainCloud\Client\BrainCloud\Common\AuthenticationType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\Platform.cs">
+      <Link>BrainCloud\Client\BrainCloud\Common\Platform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\AuthenticationIds.cs">
+      <Link>BrainCloud\Client\BrainCloud\Common\AuthenticationIds.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\ACL.cs">
+      <Link>BrainCloud\Client\BrainCloud\Common\ACL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\ReasonPhrases.cs">
+      <Link>BrainCloud\ModernHttpClient\ReasonPhrases.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\NativeCookieHandler.cs">
+      <Link>BrainCloud\ModernHttpClient\NativeCookieHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\ProgressStreamContent.cs">
+      <Link>BrainCloud\ModernHttpClient\ProgressStreamContent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\FailureMessages.cs">
+      <Link>BrainCloud\ModernHttpClient\FailureMessages.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\NativeMessageHandler.cs">
+      <Link>BrainCloud\ModernHttpClient\NativeMessageHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\TLSConfig.cs">
+      <Link>BrainCloud\ModernHttpClient\TLSConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\CaptiveNetworkException.cs">
+      <Link>BrainCloud\ModernHttpClient\CaptiveNetworkException.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>
