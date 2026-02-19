@@ -11,6 +11,7 @@ namespace MultiPlatformXamarinExample
         private CancellationTokenSource _cancellationTokenSource;
         private Task _updateTask;
         private bool _isRunning = false;
+        
 
         public static BCService Instance
         {
@@ -25,6 +26,8 @@ namespace MultiPlatformXamarinExample
         private BCService()
         {
             _bc = new BrainCloudWrapper();
+
+            RedirectConsoleToLogger();
         }
 
         public BrainCloudWrapper BrainCloud => _bc;
@@ -33,7 +36,8 @@ namespace MultiPlatformXamarinExample
         {
             string url = "https://api.internal.braincloudservers.com";
             _bc.Init(url, secret, appId, appVersion);
-            Logger.Log("BrainCloud initialized");
+            _bc.Client.EnableLogging(true);
+            _bc.Client.RegisterLogDelegate(Logger.Log);
             StartUpdateLoop();
         }
 
@@ -87,6 +91,11 @@ namespace MultiPlatformXamarinExample
         public void Dispose()
         {
             Shutdown();
+        }
+
+        private void RedirectConsoleToLogger()
+        {
+            //Console.SetOut(new LoggerTextWriter(Console.Out));
         }
     }
 }

@@ -73,11 +73,26 @@ namespace MultiPlatformXamarinExample
             });
         }
 
-        private void OnAPICallClicked(object sender, EventArgs e)
+        private void CallIncrementXP(object sender, EventArgs e)
         {
             try
             {
-                PrintResult("Sending request...");
+                PrintResult("Sending IncrementXP request...");
+
+                _bcService.BrainCloud.PlayerStatisticsService.IncrementExperiencePoints(10, OnAPICallSuccess, OnAPICallFailure);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("API request failed", ex);
+                PrintResult($"API request failed: {ex.Message}");
+            }
+        }
+
+        private void CallIdentities(object sender, EventArgs e)
+        {
+            try
+            {
+                PrintResult("Sending Identity request...");
 
                 _bcService.BrainCloud.IdentityService.GetIdentities(OnAPICallSuccess, OnAPICallFailure);
             }

@@ -882,6 +882,9 @@
     <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\AuthenticationType.cs.meta">
       <Link>BrainCloud\Client\BrainCloud\Common\AuthenticationType.cs.meta</Link>
     </None>
+    <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\JsonParser.cs.meta">
+      <Link>BrainCloud\Client\BrainCloud\Common\JsonParser.cs.meta</Link>
+    </None>
     <None Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\GroupACL.cs.meta">
       <Link>BrainCloud\Client\BrainCloud\Common\GroupACL.cs.meta</Link>
     </None>
@@ -1456,6 +1459,9 @@
     </Compile>
     <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\ACL.cs">
       <Link>BrainCloud\Client\BrainCloud\Common\ACL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\Client\BrainCloud\Common\JsonParser.cs">
+      <Link>BrainCloud\Client\BrainCloud\Common\JsonParser.cs</Link>
     </Compile>
     <Compile Include="..\..\braincloud-csharp\BrainCloudClient\Assets\BrainCloud\ModernHttpClient\ReasonPhrases.cs">
       <Link>BrainCloud\ModernHttpClient\ReasonPhrases.cs</Link>

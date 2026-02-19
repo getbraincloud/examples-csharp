@@ -25,9 +25,16 @@
                 HeightRequest="50"
                 Margin="0,10"/>
 
-        <Button x:Name="APICall"
-                Text="API to Test"
-                Clicked="OnAPICallClicked"
+        <Button x:Name="GetIdentities"
+                Text="Get Identities"
+                Clicked="CallIdentities"
+                BackgroundColor="#4CAF50"
+                TextColor="White"
+                HeightRequest="50"
+                Margin="0,10"/>
+        <Button x:Name="IncrementXP"
+                Text="Increment XP"
+                Clicked="CallIncrementXP"
                 BackgroundColor="#4CAF50"
                 TextColor="White"
                 HeightRequest="50"
