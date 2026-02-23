@@ -1,6 +1,6 @@
 //----------------------------------------------------
 // brainCloud client source code
-// Copyright 2020 bitHeads, inc.
+// Copyright 2026 bitHeads, inc.
 //----------------------------------------------------
 #if ((UNITY_5_3_OR_NEWER) && !UNITY_WEBPLAYER && (!UNITY_IOS || ENABLE_IL2CPP)) || UNITY_2018_3_OR_NEWER
 #define USE_WEB_REQUEST //Comment out to force use of old WWW class on Unity 5.3+
@@ -28,9 +28,11 @@ using BrainCloud.JsonFx.Json;
 
 public class BrainCloudS2S
 {
+
+    private static string VERSION = "5.9.0";
     private static int NO_PACKET_EXPECTED = -1;
     private static int SERVER_SESSION_EXPIRED = 40365;
-    private static string DEFAULT_S2S_URL = "https://sharedprod.braincloudservers.com/s2sdispatcher";
+    private static string DEFAULT_S2S_URL = "https://api.braincloudservers.com/s2sdispatcher";
     public string ServerURL
     {
         get; private set;
@@ -75,10 +77,11 @@ public class BrainCloudS2S
     private DateTime _lastHeartbeat;
     private ArrayList _requestQueue = new ArrayList();
     private ArrayList _waitingForAuthRequestQueue = new ArrayList();
+    private Brainclouds2sRttComms _rttComms;
     public delegate void S2SCallback(string responseString);
     S2SRequest activeRequest;
 
-    private struct S2SRequest
+    public struct S2SRequest
     {
 #if DOT_NET
         public HttpWebRequest request;
@@ -124,6 +127,13 @@ public class BrainCloudS2S
         SessionId = null;
         activeRequest.request = null;
         _heartbeatTimer = TimeSpan.FromSeconds(_heartbeatSeconds);
+
+        if (_rttComms == null)
+        {
+            _rttComms = new Brainclouds2sRttComms();
+        }
+
+        LogString($"Initialized S2S AppId:{appId} ServerName:{serverName} ServerSecret:{serverSecret} ServerUrl:{serverUrl} ");
     }
 
     /**
@@ -131,7 +141,7 @@ public class BrainCloudS2S
     */
     public void Authenticate()
     {
-        Authenticate(OnAuthenticationCallback);
+        Authenticate(null);
     }
 
     /**
@@ -146,7 +156,7 @@ public class BrainCloudS2S
         {
             if (!(_state == State.Authenticated) && _packetId == 0) //this is an authentication request no matter what
             {
-                Authenticate(OnAuthenticationCallback);
+                Authenticate();
             }
         }
         if (!(_state == State.Authenticated)) // these are the requests that have been made that are awaiting authentication. We NEED to store the request so we can properly call this function back for additional requests that are made after authenitcation.
@@ -176,7 +186,7 @@ public class BrainCloudS2S
         {
             if (!(_state == State.Authenticated) && _packetId == 0) //this is an authentication request no matter what
             {
-                Authenticate(OnAuthenticationCallback);
+                Authenticate();
             }
         }
         if (!(_state == State.Authenticated)) // these are the requests that have been made that are awaiting authentication. We NEED to store the request so we can properly call this function back for additional requests that are made after authenitcation.
@@ -193,8 +203,9 @@ public class BrainCloudS2S
         }
     }
 
-    private void QueueRequest(string jsonRequestData, S2SCallback callback)
+    public void QueueRequest(string jsonRequestData, S2SCallback callback)
     {
+        LogString("[S2S] Queuing request: " + jsonRequestData);
 #if DOT_NET
         //create new request
         HttpWebRequest httpRequest = (HttpWebRequest)WebRequest.Create(ServerURL);
@@ -253,7 +264,7 @@ public class BrainCloudS2S
 
         Stream requestStream = request.GetRequestStream();          //gets a stream to send dataPacket for request
         requestStream.Write(byteArray, 0, byteArray.Length);        //writes dataPacket to stream and sends data with request. 
-        //request.ContentLength = byteArray.Length;
+        request.ContentLength = byteArray.Length;
     }
 #endif
 
@@ -262,7 +273,7 @@ public class BrainCloudS2S
     {
         string packet = CreatePacket(dataPacket);                   //create data packet of the data with packetId info
 
-        //LogString("Sending Request: " + packet);
+        LogString("Sending Request: " + packet + " to url " + request.url);
 
         byte[] byteArray = Encoding.UTF8.GetBytes(packet);          //convert data packet to byte[]
         request.uploadHandler = new UploadHandlerRaw(byteArray);    //prepare data
@@ -279,10 +290,11 @@ public class BrainCloudS2S
 
     public void Authenticate(S2SCallback callback)
     {
+        LogString("[S2S] Authenticating");
         _state = State.Authenticating;
         string jsonAuthString = "{\"service\":\"authenticationV2\",\"operation\":\"AUTHENTICATE\",\"data\":{\"appId\":\"" + AppId + "\",\"serverName\":\"" + ServerName + "\",\"serverSecret\":\"" + ServerSecret + "\"}}";
         _packetId = 0;
-        QueueRequest(jsonAuthString, callback + OnAuthenticationCallback); //We need to call OnAuthenticate callback to refill the queue with requests waiting on an auth request, and handle heartbeat and sessionId data. 
+        QueueRequest(jsonAuthString, OnAuthenticationCallback + callback); //OnAuthenticationCallback runs first to set SessionId, then the user callback fires with a valid session.
     }
 
     public void SendHeartbeat(S2SCallback callback)
@@ -303,7 +315,7 @@ public class BrainCloudS2S
     }
 #endif
 
-    private void LogString(string s)
+    public void LogString(string s)
     {
         if (LoggingEnabled)
         {
@@ -349,7 +361,6 @@ public class BrainCloudS2S
             string unityResponse = null;
             if(activeRequest.request.downloadHandler.isDone)
             {
-                LogString("Sending Request: " + activeRequest.request);
                 unityResponse = activeRequest.request.downloadHandler.text;
             }
             if(!string.IsNullOrEmpty(activeRequest.request.error))
@@ -435,6 +446,11 @@ public class BrainCloudS2S
                 ResetHeartbeat();
             }
         }
+
+        if (_rttComms != null && _rttComms.InquireRTTStatusForUpdate())
+        {
+            _rttComms.RunCallbacks();
+        }
     }
 
     /**
@@ -446,6 +462,7 @@ public class BrainCloudS2S
         _state = State.Disconnected;
         SessionId = null;
         _packetId = 0;
+        DisableRTT();
     }
 
     public void OnAuthenticationCallback(string responseString)
@@ -503,5 +520,110 @@ public class BrainCloudS2S
             }
         }
         Disconnect();
+    }
+
+    /// <summary>
+    /// Returns true if RTT connection status is connected
+    /// </summary>
+    public bool IsRTTEnabled()
+    {
+        if (_rttComms == null)
+        {
+            LogString("Please initialize first before checking if RTT is enabled.");
+            return false;
+        }
+        return _rttComms.IsRTTEnabled();
+    }
+
+    /// <summary>
+    /// Enables Real Time event for this session.
+    /// Real Time events are disabled by default.
+    ///
+    /// This function will first call requestClientConnection, then connect to the address
+    /// </summary>
+    /// <param name="callback">Callback for after we connect to the address.</param>
+    public void EnableRTT(S2SCallback callback)
+    {
+        if (_rttComms != null)
+        {
+            _rttComms.EnableRTT(callback, this);
+        }
+        else
+        {
+
+            LogString("You need to initialize first before checking if RTT is enabled.");
+        }
+    }
+
+    /// <summary>
+    /// Disables Real Time event for this session.
+    /// </summary>
+    public void DisableRTT()
+    {
+        if (_rttComms != null)
+        {
+            _rttComms.DisableRTT();
+        }
+        else
+        {
+
+            LogString("You need to initialize and EnableRTT first before disabling RTT.");
+        }
+    }
+
+    /// <summary>
+    /// Send a raw packet to the main channel.
+    /// Must call RegisterRTTRawCallback() and ConnectToChannel() before sending anything,
+    /// otherwise you won't receive callbacks for Raw Packets.
+    /// </summary>
+    /// <param name="in_jsonData">JSON Data to send</param>
+    public void SendRawRTTPacket(Dictionary<string, object> in_jsonData)
+    {
+        _rttComms.SendRawRTTPacket(in_jsonData);
+    }
+
+    /// <summary>
+    /// Register to receive Raw Callbacks with RTT.
+    /// After registering and ConnectToChannel() you can call SendRawRTTPacket().
+    /// </summary>
+    /// <param name="callback"></param>
+    public void RegisterRTTRawCallback(Brainclouds2sRttComms.RTTCallback callback)
+    {
+        if (_rttComms != null && callback != null)
+        {
+            _rttComms.RegisterRTTRawCallback(callback);
+        }
+        else
+        {
+
+            LogString("You need to initialize and EnableRTT first before registering the callback");
+        }
+    }
+
+    /// <summary>
+    /// Removing the registered RTTRawCallback.
+    /// </summary>
+    public void DeregisterRTTRawCallback()
+    {
+        if (_rttComms != null)
+        {
+            _rttComms.DeregisterRTTRawCallback();
+        }
+    }
+
+    /// <summary>
+    /// Channel to connect for subscribing raw callbacks.
+    /// </summary>
+    /// <param name="in_channel">Used to connect to a channel with. IE: {AppID}:sl:mysyschannel</param>
+    /// <param name="callback">Callback for channel connecting.</param>
+    public void ConnectToChannel(string in_channel, S2SCallback callback)
+    {
+        if (_rttComms != null)
+        {
+            if (_rttComms.IsRTTEnabled())
+            {
+                _rttComms.ConnectToChannel(in_channel, callback);
+            }
+        }
     }
 }
