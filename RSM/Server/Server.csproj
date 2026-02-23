@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;DOT_NET</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -30,7 +30,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;DOT_NET</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -39,6 +39,9 @@
     <Compile Include="GameServer.cs" />
     <Compile Include="JsonFx\About.cs" />
     <Compile Include="Brainclouds2s.cs" />
+    <Compile Include="Brainclouds2sRttComms.cs" />
+    <Compile Include="BrainCloudS2SPrl.cs" />
+    <Compile Include="BrainCloudWebSocket.cs" />
     <Compile Include="JsonFx\DataReaderProvider.cs" />
     <Compile Include="JsonFx\DataWriterProvider.cs" />
     <Compile Include="JsonFx\EcmaScriptIdentifier.cs" />
