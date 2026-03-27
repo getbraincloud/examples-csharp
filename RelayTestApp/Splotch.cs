@@ -1,12 +1,11 @@
-using System;
 using Avalonia;
 
 namespace RelayTestApp
 {
-    class Shockwave
+    class Splotch
     {
         public Point pos;
         public int colorIndex;
-        public DateTime startTime;
+        public long startTimeMs;
     }
 }

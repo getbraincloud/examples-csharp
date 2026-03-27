@@ -1,50 +1,79 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using BrainCloud;
 using BrainCloud.JsonFx.Json;
 
 namespace RelayTestApp
 {
-    class App
+    class GameApp
     {
+        const int MATCH_DURATION_SEC = 90;
+        const int COUNTDOWN_FROM_SEC = 80;
+
         BrainCloudWrapper m_bcWrapper;
         bool m_dead = false;
+        string m_appVersion = "";
 
-        public App()
-        {
-        }
+        // Move throttle — flush at most once per ~16 ms (~60 fps)
+        long _lastMoveSendTime = 0;
+        bool _pendingMoveSend = false;
+        Point _pendingMovePos;
 
-        // update brainCloud
+        public GameApp() { }
+
         public void Update()
         {
             if (m_bcWrapper != null)
             {
                 m_bcWrapper.Update();
 
+                if (State.screenState == ScreenState.JoiningLobby)
+                {
+                    long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    if (State.lobbySearchStartTime > 0)
+                        State.form.UpdateLobbyTimer(now - State.lobbySearchStartTime);
+                }
+
+                if (State.screenState == ScreenState.Starting)
+                {
+                    long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    long from = State.lobbyStatusStartTime > 0 ? State.lobbyStatusStartTime : State.lobbySearchStartTime;
+                    if (from > 0)
+                        State.form.UpdateStartingTimer(now - from);
+                }
+
                 if (State.screenState == ScreenState.Game)
                 {
-                    // Update shockwaves
-                    State.form.UpdateShockwaves();
+                    long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+                    // Flush pending move at 60 fps
+                    if (_pendingMoveSend && now - _lastMoveSendTime >= 16)
+                        FlushPendingMove();
+
+                    // Update visual effects and clean up expired splotches
+                    State.form.UpdateEffects();
+
+                    // Host: auto-end match after MATCH_DURATION_SEC
+                    if (State.gameStartTime > 0 &&
+                        State.lobby?.ownerCxId == State.user?.cxId)
+                    {
+                        int elapsed = (int)((now - State.gameStartTime) / 1000);
+                        if (elapsed >= MATCH_DURATION_SEC)
+                            EndMatch();
+                    }
                 }
             }
             if (m_dead)
             {
                 m_dead = false;
-
-                // We differ destroying BC because we cannot destroy it within a callback
                 UninitBC();
             }
         }
 
-        // Uninitialize brainCloud
         void UninitBC()
         {
             if (m_bcWrapper != null)
@@ -54,7 +83,6 @@ namespace RelayTestApp
             }
         }
 
-        // Logs out the current user and goes back to login screen
         public void LogOut()
         {
             m_bcWrapper.Logout(true);
@@ -62,19 +90,15 @@ namespace RelayTestApp
             ResetState();
         }
 
-        // Shutdowns the application
         public void Exit()
         {
-            Application.Exit();
+            (Avalonia.Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
         }
 
-        // Attempt login with the specific username/password
         public void Login(string username, string password)
         {
-            // Show loading screen
+            InitBC();
             ChangeScreen(ScreenState.LoggingIn);
-
-            // Authenticate with brainCloud
             m_bcWrapper.AuthenticateUniversal(username, password, true, HandlePlayerState, DieWithMessage, "Login Failed");
         }
 
@@ -82,26 +106,26 @@ namespace RelayTestApp
         {
             InitBC();
             if (m_bcWrapper.CanReconnect())
-            {
                 m_bcWrapper.Reconnect(HandlePlayerState, DieWithMessage);
-            }
         }
 
-        // Find lobby
-        public void Play(BrainCloud.RelayConnectionType protocol)
+        public void RefreshClientVersion()
+        {
+            if (m_bcWrapper != null)
+                State.form?.SetClientVersion(m_bcWrapper.Client.BrainCloudClientVersion);
+        }
+
+        public void Play(BrainCloud.RelayConnectionType protocol, string lobbyType)
         {
             Settings.protocol = protocol;
+            Settings.lobbyType = lobbyType;
             State.user.colorIndex = Settings.colorIndex;
-
-            // Show loading screen
+            State.lobbySearchStartTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             ChangeScreen(ScreenState.JoiningLobby);
-
-            // Enable RTT
             m_bcWrapper.RTTService.RegisterRTTLobbyCallback(OnLobbyEvent);
             m_bcWrapper.RTTService.EnableRTT(OnRTTConnected, OnRTTDisconnected);
         }
 
-        // Cleanly close the game. Go back to main menu but don't log 
         public void CloseGame()
         {
             m_bcWrapper.RelayService.DeregisterRelayCallback();
@@ -110,30 +134,27 @@ namespace RelayTestApp
             m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
             m_bcWrapper.RTTService.DisableRTT();
 
-            // Reset state but keep the user around
             State.lobby = null;
             State.server = null;
             State.shockwaves = new List<Shockwave>();
+            State.splotches = new List<Splotch>();
+            State.gameStartTime = 0;
+            State.lobbySearchStartTime = 0;
+            State.lobbyStatusStartTime = 0;
             State.mouseX = 0;
             State.mouseY = 0;
             ChangeScreen(ScreenState.MainMenu);
         }
 
-        // Ready up and signals RTT service we can start the game
         public void StartGame()
         {
             State.user.isReady = true;
             ChangeScreen(ScreenState.Starting);
 
-            //
-            var extra = new Dictionary<string, object>();
-            extra["colorIndex"] = State.user.colorIndex;
-
-            //
+            var extra = new Dictionary<string, object> { ["colorIndex"] = State.user.colorIndex };
             m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, extra);
         }
 
-        // User changes his player color
         public void ChangeUserColor(int colorIndex)
         {
             State.user.colorIndex = colorIndex;
@@ -145,116 +166,165 @@ namespace RelayTestApp
                     break;
                 }
             }
-
-            //
-            var extra = new Dictionary<string, object>();
-            extra["colorIndex"] = State.user.colorIndex;
-
-            //
+            var extra = new Dictionary<string, object> { ["colorIndex"] = State.user.colorIndex };
             m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, extra);
         }
 
-        // User moved mouse in the play area
         public void MouseMoved(Point pos)
         {
             State.user.isAlive = true;
             State.user.pos = pos;
-            User myUser = null;
             foreach (var user in State.lobby.members)
             {
                 if (State.user.cxId == user.cxId)
                 {
                     user.isAlive = true;
                     user.pos = pos;
-                    myUser = user;
                     break;
                 }
             }
 
-            // Send to other players
-            Dictionary<string, object> jsonData = new Dictionary<string, object>();
-            jsonData["x"] = pos.X;
-            jsonData["y"] = pos.Y;
+            _pendingMoveSend = true;
+            _pendingMovePos = pos;
 
-            Dictionary<string, object> json = new Dictionary<string, object>();
-            json["op"] = "move";
-            json["data"] = jsonData;
-
-            byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
-            m_bcWrapper.RelayService.Send(data, BrainCloudRelay.TO_ALL_PLAYERS, Settings.sendReliable, Settings.sendOrdered, Settings.sendChannel);
-
-            // Move our own sprite
-            State.form.SetCursor(myUser, pos);
+            long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (now - _lastMoveSendTime >= 16)
+                FlushPendingMove();
         }
 
-        // User clicked mouse in the play area
+        void FlushPendingMove()
+        {
+            if (!_pendingMoveSend) return;
+            _pendingMoveSend = false;
+
+            var json = new Dictionary<string, object>
+            {
+                ["op"] = "move",
+                ["data"] = new Dictionary<string, object> { ["x"] = _pendingMovePos.X, ["y"] = _pendingMovePos.Y }
+            };
+            byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
+            m_bcWrapper.RelayService.Send(data, BrainCloudRelay.TO_ALL_PLAYERS,
+                Settings.sendReliable, Settings.sendOrdered, Settings.sendChannel);
+            _lastMoveSendTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        }
+
         public void Shockwave(Point pos)
         {
-            // Send to other players
-            Dictionary<string, object> jsonData = new Dictionary<string, object>();
-            jsonData["x"] = pos.X;
-            jsonData["y"] = pos.Y;
-
-            Dictionary<string, object> json = new Dictionary<string, object>();
-            json["op"] = "shockwave";
-            json["data"] = jsonData;
-
+            var json = new Dictionary<string, object>
+            {
+                ["op"] = "shockwave",
+                ["data"] = new Dictionary<string, object> { ["x"] = pos.X, ["y"] = pos.Y }
+            };
             byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
-            m_bcWrapper.RelayService.Send(data, BrainCloudRelay.TO_ALL_PLAYERS, 
-                true, // Reliable
-                false, // Unordered
-                Settings.sendChannel);
 
-            // Create a local shockwave so we can see it
-            var shockwave = new Shockwave();
-            shockwave.pos = pos;
-            shockwave.colorIndex = State.user.colorIndex;
-            shockwave.startTime = DateTime.Now;
-            State.shockwaves.Add(shockwave);
-       }
+            ulong playerMask = BuildSendMask();
+            m_bcWrapper.RelayService.SendToPlayers(data, playerMask,
+                true, false, Settings.sendChannel);
 
-        // Initialize brainCloud
+            // Add locally (sender doesn't receive their own relay message)
+            AddShockwaveAndSplotch(pos, State.user.colorIndex);
+        }
+
+        // Host-only: end the current match and return all players to the lobby.
+        public void EndMatch()
+        {
+            if (State.lobby?.ownerCxId != State.user?.cxId) return;
+            m_bcWrapper.RelayService.EndMatch(new Dictionary<string, object>());
+        }
+
+        // Host-only: wipe all splotches on every client.
+        public void ClearSplotches()
+        {
+            if (State.lobby?.ownerCxId != State.user?.cxId) return;
+            State.splotches.Clear();
+            var json = new Dictionary<string, object> { ["op"] = "clear_splotches" };
+            byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
+            m_bcWrapper.RelayService.Send(data, BrainCloudRelay.TO_ALL_PLAYERS,
+                true, true, BrainCloudRelay.CHANNEL_HIGH_PRIORITY_2);
+        }
+
+        public string GetAppVersion()
+        {
+            if (m_bcWrapper != null) return m_bcWrapper.Client.GetAppVersion();
+            if (!string.IsNullOrEmpty(m_appVersion)) return m_appVersion;
+            // Read directly from ids.txt if not yet initialized
+            string idsPath = Path.Combine(AppContext.BaseDirectory, "ids.txt");
+            if (File.Exists(idsPath))
+            {
+                foreach (var line in File.ReadAllLines(idsPath))
+                    if (line.StartsWith("appVersion=")) return line["appVersion=".Length..].Trim();
+            }
+            return "N/A";
+        }
+        // -----------------------------------------------------------------------
+        // Private helpers
+        // -----------------------------------------------------------------------
+
         void InitBC()
         {
             if (m_bcWrapper == null)
-            {
                 m_bcWrapper = new BrainCloudWrapper("RelayTestApp");
-            }
             m_dead = false;
 
-            string url = "";
-            string appId = "";
-            string appSecret = "";
-            using (var reader = new StreamReader("ids.txt"))
+            string url = "", appId = "", appSecret = "", appVersion = "";
+            string idsPath = Path.Combine(AppContext.BaseDirectory, "ids.txt");
+            using (var reader = new StreamReader(idsPath))
             {
-                Console.WriteLine("Found ids.txt");
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (line.StartsWith("serverUrl="))
-                    {
-                        url = line.Substring(("serverUrl=").Length);
-                        url.Trim();
-                    }
-                    else if (line.StartsWith("appId="))
-                    {
-                        appId = line.Substring(("appId=").Length);
-                        appId.Trim();
-                    }
-                    else if (line.StartsWith("secret="))
-                    {
-                        appSecret = line.Substring(("secret=").Length);
-                        appSecret.Trim();
-                    }
+                    if (line.StartsWith("serverUrl=")) url = line.Substring("serverUrl=".Length).Trim();
+                    else if (line.StartsWith("appId=")) appId = line.Substring("appId=".Length).Trim();
+                    else if (line.StartsWith("secret=")) appSecret = line.Substring("secret=".Length).Trim();
+                    else if (line.StartsWith("appVersion=")) appVersion = line.Substring("appVersion=".Length).Trim();
                 }
             }
 
-            m_bcWrapper.Init(url, appSecret, appId, "1.0");
-
+            m_appVersion = appVersion;
+            m_bcWrapper.Init(url, appSecret, appId, appVersion);
             m_bcWrapper.Client.EnableLogging(true);
+            State.form?.SetClientVersion(m_bcWrapper.Client.BrainCloudClientVersion);
         }
 
-        // User authenticated, handle the result
+        void ReadGlobalProperties()
+        {
+            m_bcWrapper.GlobalAppService.ReadProperties(
+                (response, cbObj) =>
+                {
+                    try
+                    {
+                        var r = JsonReader.Deserialize<Dictionary<string, object>>(response);
+                        var data = r["data"] as Dictionary<string, object>;
+                        if (data != null && data.ContainsKey("SplotchDuration"))
+                        {
+                            var prop = data["SplotchDuration"] as Dictionary<string, object>;
+                            if (prop != null && prop.ContainsKey("value"))
+                                int.TryParse(prop["value"]?.ToString(), out State.splotchDurationSec);
+                        }
+                        if (data != null && data.ContainsKey("AllLobbyTypes"))
+                        {
+                            var prop = data["AllLobbyTypes"] as Dictionary<string, object>;
+                            if (prop != null && prop.ContainsKey("value"))
+                            {
+                                // value is a JSON string: { "key": { "lobby": "TypeName" }, ... }
+                                var lobbyMap = JsonReader.Deserialize<Dictionary<string, object>>(
+                                    prop["value"]?.ToString() ?? "{}");
+                                State.appLobbies.Clear();
+                                foreach (var entry in lobbyMap.Values)
+                                {
+                                    var entryDict = entry as Dictionary<string, object>;
+                                    if (entryDict != null && entryDict.ContainsKey("lobby"))
+                                        State.appLobbies.Add(entryDict["lobby"]?.ToString() ?? "");
+                                }
+                                State.form.UpdateMainMenu();
+                            }
+                        }
+                    }
+                    catch { }
+                },
+                null, null);
+        }
+
         void HandlePlayerState(string jsonResponse, object cbObject)
         {
             var response = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
@@ -262,64 +332,65 @@ namespace RelayTestApp
 
             State.user = new User();
 
-            // If no username is set for this user, ask for it
-            if (!data.ContainsKey("playerName"))
-            {
+            string playerName = data.ContainsKey("playerName") ? data["playerName"] as string : null;
+            if (string.IsNullOrEmpty(playerName))
                 SubmitName(Settings.username);
-            }
             else
             {
-                string playerName = data["playerName"] as string;
-                if (string.IsNullOrEmpty(playerName))
-                {
-                    SubmitName(Settings.username);
-                }
-                else
-                {
-                    State.user.name = playerName;
-                    OnLoggedIn(jsonResponse, cbObject);
-                }
+                State.user.name = playerName;
+                OnLoggedIn(jsonResponse, cbObject);
             }
-            if(!State.form.GetRememberMeStatus())
-            {
+
+            if (!State.form.GetRememberMeStatus())
                 m_bcWrapper.ResetStoredProfileId();
-            }
         }
 
         void ChangeScreen(ScreenState screen)
         {
             State.screenState = screen;
-            State.form.screens.SelectedTab = State.form.screens.TabPages[(int)State.screenState];
-            State.form.UpdateMenuStates();
+            State.form.ShowScreen(screen);
         }
 
-        // User fully logged in. Enable RTT and listen for chat messages
         void OnLoggedIn(string jsonResponse, object cbObject)
         {
-            // Go to main menu screen
+            ReadGlobalProperties();
+            FetchServerVersion();
             ChangeScreen(ScreenState.MainMenu);
+            State.form.UpdateMainMenu();
         }
 
-        // Submit user name to brainCloud to be assosiated with the current user
+        void FetchServerVersion()
+        {
+            m_bcWrapper.Client.AuthenticationService.getServerVersion(
+                (response, _) =>
+                {
+                    try
+                    {
+                        var r = JsonReader.Deserialize<Dictionary<string, object>>(response);
+                        var data = r["data"] as Dictionary<string, object>;
+                        if (data != null && data.ContainsKey("serverVersion"))
+                            State.form.SetServerVersion(data["serverVersion"]?.ToString() ?? "");
+                    }
+                    catch { }
+                },
+                null);
+        }
+
         void SubmitName(string username)
         {
             State.user.name = username;
-
-            // Update name
-            m_bcWrapper.PlayerStateService.UpdateName(username, OnLoggedIn, DieWithMessage, "Failed to update username to braincloud");
+            m_bcWrapper.PlayerStateService.UpdateName(username, OnLoggedIn, DieWithMessage, "Failed to update username");
         }
 
         void OnRTTDisconnected(int status, int reasonCode, string jsonError, object cbObject)
         {
-            if (jsonError == "DisableRTT Called") return; // Ignore
+            if (jsonError == "DisableRTT Called") return;
             DieWithMessage(status, reasonCode, jsonError, cbObject);
         }
 
-        // Go back to login screen, with an error message
         void DieWithMessage(int status, int reasonCode, string jsonError, object cbObject)
         {
             if (m_dead) return;
-
             m_dead = true;
 
             m_bcWrapper.RelayService.DeregisterRelayCallback();
@@ -329,193 +400,358 @@ namespace RelayTestApp
             m_bcWrapper.RTTService.DisableRTT();
 
             string message = cbObject as string;
-            MessageBox.Show(message + ": " + jsonError);
+            State.form.ShowError((message ?? "Error") + ": " + jsonError);
             ResetState();
         }
 
-        // Reset application state, back to login screen
         void ResetState()
         {
             State.user = null;
             State.lobby = null;
             State.server = null;
             State.shockwaves = new List<Shockwave>();
+            State.splotches = new List<Splotch>();
+            State.gameStartTime = 0;
+            State.lobbySearchStartTime = 0;
+            State.lobbyStatusStartTime = 0;
             State.mouseX = 0;
             State.mouseY = 0;
             ChangeScreen(ScreenState.Login);
         }
 
-        // RTT connected. Try to create or join a lobby
         void OnRTTConnected(string jsonResponse, object cbObject)
         {
-            // Find lobby
-            var algo = new Dictionary<string, object>();
-            algo["strategy"] = "ranged-absolute";
-            algo["alignment"] = "center";
-            List<int> ranges = new List<int>();
-            ranges.Add(1000);
-            algo["ranges"] = ranges;
+            var algo = new Dictionary<string, object>
+            {
+                ["strategy"] = "ranged-absolute",
+                ["alignment"] = "center",
+                ["ranges"] = new System.Collections.Generic.List<int> { 1000 }
+            };
             State.user.cxId = m_bcWrapper.RTTService.getRTTConnectionID();
 
-            //
-            var extra = new Dictionary<string, object>();
-            extra["colorIndex"] = State.user.colorIndex;
+            var extra = new Dictionary<string, object> { ["colorIndex"] = State.user.colorIndex };
 
-            //
-            var filters = new Dictionary<string, object>();
-
-            //
-            var settings = new Dictionary<string, object>();
-
-            //
             m_bcWrapper.LobbyService.FindOrCreateLobby(
-                "CursorPartyV2",// lobby type
-                0,              // rating
-                1,              // max steps
-                algo,           // algorithm
-                filters,        // filters
-                false,          // ready
-                extra,          // extra
-                "all",          // team code
-                settings,       // settings
-                null,           // other users
-                null,           // Success of lobby found will be in the event onLobbyEvent
-                DieWithMessage, "Failed to find lobby");
+                Settings.lobbyType, 0, 1, algo,
+                new Dictionary<string, object>(),
+                false, extra, "all",
+                new Dictionary<string, object>(),
+                null, null, DieWithMessage, "Failed to find lobby");
         }
 
-        // We received a lobby event through RTT
         void OnLobbyEvent(string jsonResponse)
         {
             var response = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
             var jsonData = response["data"] as Dictionary<string, object>;
 
-            // If there is a lobby object present in the message, update our lobby
-            // state with it.
             if (jsonData.ContainsKey("lobby"))
             {
-                State.lobby = new Lobby(jsonData["lobby"] as Dictionary<string, object>, 
+                State.lobby = new Lobby(jsonData["lobby"] as Dictionary<string, object>,
                                         jsonData["lobbyId"] as string);
-
-                // If we were joining lobby, show the lobby screen. We have the information to
-                // display now.
                 if (State.screenState == ScreenState.JoiningLobby)
-                {
                     ChangeScreen(ScreenState.Lobby);
-                }
-
                 State.form.UpdateLobby();
             }
 
             if (response.ContainsKey("operation"))
             {
-                var operation = response["operation"] as string;
-                switch (operation)
+                switch (response["operation"] as string)
                 {
-                    case "DISBANDED":
-                    {
-                        var reason = jsonData["reason"] as Dictionary<string, object>;
-                        if ((int)reason["code"] != BrainCloud.ReasonCodes.RTT_ROOM_READY)
-                        {
-                            // Disbanded for any other reason than ROOM_READY, means we failed to launch the game.
-                            CloseGame();
-                        }
+                    case "ROOM_ASSIGNED":
+                        State.lobbyStatusText = "Server assigned...";
+                        State.form.UpdateLobbyStatus(State.lobbyStatusText);
+                        State.form.UpdateStartingStatus(State.lobbyStatusText);
                         break;
-                    }
+
+                    case "ROOM_PROGRESS":
+                        {
+                            string progressText;
+                            if (jsonData.ContainsKey("curStep"))
+                            {
+                                int curStep = Convert.ToInt32(jsonData["curStep"]);
+                                int ofStep = jsonData.ContainsKey("ofStep") ? Convert.ToInt32(jsonData["ofStep"]) : 0;
+                                string msg = jsonData.ContainsKey("msg") ? jsonData["msg"] as string ?? "" : "";
+                                progressText = curStep > 0
+                                    ? $"{curStep}/{ofStep}: {msg}"
+                                    : (string.IsNullOrEmpty(msg) ? "Starting server..." : msg);
+                            }
+                            else if (jsonData.ContainsKey("progress"))
+                            {
+                                var prog = jsonData["progress"] as Dictionary<string, object>;
+                                progressText = prog != null && prog.ContainsKey("status")
+                                    ? prog["status"] as string ?? "" : "";
+                            }
+                            else progressText = "Starting server...";
+
+                            State.lobbyStatusText = progressText;
+                            State.form.UpdateLobbyStatus(progressText);
+                            State.form.UpdateStartingStatus(progressText);
+                            break;
+                        }
+
+                    case "DISBANDED":
+                        {
+                            var reason = jsonData["reason"] as Dictionary<string, object>;
+                            if (Convert.ToInt32(reason["code"]) != BrainCloud.ReasonCodes.RTT_ROOM_READY)
+                                CloseGame();
+                            break;
+                        }
+
                     case "STARTING":
-                        // Save our picked color index
                         Settings.colorIndex = State.user.colorIndex;
                         Settings.SaveConfigs();
-
-                        // Go to loading screen
+                        State.lobbyStatusStartTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                         ChangeScreen(ScreenState.Starting);
+                        State.form.UpdateStartingStatus("Provisioning server...");
+                        State.form.UpdateStartingLobbyId(State.lobby?.lobbyId ?? "");
                         break;
+
                     case "ROOM_READY":
-                        State.server = new Server(jsonData);
+                        State.server = new Server(jsonData, Settings.protocol);
+                        State.form.UpdateStartingStatus("Connecting...");
                         ConnectRelay();
+                        break;
+
+                    case "STATUS_UPDATE":
+                        // Lobby state already refreshed above via the "lobby" key check
+                        if (State.screenState == ScreenState.Game)
+                            State.form.UpdateGameViewport();
                         break;
                 }
             }
         }
 
-        // Connect to the Relay server and start the game
         void ConnectRelay()
         {
             m_bcWrapper.RelayService.RegisterRelayCallback(OnRelayMessage);
             m_bcWrapper.RelayService.RegisterSystemCallback(OnRelaySystemMessage);
 
-            int port = 0;
-            switch (Settings.protocol)
-            {
-                case RelayConnectionType.WEBSOCKET:
-                    port = State.server.wsPort;
-                    break;
-                case RelayConnectionType.TCP:
-                    port = State.server.tcpPort;
-                    break;
-                case RelayConnectionType.UDP:
-                    port = State.server.udpPort;
-                    break;
-            }
-
-            m_bcWrapper.RelayService.Connect(Settings.protocol,
-                new RelayConnectOptions(false, State.server.host, port, State.server.passcode, State.server.lobbyId),
-                OnRelayConnectSuccess, 
-                DieWithMessage, "Failed to connect to server");
+            m_bcWrapper.RelayService.Connect(State.server.connectionType,
+                new RelayConnectOptions(false, State.server.host, State.server.port,
+                    State.server.passcode, State.server.lobbyId),
+                OnRelayConnectSuccess, DieWithMessage, "Failed to connect to server");
         }
 
         void OnRelayConnectSuccess(string jsonResponse, object cbObject)
         {
+            GoToGameScreen();
+        }
+
+        void GoToGameScreen()
+        {
+            bool isHost = State.lobby?.ownerCxId == State.user?.cxId;
+
             ChangeScreen(ScreenState.Game);
             State.form.UpdateGameViewport();
+
+            if (isHost)
+            {
+                State.roundNumber++;
+                State.gameStartTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                SendGameStart(BrainCloudRelay.TO_ALL_PLAYERS);
+            }
+            // Non-host: gameStartTime/roundNumber set when game_start relay message arrives
         }
+
+        void GoToLobbyScreen()
+        {
+            m_bcWrapper.RelayService.DeregisterRelayCallback();
+            m_bcWrapper.RelayService.DeregisterSystemCallback();
+            m_bcWrapper.RelayService.Disconnect();
+            // Keep RTT alive — deregister all callbacks then re-register lobby callback
+            m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
+            m_bcWrapper.RTTService.RegisterRTTLobbyCallback(OnLobbyEvent);
+
+            State.shockwaves = new List<Shockwave>();
+            State.splotches = new List<Splotch>();
+            State.gameStartTime = 0;
+            foreach (var member in State.lobby?.members ?? new System.Collections.Generic.List<User>())
+                member.isAlive = false;
+
+            ChangeScreen(ScreenState.Lobby);
+            State.form.UpdateLobby();
+        }
+
+        // Sends game_start (host → recipients). Also used for JIP re-sync.
+        void SendGameStart(ulong toMask)
+        {
+            var json = new Dictionary<string, object>
+            {
+                ["op"] = "game_start",
+                ["data"] = new Dictionary<string, object>
+                {
+                    ["startTime"] = State.gameStartTime,
+                    ["round"] = State.roundNumber
+                }
+            };
+            byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
+            m_bcWrapper.RelayService.SendToPlayers(data, toMask,
+                true, true, BrainCloudRelay.CHANNEL_HIGH_PRIORITY_2);
+        }
+
+        // Sends the full splotch canvas to a single joining-in-progress player.
+        void SendSplotchSync(ulong toMask)
+        {
+            var splotchArray = new List<Dictionary<string, object>>();
+            foreach (var s in State.splotches)
+            {
+                splotchArray.Add(new Dictionary<string, object>
+                {
+                    ["x"] = s.pos.X,
+                    ["y"] = s.pos.Y,
+                    ["c"] = s.colorIndex,
+                    ["t"] = s.startTimeMs
+                });
+            }
+
+            var json = new Dictionary<string, object>
+            {
+                ["op"] = "splotch_sync",
+                ["data"] = new Dictionary<string, object>
+                {
+                    ["first"] = true,
+                    ["splotches"] = splotchArray.ToArray()
+                }
+            };
+            byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
+            m_bcWrapper.RelayService.SendToPlayers(data, toMask,
+                true, true, BrainCloudRelay.CHANNEL_HIGH_PRIORITY_2);
+        }
+
+        // Builds the outbound player mask for shockwaves, respecting per-player allowSendTo flags.
+        ulong BuildSendMask()
+        {
+            ulong mask = 0;
+            foreach (var member in State.lobby.members)
+            {
+                if (!member.allowSendTo) continue;
+                short netId = m_bcWrapper.RelayService.GetNetIdForCxId(member.cxId);
+                if (netId >= 0 && netId < 64)
+                    mask |= 1ul << netId;
+            }
+            return mask;
+        }
+
+        void AddShockwaveAndSplotch(Point pos, int colorIndex)
+        {
+            State.shockwaves.Add(new Shockwave
+            {
+                pos = pos,
+                colorIndex = colorIndex,
+                startTime = DateTime.Now
+            });
+            State.splotches.Add(new Splotch
+            {
+                pos = pos,
+                colorIndex = colorIndex,
+                startTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+            });
+        }
+
+        // -----------------------------------------------------------------------
+        // Relay callbacks
+        // -----------------------------------------------------------------------
 
         void OnRelayMessage(short netId, byte[] jsonResponse)
         {
-            var memberCxId = m_bcWrapper.RelayService.GetCxIdForNetId(netId);
-            string jsonMessage = Encoding.ASCII.GetString(jsonResponse);
-            var json = JsonReader.Deserialize<Dictionary<string, object>>(jsonMessage);
+            var json = JsonReader.Deserialize<Dictionary<string, object>>(
+                Encoding.ASCII.GetString(jsonResponse));
 
+            var op = json.ContainsKey("op") ? json["op"] as string : "";
+            var data = json.ContainsKey("data") ? json["data"] as Dictionary<string, object> : null;
+
+            // --- Ops that don't require a sender lookup ---
+
+            if (op == "game_start" && data != null)
+            {
+                State.gameStartTime = Convert.ToInt64(data["startTime"]);
+                State.roundNumber = Convert.ToInt32(data["round"]);
+                return;
+            }
+
+            if (op == "splotch_sync" && data != null)
+            {
+                bool first = data.ContainsKey("first") && data["first"] is bool b && b;
+                if (first) State.splotches.Clear();
+
+                if (data.ContainsKey("splotches"))
+                {
+                    var arr = data["splotches"] as object[];
+                    if (arr != null)
+                    {
+                        foreach (var entry in arr)
+                        {
+                            var sd = entry as Dictionary<string, object>;
+                            if (sd == null) continue;
+                            State.splotches.Add(new Splotch
+                            {
+                                pos = new Point(Convert.ToDouble(sd["x"]), Convert.ToDouble(sd["y"])),
+                                colorIndex = Convert.ToInt32(sd["c"]),
+                                startTimeMs = Convert.ToInt64(sd["t"])
+                            });
+                        }
+                    }
+                }
+                return;
+            }
+
+            if (op == "clear_splotches")
+            {
+                State.splotches.Clear();
+                return;
+            }
+
+            // --- Per-player ops (move, shockwave) ---
+
+            var memberCxId = m_bcWrapper.RelayService.GetCxIdForNetId(netId);
             foreach (var member in State.lobby.members)
             {
-                if (member.cxId == memberCxId)
+                if (member.cxId != memberCxId) continue;
+
+                if (op == "move" && data != null)
                 {
-                    var op = json["op"] as string;
-                    if (op == "move")
-                    {
-                        var data = json["data"] as Dictionary<string, object>;
-
-                        member.isAlive = true;
-                        member.pos.X = (int)data["x"];
-                        member.pos.Y = (int)data["y"];
-                    }
-                    else if (op == "shockwave")
-                    {
-                        var data = json["data"] as Dictionary<string, object>;
-
-                        var shockwave = new Shockwave();
-                        shockwave.pos.X = (int)data["x"];
-                        shockwave.pos.Y = (int)data["y"];
-                        shockwave.colorIndex = member.colorIndex;
-                        shockwave.startTime = DateTime.Now;
-                        State.shockwaves.Add(shockwave);
-                    }
-                    break;
+                    member.isAlive = true;
+                    member.pos = new Point(Convert.ToDouble(data["x"]), Convert.ToDouble(data["y"]));
                 }
+                else if (op == "shockwave" && data != null)
+                {
+                    AddShockwaveAndSplotch(
+                        new Point(Convert.ToDouble(data["x"]), Convert.ToDouble(data["y"])),
+                        member.colorIndex);
+                }
+                break;
             }
         }
 
         void OnRelaySystemMessage(string jsonResponse)
         {
             var json = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
-            if (json["op"] as string == "DISCONNECT")
+            var op = json["op"] as string;
+
+            if (op == "DISCONNECT")
             {
                 var cxId = json["cxId"] as string;
                 foreach (var member in State.lobby.members)
                 {
-                    if (member.cxId == cxId)
+                    if (member.cxId == cxId) { member.isAlive = false; break; }
+                }
+            }
+            else if (op == "END_MATCH")
+            {
+                GoToLobbyScreen();
+            }
+            else if (op == "CONNECT")
+            {
+                // Host re-syncs game state to a joining-in-progress player
+                if (State.lobby?.ownerCxId == State.user?.cxId)
+                {
+                    var newCxId = json["cxId"] as string;
+                    short newNetId = m_bcWrapper.RelayService.GetNetIdForCxId(newCxId);
+                    if (newNetId >= 0 && newNetId < 64)
                     {
-                        member.isAlive = false;
-                        break;
+                        ulong playerMask = 1ul << newNetId;
+                        SendGameStart(playerMask);
+                        SendSplotchSync(playerMask);
                     }
                 }
             }
