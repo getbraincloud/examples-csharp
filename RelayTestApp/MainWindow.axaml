@@ -139,7 +139,7 @@
                 <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0"
                     HorizontalAlignment="Center">
                     <Button Content="Leave" Click="btnLobbyLeave_Click" Width="80" />
-                    <Button Content="Start" Click="btnStart_Click" Width="80" />
+                    <Button Name="btnStart" Content="Start" Click="btnStart_Click" Width="80" />
                 </StackPanel>
             </Grid>
 

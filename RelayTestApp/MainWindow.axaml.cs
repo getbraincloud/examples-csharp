@@ -173,6 +173,7 @@ namespace RelayTestApp
         public void UpdateLobby()
         {
             lblLobbyId.Text = "Lobby: " + (State.lobby?.lobbyId ?? "");
+            btnStart.IsVisible = State.lobby?.ownerCxId == State.user?.cxId;
 
             for (int i = 0; i < 40; i++)
             {

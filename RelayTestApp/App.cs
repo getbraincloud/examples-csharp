@@ -15,13 +15,20 @@ namespace RelayTestApp
         const int COUNTDOWN_FROM_SEC = 80;
 
         BrainCloudWrapper m_bcWrapper;
-        bool m_dead = false;
         string m_appVersion = "";
 
         // Move throttle — flush at most once per ~16 ms (~60 fps)
         long _lastMoveSendTime = 0;
         bool _pendingMoveSend = false;
         Point _pendingMovePos;
+
+        // Deferred END_MATCH disconnect — cannot safely call Disconnect() from inside a relay callback
+        bool _pendingEndMatch = false;
+
+        // Guards DieWithMessage during voluntary relay disconnect (END_MATCH / CloseGame).
+        // Stays true from disconnect until next successful relay Connect — mirrors Java's _disconnecting
+        // and C++'s isDisconnecting, but kept across the async disconnect-to-reconnect window.
+        bool _isRelayDisconnecting = false;
 
         public GameApp() { }
 
@@ -46,6 +53,32 @@ namespace RelayTestApp
                         State.form.UpdateStartingTimer(now - from);
                 }
 
+                // Deferred END_MATCH: safely disconnect relay after callback has returned
+                if (_pendingEndMatch)
+                {
+                    Console.WriteLine("[APP] _pendingEndMatch firing — disconnecting relay, _isRelayDisconnecting=true");
+                    _pendingEndMatch = false;
+                    _isRelayDisconnecting = true;   // suppress DieWithMessage until next relay connect
+                    m_bcWrapper.RelayService.DeregisterRelayCallback();
+                    m_bcWrapper.RelayService.DeregisterSystemCallback();
+                    m_bcWrapper.RelayService.Disconnect();
+                    m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
+                    m_bcWrapper.RTTService.RegisterRTTLobbyCallback(OnLobbyEvent);
+
+                    // Mirror C++ pendingEndMatch:
+                    //   Non-host → UpdateReady(true):  auto-ready so the lobby threshold is met as
+                    //              soon as the host clicks Start, which fires STARTING for everyone.
+                    //   Host     → UpdateReady(false): host controls when the next round begins.
+                    if (State.lobby != null && State.user != null)
+                    {
+                        bool isHost = State.lobby.ownerCxId == State.user.cxId;
+                        State.user.isReady = !isHost;
+                        var extra = new Dictionary<string, object> { ["colorIndex"] = State.user.colorIndex };
+                        m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, extra);
+                        Console.WriteLine($"[APP] UpdateReady({State.user.isReady}) sent — isHost={isHost}");
+                    }
+                }
+
                 if (State.screenState == ScreenState.Game)
                 {
                     long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -67,26 +100,12 @@ namespace RelayTestApp
                     }
                 }
             }
-            if (m_dead)
-            {
-                m_dead = false;
-                UninitBC();
-            }
         }
 
-        void UninitBC()
-        {
-            if (m_bcWrapper != null)
-            {
-                m_bcWrapper.Client.ShutDown();
-                m_bcWrapper = null;
-            }
-        }
 
         public void LogOut()
         {
             m_bcWrapper.Logout(true);
-            UninitBC();
             ResetState();
         }
 
@@ -128,9 +147,11 @@ namespace RelayTestApp
 
         public void CloseGame()
         {
+            _isRelayDisconnecting = true;
             m_bcWrapper.RelayService.DeregisterRelayCallback();
             m_bcWrapper.RelayService.DeregisterSystemCallback();
             m_bcWrapper.RelayService.Disconnect();
+            _isRelayDisconnecting = false;  // RTT is also shutting down, so no relay reconnect expected
             m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
             m_bcWrapper.RTTService.DisableRTT();
 
@@ -229,6 +250,9 @@ namespace RelayTestApp
         public void EndMatch()
         {
             if (State.lobby?.ownerCxId != State.user?.cxId) return;
+            // Zero out gameStartTime immediately so the auto-end loop in Update()
+            // cannot fire EndMatch() again before the END_MATCH system callback arrives.
+            State.gameStartTime = 0;
             m_bcWrapper.RelayService.EndMatch(new Dictionary<string, object>());
         }
 
@@ -264,7 +288,6 @@ namespace RelayTestApp
         {
             if (m_bcWrapper == null)
                 m_bcWrapper = new BrainCloudWrapper("RelayTestApp");
-            m_dead = false;
 
             string url = "", appId = "", appSecret = "", appVersion = "";
             string idsPath = Path.Combine(AppContext.BaseDirectory, "ids.txt");
@@ -379,7 +402,7 @@ namespace RelayTestApp
         void SubmitName(string username)
         {
             State.user.name = username;
-            m_bcWrapper.PlayerStateService.UpdateName(username, OnLoggedIn, DieWithMessage, "Failed to update username");
+            m_bcWrapper.PlayerStateService.UpdateUserName(username, OnLoggedIn, DieWithMessage, "Failed to update username");
         }
 
         void OnRTTDisconnected(int status, int reasonCode, string jsonError, object cbObject)
@@ -390,8 +413,43 @@ namespace RelayTestApp
 
         void DieWithMessage(int status, int reasonCode, string jsonError, object cbObject)
         {
-            if (m_dead) return;
-            m_dead = true;
+            if (_isRelayDisconnecting)
+            {
+                Console.WriteLine($"[APP] DieWithMessage suppressed (voluntary disconnect) — {jsonError}");
+                return;
+            }
+
+            // Race guard: the relay server closes the WebSocket immediately after broadcasting
+            // END_MATCH, so ConnectFailure (RS_ENDMATCH_REQUESTED) can arrive in the same SDK
+            // event batch as SocketData(END_MATCH binary).  If ConnectFailure is processed first
+            // it clears the pending System(END_MATCH) event before OnRelaySystemMessage fires,
+            // so _isRelayDisconnecting is never set.  Detect this case and treat it as a graceful
+            // END_MATCH rather than a fatal error.
+            if (reasonCode == BrainCloud.ReasonCodes.RS_ENDMATCH_REQUESTED &&
+                State.screenState == ScreenState.Game)
+            {
+                Console.WriteLine($"[APP] DieWithMessage: RS_ENDMATCH_REQUESTED in Game — treating as END_MATCH (race guard)");
+                _isRelayDisconnecting = true;
+                State.user.isAlive = false;
+                State.user.isReady = false;
+                State.shockwaves = new List<Shockwave>();
+                State.splotches = new List<Splotch>();
+                State.gameStartTime = 0;
+                State.lobbyStatusStartTime = 0;
+                State.lobbyStatusText = "";
+                _pendingMoveSend = false;
+                foreach (var member in State.lobby?.members ?? new List<User>())
+                {
+                    member.isAlive = false;
+                    member.isReady = false;
+                }
+                _pendingEndMatch = true;
+                ChangeScreen(ScreenState.Lobby);
+                State.form.UpdateLobby();
+                return;
+            }
+
+            Console.WriteLine($"[APP] DieWithMessage — status={status} reasonCode={reasonCode} | {jsonError}");
 
             m_bcWrapper.RelayService.DeregisterRelayCallback();
             m_bcWrapper.RelayService.DeregisterSystemCallback();
@@ -534,6 +592,8 @@ namespace RelayTestApp
 
         void OnRelayConnectSuccess(string jsonResponse, object cbObject)
         {
+            Console.WriteLine("[APP] Relay connected — _isRelayDisconnecting reset to false");
+            _isRelayDisconnecting = false;  // old relay WebSocket close can no longer cause harm
             GoToGameScreen();
         }
 
@@ -551,25 +611,6 @@ namespace RelayTestApp
                 SendGameStart(BrainCloudRelay.TO_ALL_PLAYERS);
             }
             // Non-host: gameStartTime/roundNumber set when game_start relay message arrives
-        }
-
-        void GoToLobbyScreen()
-        {
-            m_bcWrapper.RelayService.DeregisterRelayCallback();
-            m_bcWrapper.RelayService.DeregisterSystemCallback();
-            m_bcWrapper.RelayService.Disconnect();
-            // Keep RTT alive — deregister all callbacks then re-register lobby callback
-            m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
-            m_bcWrapper.RTTService.RegisterRTTLobbyCallback(OnLobbyEvent);
-
-            State.shockwaves = new List<Shockwave>();
-            State.splotches = new List<Splotch>();
-            State.gameStartTime = 0;
-            foreach (var member in State.lobby?.members ?? new System.Collections.Generic.List<User>())
-                member.isAlive = false;
-
-            ChangeScreen(ScreenState.Lobby);
-            State.form.UpdateLobby();
         }
 
         // Sends game_start (host → recipients). Also used for JIP re-sync.
@@ -727,25 +768,55 @@ namespace RelayTestApp
         {
             var json = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
             var op = json["op"] as string;
+            Console.WriteLine($"[SYS] op={op}");
 
             if (op == "DISCONNECT")
             {
-                var cxId = json["cxId"] as string;
-                foreach (var member in State.lobby.members)
+                var cxId = json.ContainsKey("cxId") ? json["cxId"] as string : null;
+                Console.WriteLine($"[SYS] DISCONNECT cxId={cxId}");
+                foreach (var member in State.lobby?.members ?? new List<User>())
                 {
                     if (member.cxId == cxId) { member.isAlive = false; break; }
                 }
             }
             else if (op == "END_MATCH")
             {
-                GoToLobbyScreen();
+                Console.WriteLine("[SYS] END_MATCH — resetting round state, queueing relay disconnect");
+                // Arm the disconnecting guard immediately — the relay server closes the WebSocket
+                // right after broadcasting END_MATCH, so ConnectFailure can arrive in the same
+                // RunCallbacks batch as this System event.  Setting the flag here (rather than
+                // waiting for _pendingEndMatch to fire next frame) ensures DieWithMessage is
+                // suppressed even in that race window.
+                _isRelayDisconnecting = true;
+
+                // Reset per-round state immediately (mirrors Java onGameScreenToLobby / JS onSystemMessage)
+                State.user.isAlive = false;
+                State.user.isReady = false;
+                State.shockwaves = new List<Shockwave>();
+                State.splotches = new List<Splotch>();
+                State.gameStartTime = 0;
+                State.lobbyStatusStartTime = 0;
+                State.lobbyStatusText = "";
+                _pendingMoveSend = false;
+                foreach (var member in State.lobby?.members ?? new List<User>())
+                {
+                    member.isAlive = false;
+                    member.isReady = false;
+                }
+
+                // Defer relay disconnect — cannot safely call from inside a relay callback
+                _pendingEndMatch = true;
+                ChangeScreen(ScreenState.Lobby);
+                State.form.UpdateLobby();
+                Console.WriteLine("[SYS] END_MATCH done — screen=Lobby _pendingEndMatch=true");
             }
             else if (op == "CONNECT")
             {
+                var newCxId = json.ContainsKey("cxId") ? json["cxId"] as string : null;
+                Console.WriteLine($"[SYS] CONNECT cxId={newCxId} isHost={State.lobby?.ownerCxId == State.user?.cxId}");
                 // Host re-syncs game state to a joining-in-progress player
-                if (State.lobby?.ownerCxId == State.user?.cxId)
+                if (State.lobby?.ownerCxId == State.user?.cxId && newCxId != null)
                 {
-                    var newCxId = json["cxId"] as string;
                     short newNetId = m_bcWrapper.RelayService.GetNetIdForCxId(newCxId);
                     if (newNetId >= 0 && newNetId < 64)
                     {
@@ -754,6 +825,10 @@ namespace RelayTestApp
                         SendSplotchSync(playerMask);
                     }
                 }
+            }
+            else
+            {
+                Console.WriteLine($"[SYS] unhandled op={op}");
             }
         }
     }
