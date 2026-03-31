@@ -177,7 +177,7 @@ namespace RelayTestApp
 
             for (int i = 0; i < 40; i++)
             {
-                if (i < State.lobby.members.Count)
+                if (State.lobby != null && i < State.lobby.members.Count)
                 {
                     var user = State.lobby.members[i];
                     _lobbyPlayerLabels[i].Text = user.name;

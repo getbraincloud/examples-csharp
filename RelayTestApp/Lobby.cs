@@ -21,7 +21,7 @@ namespace RelayTestApp
             {
                 var jsonMember = jsonMembers[i] as Dictionary<string, object>;
                 var user = new User(jsonMember);
-                if (user.cxId == State.user.cxId) user.allowSendTo = false;
+                if (State.user != null && user.cxId == State.user.cxId) user.allowSendTo = false;
                 members.Add(user);
             }
         }

@@ -105,6 +105,11 @@ namespace RelayTestApp
 
         public void LogOut()
         {
+            m_bcWrapper.RelayService.DeregisterRelayCallback();
+            m_bcWrapper.RelayService.DeregisterSystemCallback();
+            m_bcWrapper.RelayService.Disconnect();
+            m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
+            m_bcWrapper.RTTService.DisableRTT();
             m_bcWrapper.Logout(true);
             ResetState();
         }
@@ -147,12 +152,20 @@ namespace RelayTestApp
 
         public void CloseGame()
         {
+            bool wasInRelay = m_bcWrapper.RelayService.IsConnected();
+
             _isRelayDisconnecting = true;
             m_bcWrapper.RelayService.DeregisterRelayCallback();
             m_bcWrapper.RelayService.DeregisterSystemCallback();
             m_bcWrapper.RelayService.Disconnect();
             _isRelayDisconnecting = false;  // RTT is also shutting down, so no relay reconnect expected
             m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
+
+            // If we were in the lobby (not yet in relay), explicitly tell the server we're
+            // leaving so other members see the departure immediately (mirrors C++ app_cancelLobby).
+            if (!wasInRelay && State.lobby != null)
+                m_bcWrapper.LobbyService.LeaveLobby(State.lobby.lobbyId);
+
             m_bcWrapper.RTTService.DisableRTT();
 
             State.lobby = null;
@@ -363,9 +376,6 @@ namespace RelayTestApp
                 State.user.name = playerName;
                 OnLoggedIn(jsonResponse, cbObject);
             }
-
-            if (!State.form.GetRememberMeStatus())
-                m_bcWrapper.ResetStoredProfileId();
         }
 
         void ChangeScreen(ScreenState screen)
@@ -745,6 +755,7 @@ namespace RelayTestApp
             // --- Per-player ops (move, shockwave) ---
 
             var memberCxId = m_bcWrapper.RelayService.GetCxIdForNetId(netId);
+            if (memberCxId == null) return; // netId not yet mapped (e.g. JIP race)
             foreach (var member in State.lobby.members)
             {
                 if (member.cxId != memberCxId) continue;
