@@ -641,32 +641,68 @@ namespace RelayTestApp
         }
 
         // Sends the full splotch canvas to a single joining-in-progress player.
+        // Chunks the array so each packet stays under the relay MAX_PACKETSIZE (1024 bytes).
+        // First chunk carries "first":true so the receiver clears its canvas before appending.
         void SendSplotchSync(ulong toMask)
         {
-            var splotchArray = new List<Dictionary<string, object>>();
-            foreach (var s in State.splotches)
-            {
-                splotchArray.Add(new Dictionary<string, object>
-                {
-                    ["x"] = s.pos.X,
-                    ["y"] = s.pos.Y,
-                    ["c"] = s.colorIndex,
-                    ["t"] = s.startTimeMs
-                });
-            }
+            const int maxChunkBytes = 900; // conservative headroom below relay MAX_PACKETSIZE (1024)
+            var splotches = State.splotches;
+            bool isFirst = true;
+            int i = 0;
 
+            // Always send at least one packet (even when the canvas is empty) so the
+            // receiver clears its local splotch list.
+            do
+            {
+                var batch = new List<Dictionary<string, object>>();
+                byte[] packet = null;
+
+                while (i < splotches.Count)
+                {
+                    var s = splotches[i];
+                    batch.Add(new Dictionary<string, object>
+                    {
+                        ["x"] = s.pos.X,
+                        ["y"] = s.pos.Y,
+                        ["c"] = s.colorIndex,
+                        ["t"] = s.startTimeMs
+                    });
+
+                    byte[] candidate = BuildSplotchSyncPacket(isFirst, batch);
+                    if (candidate.Length > maxChunkBytes && batch.Count > 1)
+                    {
+                        // This entry pushed the packet over the limit — back it out and
+                        // flush the current batch. i is not incremented so it opens the
+                        // next chunk.
+                        batch.RemoveAt(batch.Count - 1);
+                        break;
+                    }
+                    packet = candidate;
+                    i++;
+                }
+
+                // packet is null only when the canvas is empty (batch is also empty).
+                packet ??= BuildSplotchSyncPacket(isFirst, batch);
+
+                m_bcWrapper.RelayService.SendToPlayers(packet, toMask,
+                    true, true, BrainCloudRelay.CHANNEL_HIGH_PRIORITY_2);
+                isFirst = false;
+
+            } while (i < splotches.Count);
+        }
+
+        byte[] BuildSplotchSyncPacket(bool isFirst, List<Dictionary<string, object>> batch)
+        {
             var json = new Dictionary<string, object>
             {
                 ["op"] = "splotch_sync",
                 ["data"] = new Dictionary<string, object>
                 {
-                    ["first"] = true,
-                    ["splotches"] = splotchArray.ToArray()
+                    ["first"] = isFirst,
+                    ["splotches"] = batch.ToArray()
                 }
             };
-            byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
-            m_bcWrapper.RelayService.SendToPlayers(data, toMask,
-                true, true, BrainCloudRelay.CHANNEL_HIGH_PRIORITY_2);
+            return Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
         }
 
         // Builds the outbound player mask for shockwaves, respecting per-player allowSendTo flags.
