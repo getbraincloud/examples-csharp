@@ -1,60 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
-
-using BrainCloud;
+using System;
+using System.IO;
+using System.Text.Json;
 
 namespace RelayTestApp
 {
     static class Settings
     {
-        static public string username;
-        static public string password;
+        static public string username = "";
+        static public string password = "";
         static public int colorIndex = 0;
         static public int sendChannel = 0;
         static public bool sendReliable = false;
         static public bool sendOrdered = true;
         static public BrainCloud.RelayConnectionType protocol = BrainCloud.RelayConnectionType.UDP;
+        static public string lobbyType = "CursorPartyV2";
+
+        static string ConfigPath => Path.Combine(AppContext.BaseDirectory, "settings.json");
 
         static public void LoadConfigs()
         {
-            var appSettings = ConfigurationManager.AppSettings;
-
-            username = appSettings["username"] ?? "";
-            password = appSettings["password"] ?? "";
-
-            string colorIndexStr = appSettings["colorIndex"] ?? "0";
-            colorIndex = Int32.Parse(colorIndexStr);
-
-            string protocolStr = appSettings["protocol"] ?? "3";
-            protocol = (BrainCloud.RelayConnectionType)Int32.Parse(protocolStr);
+            if (!File.Exists(ConfigPath)) return;
+            try
+            {
+                var doc  = JsonDocument.Parse(File.ReadAllText(ConfigPath));
+                var root = doc.RootElement;
+                if (root.TryGetProperty("username",   out var u))  username  = u.GetString() ?? "";
+                if (root.TryGetProperty("password",   out var p))  password  = p.GetString() ?? "";
+                if (root.TryGetProperty("colorIndex", out var c))  colorIndex = c.GetInt32();
+                if (root.TryGetProperty("protocol",   out var pr)) protocol  = (BrainCloud.RelayConnectionType)pr.GetInt32();
+                if (root.TryGetProperty("lobbyType",  out var lt)) lobbyType = lt.GetString() ?? "CursorPartyV2";
+            }
+            catch { }
         }
 
         static public void SaveConfigs()
         {
-            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var settings = configFile.AppSettings.Settings;
-
-            if (settings["username"] == null) settings.Add("username", username);
-            else settings["username"].Value = username;
-
-            if (settings["password"] == null) settings.Add("password", password);
-            else settings["password"].Value = password;
-
-            string colorIndexStr = colorIndex.ToString();
-            if (settings["colorIndex"] == null) settings.Add("colorIndex", colorIndexStr);
-            else settings["colorIndex"].Value = colorIndexStr;
-
-            string protocolStr = ((int)protocol).ToString();
-            if (settings["protocol"] == null) settings.Add("protocol", protocolStr);
-            else settings["protocol"].Value = protocolStr;
-
-            configFile.Save(ConfigurationSaveMode.Modified);
-            ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            try
+            {
+                var data = new
+                {
+                    username,
+                    password,
+                    colorIndex,
+                    protocol = (int)protocol,
+                    lobbyType
+                };
+                File.WriteAllText(ConfigPath, JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true }));
+            }
+            catch { }
         }
     }
 }
