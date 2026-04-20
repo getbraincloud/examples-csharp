@@ -35,5 +35,6 @@ namespace RelayTestApp
         static public List<string> appLobbies = new List<string>();  // Lobby types from GlobalProperties
         static public long lobbySearchStartTime = 0;   // UTC epoch ms when lobby search started
         static public long lobbyStatusStartTime = 0;   // UTC epoch ms when STARTING event fired
+        static public Dictionary<string, int> pingData = new Dictionary<string, int>(); // our measured region latencies (ms)
     }
 }

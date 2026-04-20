@@ -22,6 +22,9 @@ namespace RelayTestApp
         bool _pendingMoveSend = false;
         Point _pendingMovePos;
 
+        // Relay ping broadcast — fires every 2 seconds while in game
+        long _lastPingBroadcastTime = 0;
+
         // Deferred END_MATCH disconnect — cannot safely call Disconnect() from inside a relay callback
         bool _pendingEndMatch = false;
 
@@ -73,8 +76,7 @@ namespace RelayTestApp
                     {
                         bool isHost = State.lobby.ownerCxId == State.user.cxId;
                         State.user.isReady = !isHost;
-                        var extra = new Dictionary<string, object> { ["colorIndex"] = State.user.colorIndex };
-                        m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, extra);
+                        m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, BuildExtraJson(State.user.colorIndex));
                         Console.WriteLine($"[APP] UpdateReady({State.user.isReady}) sent — isHost={isHost}");
                     }
                 }
@@ -86,6 +88,13 @@ namespace RelayTestApp
                     // Flush pending move at 60 fps
                     if (_pendingMoveSend && now - _lastMoveSendTime >= 16)
                         FlushPendingMove();
+
+                    // Broadcast relay RTT to all players every 2 seconds
+                    if (now - _lastPingBroadcastTime >= 2000)
+                    {
+                        _lastPingBroadcastTime = now;
+                        BroadcastRelayPing();
+                    }
 
                     // Update visual effects and clean up expired splotches
                     State.form.UpdateEffects();
@@ -184,9 +193,7 @@ namespace RelayTestApp
         {
             State.user.isReady = true;
             ChangeScreen(ScreenState.Starting);
-
-            var extra = new Dictionary<string, object> { ["colorIndex"] = State.user.colorIndex };
-            m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, extra);
+            m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, BuildExtraJson(State.user.colorIndex));
         }
 
         public void ChangeUserColor(int colorIndex)
@@ -200,8 +207,38 @@ namespace RelayTestApp
                     break;
                 }
             }
-            var extra = new Dictionary<string, object> { ["colorIndex"] = State.user.colorIndex };
-            m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, extra);
+            m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, BuildExtraJson(colorIndex));
+        }
+
+        // Build the extra dict for lobby join/updateReady calls.
+        // Always includes colorIndex; includes per-region pings when available.
+        Dictionary<string, object> BuildExtraJson(int colorIndex)
+        {
+            var extra = new Dictionary<string, object> { ["colorIndex"] = colorIndex };
+            if (State.pingData.Count > 0)
+                extra["pings"] = State.pingData;
+            return extra;
+        }
+
+        // Broadcast our current relay RTT to all players. Called every 2 seconds while in game.
+        void BroadcastRelayPing()
+        {
+            if (m_bcWrapper?.RelayService == null || !m_bcWrapper.RelayService.IsConnected()) return;
+            int ping = (int)(m_bcWrapper.RelayService.LastPing * 0.0001f);
+
+            // Update own entry immediately
+            if (State.lobby != null)
+                foreach (var member in State.lobby.members)
+                    if (member.cxId == State.user?.cxId) { member.activePing = ping; break; }
+
+            var json = new Dictionary<string, object>
+            {
+                ["op"] = "relay_ping",
+                ["data"] = new Dictionary<string, object> { ["ping"] = ping }
+            };
+            byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
+            m_bcWrapper.RelayService.Send(data, BrainCloudRelay.TO_ALL_PLAYERS,
+                false, false, BrainCloudRelay.CHANNEL_HIGH_PRIORITY_1);
         }
 
         public void MouseMoved(Point pos)
@@ -497,14 +534,57 @@ namespace RelayTestApp
             };
             State.user.cxId = m_bcWrapper.RTTService.getRTTConnectionID();
 
-            var extra = new Dictionary<string, object> { ["colorIndex"] = State.user.colorIndex };
+            void DoFindLobby(bool withPingData)
+            {
+                var extra = BuildExtraJson(State.user.colorIndex);
+                if (withPingData)
+                    m_bcWrapper.LobbyService.FindOrCreateLobbyWithPingData(
+                        Settings.lobbyType, 0, 1, algo,
+                        new Dictionary<string, object>(),
+                        false, extra, "all",
+                        new Dictionary<string, object>(),
+                        null, null, DieWithMessage, "Failed to find lobby");
+                else
+                    m_bcWrapper.LobbyService.FindOrCreateLobby(
+                        Settings.lobbyType, 0, 1, algo,
+                        new Dictionary<string, object>(),
+                        false, extra, "all",
+                        new Dictionary<string, object>(),
+                        null, null, DieWithMessage, "Failed to find lobby");
+            }
 
-            m_bcWrapper.LobbyService.FindOrCreateLobby(
-                Settings.lobbyType, 0, 1, algo,
-                new Dictionary<string, object>(),
-                false, extra, "all",
-                new Dictionary<string, object>(),
-                null, null, DieWithMessage, "Failed to find lobby");
+            if (Settings.usePingData)
+            {
+                m_bcWrapper.LobbyService.GetRegionsForLobbies(
+                    new string[] { Settings.lobbyType },
+                    (response, _) =>
+                    {
+                        m_bcWrapper.LobbyService.PingRegions(
+                            (response2, _) =>
+                            {
+                                State.pingData.Clear();
+                                var pingDataRaw = m_bcWrapper.LobbyService.PingData;
+                                if (pingDataRaw != null)
+                                    foreach (var kv in pingDataRaw)
+                                    {
+                                        State.pingData[kv.Key] = (int)kv.Value;
+                                    }
+                                DoFindLobby(true);
+                            },
+                            (status, code, err, _) =>
+                            {
+                                DoFindLobby(false);
+                            });
+                    },
+                    (status, code, err, _) =>
+                    {
+                        DoFindLobby(false);
+                    });
+            }
+            else
+            {
+                DoFindLobby(false);
+            }
         }
 
         void OnLobbyEvent(string jsonResponse)
@@ -785,6 +865,15 @@ namespace RelayTestApp
             if (op == "clear_splotches")
             {
                 State.splotches.Clear();
+                return;
+            }
+
+            if (op == "relay_ping" && data != null)
+            {
+                int ping = Convert.ToInt32(data["ping"]);
+                var senderCxId = m_bcWrapper.RelayService.GetCxIdForNetId(netId);
+                foreach (var member in State.lobby?.members ?? new List<User>())
+                    if (member.cxId == senderCxId) { member.activePing = ping; break; }
                 return;
             }
 

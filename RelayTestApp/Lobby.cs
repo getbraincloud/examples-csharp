@@ -22,6 +22,17 @@ namespace RelayTestApp
                 var jsonMember = jsonMembers[i] as Dictionary<string, object>;
                 var user = new User(jsonMember);
                 if (State.user != null && user.cxId == State.user.cxId) user.allowSendTo = false;
+
+                // Parse per-region ping data shared by this member via lobby extra
+                var extra = jsonMember.ContainsKey("extra") ? jsonMember["extra"] as Dictionary<string, object> : null;
+                if (extra != null && extra.ContainsKey("pings"))
+                {
+                    var pingsDict = extra["pings"] as Dictionary<string, object>;
+                    if (pingsDict != null)
+                        foreach (var kv in pingsDict)
+                            user.pings[kv.Key] = Convert.ToInt32(kv.Value);
+                }
+
                 members.Add(user);
             }
         }
