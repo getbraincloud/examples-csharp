@@ -74,6 +74,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="90" />
@@ -94,7 +95,11 @@
                     <ComboBoxItem>WebSocket</ComboBoxItem>
                 </ComboBox>
 
-                <Button Grid.Row="2" Grid.ColumnSpan="2" Name="btnPlay"
+                <CheckBox Grid.Row="2" Grid.ColumnSpan="2" Name="chkUsePingData"
+                    Content="With Ping Region Data" Margin="0,4"
+                    IsCheckedChanged="chkUsePingData_Changed" />
+
+                <Button Grid.Row="3" Grid.ColumnSpan="2" Name="btnPlay"
                     Content="Play" Click="btnPlay_Click"
                     HorizontalAlignment="Stretch" Margin="0,12" />
             </Grid>
@@ -134,6 +139,7 @@
                 <StackPanel Grid.Row="2">
                     <TextBlock Text="Players:" FontWeight="Bold" Margin="0,0,0,8" />
                     <WrapPanel Name="panelLobbyPlayers" />
+                    <StackPanel Name="panelPingData" Margin="0,12,0,0" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0"

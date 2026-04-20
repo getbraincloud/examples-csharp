@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
@@ -30,6 +32,7 @@ namespace RelayTestApp
                 BrainCloud.RelayConnectionType.WEBSOCKET => 2,
                 _ => 0
             };
+            chkUsePingData.IsChecked = Settings.usePingData;
 
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
             _timer.Tick += (_, _) => State.app.Update();
@@ -189,6 +192,67 @@ namespace RelayTestApp
                     _lobbyPlayerLabels[i].IsVisible = false;
                 }
             }
+
+            // Ping data table — only shown when usePingData is enabled
+            panelPingData.Children.Clear();
+            if (Settings.usePingData && State.lobby != null)
+            {
+                // Region quality label — derive region from lobbyId prefix (format: "region:Type:N")
+                string lobbyIdStr = State.lobby.lobbyId ?? "";
+                int colonPos = lobbyIdStr.IndexOf(':');
+                string lobbyRegion = (colonPos > 0 && !System.Text.RegularExpressions.Regex.IsMatch(
+                    lobbyIdStr[..colonPos], @"^\d+$")) ? lobbyIdStr[..colonPos] : "";
+                if (lobbyRegion.Length > 0 && State.pingData.Count > 0)
+                {
+                    int bestPing = int.MaxValue;
+                    foreach (var ms in State.pingData.Values) if (ms < bestPing) bestPing = ms;
+                    bool isGood = State.pingData.TryGetValue(lobbyRegion, out int lobbyPing)
+                        && (lobbyPing - bestPing) <= 30;
+                    panelPingData.Children.Add(new TextBlock
+                    {
+                        Text = "Region: " + lobbyRegion,
+                        Foreground = new SolidColorBrush(Avalonia.Media.Color.Parse(isGood ? "#44EE44" : "#EE4444")),
+                        FontSize = 11,
+                        Margin = new Avalonia.Thickness(0, 0, 0, 2)
+                    });
+                }
+
+                var regionSet = new SortedSet<string>(State.pingData.Keys);
+                foreach (var m in State.lobby.members)
+                    foreach (var r in m.pings.Keys) regionSet.Add(r);
+
+                if (regionSet.Count > 0)
+                {
+                    var regions = regionSet.ToList();
+                    var monoFont = new Avalonia.Media.FontFamily("Courier New, Consolas, monospace");
+                    var dimBrush = new SolidColorBrush(Avalonia.Media.Color.Parse("#8899AA"));
+
+                    // Header
+                    var header = "Player".PadRight(18) + string.Concat(regions.Select(r => r.PadRight(16)));
+                    panelPingData.Children.Add(new TextBlock { Text = header, FontFamily = monoFont, FontSize = 11, Foreground = dimBrush });
+
+                    foreach (var member in State.lobby.members)
+                    {
+                        var pings = member.pings.Count > 0 ? member.pings
+                            : (member.cxId == State.user?.cxId && State.pingData.Count > 0 ? State.pingData : null);
+                        if (pings == null) continue;
+
+                        string nameCol = member.name;
+                        if (member.cxId == State.lobby.ownerCxId) nameCol += " [H]";
+                        var row = nameCol.PadRight(18) + string.Concat(regions.Select(r =>
+                        {
+                            if (!pings.TryGetValue(r, out int ms)) return "-".PadRight(16);
+                            return (ms >= 999 ? "T/O" : ms.ToString()).PadRight(16);
+                        }));
+
+                        bool isMe = member.cxId == State.user?.cxId;
+                        var brush = isMe
+                            ? new SolidColorBrush(CursorColor.COLORS[member.colorIndex])
+                            : (IBrush)dimBrush;
+                        panelPingData.Children.Add(new TextBlock { Text = row, FontFamily = monoFont, FontSize = 11, Foreground = brush });
+                    }
+                }
+            }
         }
 
         // --- Game viewport ---
@@ -199,6 +263,8 @@ namespace RelayTestApp
             panelPlayers.Children.Clear();
             foreach (var user in State.lobby.members)
             {
+                string pingText = user.activePing < 0 ? "..." : user.activePing >= 999 ? "T/O" : $"{user.activePing} ms";
+                var row = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 6 };
                 var cb = new CheckBox
                 {
                     Content = user.name,
@@ -207,7 +273,16 @@ namespace RelayTestApp
                 };
                 var captured = user;
                 cb.IsCheckedChanged += (_, _) => captured.allowSendTo = cb.IsChecked == true;
-                panelPlayers.Children.Add(cb);
+                var lblPing = new TextBlock
+                {
+                    Text = pingText,
+                    FontSize = 11,
+                    Foreground = new SolidColorBrush(Avalonia.Media.Color.Parse("#888888")),
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
+                };
+                row.Children.Add(cb);
+                row.Children.Add(lblPing);
+                panelPlayers.Children.Add(row);
             }
 
             // Show host-only controls only for the lobby owner
@@ -300,6 +375,12 @@ namespace RelayTestApp
         void btnClearSplotches_Click(object sender, RoutedEventArgs e) => State.app.ClearSplotches();
 
         // --- Send options ---
+
+        void chkUsePingData_Changed(object sender, RoutedEventArgs e)
+        {
+            Settings.usePingData = chkUsePingData.IsChecked == true;
+            Settings.SaveConfigs();
+        }
 
         void chkSendOption_Changed(object sender, RoutedEventArgs e)
         {
