@@ -9,7 +9,7 @@ namespace RelayTestApp
         // Row 1 (10-19): Vivid-medium / complementary
         // Row 2 (20-29): Pastel / light
         // Row 3 (30-39): Medium-depth / muted
-        public static readonly Color[] COLORS =
+        public static Color[] COLORS =
         {
             // Row 0 — vivid
             Color.FromRgb(0xFF, 0x33, 0x33), // 0  vivid red

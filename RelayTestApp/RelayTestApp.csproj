@@ -8,6 +8,7 @@
     <DefineConstants>DOT_NET</DefineConstants>
     <AssemblyName>RelayTestApp</AssemblyName>
     <RootNamespace>RelayTestApp</RootNamespace>
+    <ApplicationIcon>assets\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +29,11 @@
     <EmbeddedResource Remove="FormGame.resx" />
     <EmbeddedResource Remove="Properties\**\*.resx" />
     <None Remove="Properties\**\*.settings" />
+  </ItemGroup>
+
+  <!-- App icon (Avalonia resource for window icon) -->
+  <ItemGroup>
+    <AvaloniaResource Include="assets\icon.png" />
   </ItemGroup>
 
   <!-- Arrow cursor images -->

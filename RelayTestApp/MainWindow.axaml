@@ -3,6 +3,7 @@
     xmlns:local="clr-namespace:RelayTestApp"
     x:Class="RelayTestApp.MainWindow"
     Title="Cursor Party"
+    Icon="avares://RelayTestApp/assets/icon.png"
     Width="960" Height="700"
     MinWidth="800" MinHeight="600"
     Background="#2B2B2B"
@@ -35,29 +36,46 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="110" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Username:" VerticalAlignment="Center"
-                    Margin="0,4" />
-                <TextBox Grid.Row="0" Grid.Column="1" Name="txtUsername" Margin="0,4" />
+                <!-- Cursor Party logo -->
+                <Image Grid.Row="0" Grid.ColumnSpan="2"
+                    Source="avares://RelayTestApp/assets/icon.png"
+                    Width="220" Height="220"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,12" />
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Password:" VerticalAlignment="Center"
+                <!-- Title -->
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                    Text="Cursor Party"
+                    FontSize="26" FontWeight="Bold"
+                    HorizontalAlignment="Center"
+                    Foreground="White"
+                    Margin="0,0,0,16" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Username:" VerticalAlignment="Center"
                     Margin="0,4" />
-                <TextBox Grid.Row="1" Grid.Column="1" Name="txtPassword" PasswordChar="*"
+                <TextBox Grid.Row="2" Grid.Column="1" Name="txtUsername" Margin="0,4" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Password:" VerticalAlignment="Center"
+                    Margin="0,4" />
+                <TextBox Grid.Row="3" Grid.Column="1" Name="txtPassword" PasswordChar="*"
                     Margin="0,4" />
 
-                <CheckBox Grid.Row="2" Grid.ColumnSpan="2" Name="chkRememberMe"
+                <CheckBox Grid.Row="4" Grid.ColumnSpan="2" Name="chkRememberMe"
                     Content="Remember Me" Margin="0,4" />
 
-                <Button Grid.Row="3" Grid.ColumnSpan="2" Name="btnLogin"
+                <Button Grid.Row="5" Grid.ColumnSpan="2" Name="btnLogin"
                     Content="Login" Click="btnLogin_Click"
                     HorizontalAlignment="Stretch" Margin="0,8" />
 
-                <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Name="lblError"
+                <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Name="lblError"
                     Foreground="Red" TextWrapping="Wrap" IsVisible="False" Margin="0,4" />
             </Grid>
 

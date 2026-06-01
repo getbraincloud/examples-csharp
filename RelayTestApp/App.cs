@@ -392,6 +392,31 @@ namespace RelayTestApp
                                 State.form.UpdateMainMenu();
                             }
                         }
+                        if (data != null && data.ContainsKey("Colors"))
+                        {
+                            var prop = data["Colors"] as Dictionary<string, object>;
+                            if (prop != null && prop.ContainsKey("value"))
+                            {
+                                try
+                                {
+                                    var hexArray = JsonReader.Deserialize<string[]>(prop["value"]?.ToString() ?? "[]");
+                                    if (hexArray != null && hexArray.Length > 0)
+                                    {
+                                        var newColors = new Avalonia.Media.Color[hexArray.Length];
+                                        for (int i = 0; i < hexArray.Length; i++)
+                                        {
+                                            string hex = hexArray[i].TrimStart('#');
+                                            byte red   = Convert.ToByte(hex.Substring(0, 2), 16);
+                                            byte green = Convert.ToByte(hex.Substring(2, 2), 16);
+                                            byte blue  = Convert.ToByte(hex.Substring(4, 2), 16);
+                                            newColors[i] = Avalonia.Media.Color.FromRgb(red, green, blue);
+                                        }
+                                        CursorColor.COLORS = newColors;
+                                    }
+                                }
+                                catch { }
+                            }
+                        }
                     }
                     catch { }
                 },
