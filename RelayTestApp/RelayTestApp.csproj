@@ -34,6 +34,7 @@
   <!-- App icon (Avalonia resource for window icon) -->
   <ItemGroup>
     <AvaloniaResource Include="assets\icon.png" />
+    <AvaloniaResource Include="assets\PaintSplatter1.png" />
   </ItemGroup>
 
   <!-- Arrow cursor images -->

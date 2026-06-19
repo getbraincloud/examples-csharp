@@ -16,6 +16,7 @@ namespace RelayTestApp
 
         BrainCloudWrapper m_bcWrapper;
         string m_appVersion = "";
+        static readonly Random m_random = new Random();
 
         // Move throttle — flush at most once per ~16 ms (~60 fps)
         long _lastMoveSendTime = 0;
@@ -281,10 +282,13 @@ namespace RelayTestApp
 
         public void Shockwave(Point pos)
         {
+            // Pick a rotation once and send it so every client renders this splotch the same.
+            double angle = m_random.NextDouble() * Math.PI * 2.0;
+
             var json = new Dictionary<string, object>
             {
                 ["op"] = "shockwave",
-                ["data"] = new Dictionary<string, object> { ["x"] = pos.X, ["y"] = pos.Y }
+                ["data"] = new Dictionary<string, object> { ["x"] = pos.X, ["y"] = pos.Y, ["angle"] = angle }
             };
             byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
 
@@ -293,7 +297,7 @@ namespace RelayTestApp
                 true, false, Settings.sendChannel);
 
             // Add locally (sender doesn't receive their own relay message)
-            AddShockwaveAndSplotch(pos, State.user.colorIndex);
+            AddShockwaveAndSplotch(pos, State.user.colorIndex, angle);
         }
 
         // Host-only: end the current match and return all players to the lobby.
@@ -770,6 +774,7 @@ namespace RelayTestApp
                         ["x"] = s.pos.X,
                         ["y"] = s.pos.Y,
                         ["c"] = s.colorIndex,
+                        ["a"] = s.angle,
                         ["t"] = s.startTimeMs
                     });
 
@@ -824,7 +829,7 @@ namespace RelayTestApp
             return mask;
         }
 
-        void AddShockwaveAndSplotch(Point pos, int colorIndex)
+        void AddShockwaveAndSplotch(Point pos, int colorIndex, double angle)
         {
             State.shockwaves.Add(new Shockwave
             {
@@ -836,6 +841,7 @@ namespace RelayTestApp
             {
                 pos = pos,
                 colorIndex = colorIndex,
+                angle = angle,
                 startTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
             });
         }
@@ -879,6 +885,8 @@ namespace RelayTestApp
                             {
                                 pos = new Point(Convert.ToDouble(sd["x"]), Convert.ToDouble(sd["y"])),
                                 colorIndex = Convert.ToInt32(sd["c"]),
+                                // "a" = synced rotation (default random if absent); "t" = original timestamp
+                                angle = sd.ContainsKey("a") ? Convert.ToDouble(sd["a"]) : m_random.NextDouble() * Math.PI * 2.0,
                                 startTimeMs = Convert.ToInt64(sd["t"])
                             });
                         }
@@ -917,9 +925,12 @@ namespace RelayTestApp
                 }
                 else if (op == "shockwave" && data != null)
                 {
+                    // Use the sender's synced rotation (default random if an older client omits it)
+                    double rAngle = data.ContainsKey("angle") ? Convert.ToDouble(data["angle"]) : m_random.NextDouble() * Math.PI * 2.0;
                     AddShockwaveAndSplotch(
                         new Point(Convert.ToDouble(data["x"]), Convert.ToDouble(data["y"])),
-                        member.colorIndex);
+                        member.colorIndex,
+                        rAngle);
                 }
                 break;
             }

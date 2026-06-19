@@ -3,6 +3,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 
 namespace RelayTestApp
 {
@@ -13,6 +15,27 @@ namespace RelayTestApp
     /// </summary>
     public class ViewportControl : Control
     {
+        private const double SplotchSize = 64.0; // rendered diameter (px), matches the other RTA clients
+
+        // Shared splotch art (white alpha-mask), loaded once and used as an opacity mask
+        // so it can be filled with each player's colour (opaque) and rotated to a synced angle.
+        private static Bitmap _splatBitmap;
+        private static bool   _splatLoadAttempted;
+
+        private static Bitmap SplatBitmap()
+        {
+            if (!_splatLoadAttempted)
+            {
+                _splatLoadAttempted = true;
+                try
+                {
+                    _splatBitmap = new Bitmap(AssetLoader.Open(new Uri("avares://RelayTestApp/assets/PaintSplatter1.png")));
+                }
+                catch { _splatBitmap = null; }
+            }
+            return _splatBitmap;
+        }
+
         public override void Render(DrawingContext ctx)
         {
             // Background — dark grey matching Java/C++/JS versions
@@ -42,18 +65,42 @@ namespace RelayTestApp
                 byte a      = (byte)(255 * alpha);
                 var  c      = CursorColor.COLORS[sp.colorIndex];
                 var  brush  = new SolidColorBrush(new Color(a, c.R, c.G, c.B));
-                ctx.DrawEllipse(brush, null, new Point(sp.pos.X * w, sp.pos.Y * h), 8, 8);
+                double cx   = sp.pos.X * w;
+                double cy   = sp.pos.Y * h;
+
+                Bitmap splat = SplatBitmap();
+                if (splat != null)
+                {
+                    // Opaque, player-coloured PaintSplatter1.png, rotated by the network-synced angle.
+                    // rect is centred on the origin; rotate about the origin then translate to (cx,cy),
+                    // so the splotch spins about its own centre.
+                    var rect = new Rect(-SplotchSize / 2, -SplotchSize / 2, SplotchSize, SplotchSize);
+                    var transform = Matrix.CreateRotation(sp.angle) * Matrix.CreateTranslation(cx, cy);
+
+                    using (ctx.PushTransform(transform))
+                    using (ctx.PushOpacityMask(new ImageBrush(splat) { Stretch = Stretch.Uniform }, rect))
+                    {
+                        ctx.FillRectangle(brush, rect);
+                    }
+                }
+                else
+                {
+                    // Fallback if the splat image failed to load
+                    ctx.DrawEllipse(brush, null, new Point(cx, cy), 8, 8);
+                }
             }
 
             // Shockwaves — expanding rings that fade out over 1 second
             foreach (var sw in State.shockwaves)
             {
                 double elapsed = (now - sw.startTime).TotalMilliseconds;
-                float  t       = (float)(elapsed / 1000.0);
-                t = 1.0f - (1.0f - t) * (1.0f - t); // ease-out
-                double radius  = t * 32.0;
+                float  t       = (float)Math.Clamp(elapsed / 600.0, 0.0, 1.0); // 0.6s, matches React/Java rings
+                float  eased   = 1.0f - (1.0f - t) * (1.0f - t);               // ease-out
+                double radius  = eased * 64.0;                                 // 128px diameter, matches other clients
+                byte   ringA   = (byte)(255 * (1.0 - t));                      // fade out as it expands
 
-                var pen = new Pen(new SolidColorBrush(CursorColor.COLORS[sw.colorIndex]), 1.5);
+                var c   = CursorColor.COLORS[sw.colorIndex];
+                var pen = new Pen(new SolidColorBrush(new Color(ringA, c.R, c.G, c.B)), 2.0);
                 ctx.DrawEllipse(null, pen, new Point(sw.pos.X * w, sw.pos.Y * h), radius, radius);
             }
 
