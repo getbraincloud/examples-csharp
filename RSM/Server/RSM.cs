@@ -11,9 +11,15 @@ namespace Server
     {
         static public int Main()
         {
+            string appId      = Environment.GetEnvironmentVariable("APP_ID")      ?? "20001";
+            string serverName = Environment.GetEnvironmentVariable("SERVER_NAME") ?? "TestServer";
+            string serverSecret = Environment.GetEnvironmentVariable("SERVER_SECRET") ?? "2ddf8355-c516-48dd-a6b0-e35bd75fac80";
+            string s2sUrl     = Environment.GetEnvironmentVariable("S2S_URL")     ?? "https://api.internal.braincloudservers.com/s2sdispatcher";
+            int port = int.TryParse(Environment.GetEnvironmentVariable("PORT"), out int p) ? p : 7779;
+
             // Create an HTTP listener.
             HttpListener listener = new HttpListener();
-            listener.Prefixes.Add("http://*:port/");
+            listener.Prefixes.Add($"http://*:{port}/");
             listener.Start();
 
             Console.WriteLine("Listening...");
@@ -59,11 +65,7 @@ namespace Server
             listener.Stop();
 
             // Create the game server instance, and run it.
-            GameServer gameServer = new GameServer("appId",
-                                                   "serverName",
-                                                   "serverSecret",
-                                                   "https://api.braincloudservers.com/s2sdispatcher",
-                                                   lobbyId);
+            GameServer gameServer = new GameServer(appId, serverName, serverSecret, s2sUrl, lobbyId);
             gameServer.Run();
 
             return 0;

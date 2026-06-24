@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>RelayExampleApp</AssemblyName>
     <RootNamespace>RelayExampletApp</RootNamespace>
+    <DefineConstants>DOT_NET</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\braincloud-csharp\BrainCloudClient\solution\vstudio\BrainCloudClient.csproj" />
+    <ProjectReference Include="..\braincloud-csharp\BrainCloudClient\solution\vstudio\BrainCloudClient.dotnet.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,3 +1,8 @@
 [submodule "braincloud-csharp"]
 	path = braincloud-csharp
 	url = https://github.com/getbraincloud/braincloud-csharp.git
+	branch = develop
+[submodule "csharp-s2s"]
+	path = csharp-s2s
+	url = https://github.com/getbraincloud/brainclouds2s-csharp.git
+	branch = develop

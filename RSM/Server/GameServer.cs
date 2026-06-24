@@ -12,6 +12,7 @@ namespace Server
     {
         bool _isRunning = true;
         BrainCloudS2S _s2s;
+        BrainCloudS2SPrl _prl;
         string _lobbyId;
 
         public GameServer(string appId,
@@ -42,6 +43,7 @@ namespace Server
         public void Update()
         {
             if (_s2s != null) _s2s.RunCallbacks();
+            _prl?.Update();
         }
 
         void OnAuthenticated(string responseString)
@@ -54,7 +56,30 @@ namespace Server
                 return;
             }
 
-            // Send request to get the lobby data. This will tell us who we are 
+            if (BrainCloudS2SPrl.IsPreReadyLaunch())
+            {
+                _prl = new BrainCloudS2SPrl();
+                _prl.Start(_s2s, _lobbyId, OnPrlComplete);
+            }
+            else
+            {
+                RequestLobbyData();
+            }
+        }
+
+        void OnPrlComplete(bool proceedWithLaunch)
+        {
+            if (!proceedWithLaunch)
+            {
+                _isRunning = false;
+                return;
+            }
+            RequestLobbyData();
+        }
+
+        void RequestLobbyData()
+        {
+            // Send request to get the lobby data. This will tell us who we are
             // expecting to get connection from and their passcode. We technically
             // already have this from the RSM, but we just assumed this game
             // server was launched without an RSM.

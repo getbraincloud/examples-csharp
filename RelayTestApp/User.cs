@@ -1,9 +1,5 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Avalonia;
 
 namespace RelayTestApp
 {
@@ -16,6 +12,8 @@ namespace RelayTestApp
         public bool isAlive = false;
         public bool allowSendTo = true;
         public Point pos = new Point(0, 0);
+        public Dictionary<string, int> pings = new Dictionary<string, int>(); // pre-game region latencies shared via lobby extra (ms)
+        public int activePing = -1; // live relay-server RTT broadcast during gameplay; -1 = not yet received
 
         public User() { }
 

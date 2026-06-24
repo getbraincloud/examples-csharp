@@ -1,0 +1,257 @@
+<Window xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:RelayTestApp"
+    x:Class="RelayTestApp.MainWindow"
+    Title="Cursor Party"
+    Icon="avares://RelayTestApp/assets/icon.png"
+    Width="960" Height="700"
+    MinWidth="800" MinHeight="600"
+    Background="#2B2B2B"
+    RequestedThemeVariant="Dark">
+
+    <DockPanel>
+
+        <!-- Menu bar -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_App">
+                <MenuItem Header="Log _Out" Name="mnuLogOut" Click="mnuLogOut_Click"
+                    IsEnabled="False" />
+                <Separator />
+                <MenuItem Header="E_xit" Click="mnuExit_Click" />
+            </MenuItem>
+            <MenuItem Header="_Game">
+                <MenuItem Header="_Leave" Name="mnuLeave" Click="mnuLeave_Click" IsEnabled="False" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Screen container — one child visible at a time -->
+        <Grid>
+
+            <!-- LOGIN -->
+            <Grid Name="screenLogin" IsVisible="True"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Width="320">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Cursor Party logo -->
+                <Image Grid.Row="0" Grid.ColumnSpan="2"
+                    Source="avares://RelayTestApp/assets/icon.png"
+                    Width="220" Height="220"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,12" />
+
+                <!-- Title -->
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                    Text="Cursor Party"
+                    FontSize="26" FontWeight="Bold"
+                    HorizontalAlignment="Center"
+                    Foreground="White"
+                    Margin="0,0,0,16" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Username:" VerticalAlignment="Center"
+                    Margin="0,4" />
+                <TextBox Grid.Row="2" Grid.Column="1" Name="txtUsername" Margin="0,4" />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Password:" VerticalAlignment="Center"
+                    Margin="0,4" />
+                <TextBox Grid.Row="3" Grid.Column="1" Name="txtPassword" PasswordChar="*"
+                    Margin="0,4" />
+
+                <CheckBox Grid.Row="4" Grid.ColumnSpan="2" Name="chkRememberMe"
+                    Content="Remember Me" Margin="0,4" />
+
+                <Button Grid.Row="5" Grid.ColumnSpan="2" Name="btnLogin"
+                    Content="Login" Click="btnLogin_Click"
+                    HorizontalAlignment="Stretch" Margin="0,8" />
+
+                <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Name="lblError"
+                    Foreground="Red" TextWrapping="Wrap" IsVisible="False" Margin="0,4" />
+            </Grid>
+
+            <!-- LOGGING IN -->
+            <Grid Name="screenLoggingIn" IsVisible="False"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Logging in..." FontSize="20" />
+            </Grid>
+
+            <!-- MAIN MENU -->
+            <Grid Name="screenMainMenu" IsVisible="False"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Width="280">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Lobby:" VerticalAlignment="Center"
+                    Margin="0,4" />
+                <ComboBox Grid.Row="0" Grid.Column="1" Name="cboLobbyType"
+                    HorizontalAlignment="Stretch" Margin="0,4" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Protocol:" VerticalAlignment="Center"
+                    Margin="0,4" />
+                <ComboBox Grid.Row="1" Grid.Column="1" Name="cboProtocol"
+                    SelectedIndex="0" HorizontalAlignment="Stretch" Margin="0,4">
+                    <ComboBoxItem>UDP</ComboBoxItem>
+                    <ComboBoxItem>TCP</ComboBoxItem>
+                    <ComboBoxItem>WebSocket</ComboBoxItem>
+                </ComboBox>
+
+                <CheckBox Grid.Row="2" Grid.ColumnSpan="2" Name="chkUsePingData"
+                    Content="With Ping Region Data" Margin="0,4"
+                    IsCheckedChanged="chkUsePingData_Changed" />
+
+                <Button Grid.Row="3" Grid.ColumnSpan="2" Name="btnPlay"
+                    Content="Play" Click="btnPlay_Click"
+                    HorizontalAlignment="Stretch" Margin="0,12" />
+            </Grid>
+
+            <!-- JOINING LOBBY -->
+            <Grid Name="screenJoiningLobby" IsVisible="False"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel HorizontalAlignment="Center" Spacing="8">
+                    <TextBlock Text="Finding lobby..." FontSize="20" HorizontalAlignment="Center" />
+                    <TextBlock Name="lblSearchTimer" FontSize="28" FontWeight="Bold"
+                        HorizontalAlignment="Center" />
+                    <TextBlock Name="lblLobbyStatus" FontSize="12" HorizontalAlignment="Center"
+                        Foreground="Gray" />
+                </StackPanel>
+            </Grid>
+
+            <!-- LOBBY -->
+            <Grid Name="screenLobby" IsVisible="False" Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Color grid — above player list -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                    <TextBlock Text="Color:" Margin="0,0,0,4" />
+                    <Grid Name="panelColorButtons" />
+                </StackPanel>
+
+                <!-- Lobby ID -->
+                <TextBlock Grid.Row="1" Name="lblLobbyId"
+                    FontSize="11" Foreground="Gray" Margin="0,0,0,8" />
+
+                <!-- Player list -->
+                <StackPanel Grid.Row="2">
+                    <TextBlock Text="Players:" FontWeight="Bold" Margin="0,0,0,8" />
+                    <WrapPanel Name="panelLobbyPlayers" />
+                    <StackPanel Name="panelPingData" Margin="0,12,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0"
+                    HorizontalAlignment="Center">
+                    <Button Content="Leave" Click="btnLobbyLeave_Click" Width="80" />
+                    <Button Name="btnStart" Content="Start" Click="btnStart_Click" Width="80" />
+                </StackPanel>
+            </Grid>
+
+            <!-- STARTING -->
+            <Grid Name="screenStarting" IsVisible="False"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel HorizontalAlignment="Center" Spacing="8">
+                    <TextBlock Text="Starting..." FontSize="20" HorizontalAlignment="Center" />
+                    <TextBlock Name="lblStartingTimer" FontSize="28" FontWeight="Bold"
+                        HorizontalAlignment="Center" />
+                    <TextBlock Name="lblStartingSubStatus" FontSize="12"
+                        HorizontalAlignment="Center"
+                        Foreground="Gray" />
+                    <TextBlock Name="lblStartingLobbyId" FontSize="10" HorizontalAlignment="Center"
+                        Foreground="#555555" TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+
+            <!-- GAME: HUD panel LEFT, viewport RIGHT -->
+            <Grid Name="screenGame" IsVisible="False" Background="#333333">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="210" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- HUD: left panel -->
+                <Border Grid.Column="0" Background="#3A3A3A" BorderBrush="#555555"
+                    BorderThickness="0,0,1,0">
+                    <StackPanel Margin="8" Spacing="4">
+
+                        <!-- Game timer -->
+                        <TextBlock Name="lblGameTimer" FontSize="22" FontWeight="Bold"
+                            HorizontalAlignment="Center" Margin="0,0,0,4" />
+
+                        <!-- Lobby ID in game -->
+                        <TextBlock Name="lblGameLobbyId" FontSize="10" Foreground="Gray"
+                            HorizontalAlignment="Center" Margin="0,0,0,8" TextWrapping="Wrap" />
+
+                        <TextBlock Text="Players:" FontWeight="Bold" />
+                        <ScrollViewer MaxHeight="220">
+                            <StackPanel Name="panelPlayers" />
+                        </ScrollViewer>
+
+                        <!-- Host-only controls -->
+                        <StackPanel Name="panelHostControls" IsVisible="False" Spacing="4"
+                            Margin="0,8,0,0">
+                            <Button Content="End Match" Click="btnEndMatch_Click"
+                                HorizontalAlignment="Stretch" />
+                            <Button Content="Clear Splotches" Click="btnClearSplotches_Click"
+                                HorizontalAlignment="Stretch" />
+                        </StackPanel>
+
+                        <Separator Margin="0,8" />
+                        <TextBlock Text="Send options:" FontWeight="Bold" />
+                        <CheckBox Name="chkReliable" Content="Reliable"
+                            IsCheckedChanged="chkSendOption_Changed" />
+                        <CheckBox Name="chkOrdered" Content="Ordered" IsChecked="True"
+                            IsCheckedChanged="chkSendOption_Changed" />
+
+                        <TextBlock Text="Channel:" Margin="0,8,0,0" />
+                        <ComboBox Name="cboChannels" SelectedIndex="0"
+                            HorizontalAlignment="Stretch"
+                            SelectionChanged="cboChannels_Changed">
+                            <ComboBoxItem>0</ComboBoxItem>
+                            <ComboBoxItem>1</ComboBoxItem>
+                            <ComboBoxItem>2</ComboBoxItem>
+                            <ComboBoxItem>3</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                </Border>
+
+                <!-- Viewport: custom-rendered game area, fills right column -->
+                <local:ViewportControl Grid.Column="1" Name="viewport"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch" />
+            </Grid>
+
+            <!-- Version overlay — always visible, bottom-left corner -->
+            <Border HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Background="#AA000000" Padding="6,4" Margin="6,0,0,6"
+                IsHitTestVisible="False">
+                <StackPanel Spacing="1">
+                    <TextBlock Name="lblVersionApp" FontSize="10" Foreground="#CCFFFFFF" />
+                    <TextBlock Name="lblVersionClient" FontSize="10" Foreground="#CCFFFFFF" />
+                    <TextBlock Name="lblVersionServer" FontSize="10" Foreground="#CCFFFFFF" />
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </DockPanel>
+</Window>

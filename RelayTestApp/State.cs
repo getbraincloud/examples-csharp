@@ -1,14 +1,8 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace RelayTestApp
 {
-    enum ScreenState
+    public enum ScreenState
     {
         Login,
         LoggingIn,
@@ -21,16 +15,26 @@ namespace RelayTestApp
 
     static class State
     {
-        static public App app = new App();
+        static public GameApp app = new GameApp();
+        static public MainWindow form;
 
-        static public FormGame form;
-
-        static public ScreenState screenState = ScreenState.Login; /* Current screen we are on */
-        static public User user = null; /* Our user */
-        static public Lobby lobby = null; /* Lobby with its members as received from brainCloud Lobby Service */
-        static public Server server = null; /* Server info (IP, port, protocol, passcode) */
-        static public List<Shockwave> shockwaves = new List<Shockwave>(); /* Players' created shockwaves */
+        static public ScreenState screenState = ScreenState.Login;
+        static public User user = null;
+        static public Lobby lobby = null;
+        static public Server server = null;
+        static public List<Shockwave> shockwaves = new List<Shockwave>();
+        static public List<Splotch> splotches = new List<Splotch>();
         static public int mouseX = 0;
         static public int mouseY = 0;
+
+        // Game session state
+        static public long gameStartTime = 0;       // UTC epoch ms when current round started (0 = not in game)
+        static public int  roundNumber   = 0;       // Increments each round within a lobby session
+        static public int  splotchDurationSec = -1; // -1 = forever; >0 = lifetime in seconds
+        static public string lobbyStatusText = "";  // Status shown on the joining-lobby screen
+        static public List<string> appLobbies = new List<string>();  // Lobby types from GlobalProperties
+        static public long lobbySearchStartTime = 0;   // UTC epoch ms when lobby search started
+        static public long lobbyStatusStartTime = 0;   // UTC epoch ms when STARTING event fired
+        static public Dictionary<string, int> pingData = new Dictionary<string, int>(); // our measured region latencies (ms)
     }
 }
