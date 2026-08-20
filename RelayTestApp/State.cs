@@ -10,7 +10,8 @@ namespace RelayTestApp
         JoiningLobby,
         Lobby,
         Starting,
-        Game
+        Game,
+        MatchSummary
     }
 
     static class State
@@ -36,5 +37,28 @@ namespace RelayTestApp
         static public long lobbySearchStartTime = 0;   // UTC epoch ms when lobby search started
         static public long lobbyStatusStartTime = 0;   // UTC epoch ms when STARTING event fired
         static public Dictionary<string, int> pingData = new Dictionary<string, int>(); // our measured region latencies (ms)
+        static public long lobbyJoinedAtMs = 0; // UTC epoch ms when this lobby was first entered; drives the INFO tab's "time in lobby"
+
+        // Global chat (this-lobby chat lives on Lobby.chatMessages instead, since it
+        // must be carried forward across the wholesale Lobby rebuilds OnLobbyEvent does)
+        static public List<ChatMessage> chatMessagesGlobal = new List<ChatMessage>();
+
+        // Leaderboard ids — defaults match the cpp reference client; overridable via
+        // the same Global App Properties mechanism as Colors/SplotchDuration above.
+        static public string pointsLeaderboardId = "CursorParty_Points";
+        static public string pointsLeaderboardIdQuarterly = "CursorParty_Points_Quarterly";
+        static public string coverageLeaderboardId = "CursorParty_HighestCoverage";
+        static public string coverageLeaderboardIdQuarterly = "CursorParty_HighestCoverage_Quarterly";
+
+        // Coverage tracking
+        static public List<Coverage.CoverageEntry> coverage = new List<Coverage.CoverageEntry>(); // live in-match rank board
+        static public long splotchGeneration = 0;   // bumped on every splotch add/clear/sync; gates the debounced recompute below
+        static public long coverageComputedGen = -1;
+        static public long coverageComputedAtMs = 0;
+
+        // Match summary / post-match leaderboard posting
+        static public MatchResult matchResult = new MatchResult(); // valid=false until the host's broadcast (or a local fallback) lands
+        static public long matchSummaryArrivalTime = 0; // UTC epoch ms, drives the 45s auto-queue and 8s "leaderboard unavailable" timeouts
+        static public int leaderboardPostedRound = -1;  // idempotency guard — the points board is cumulative, a double-post can't be undone
     }
 }

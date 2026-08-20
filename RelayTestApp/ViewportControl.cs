@@ -16,6 +16,11 @@ namespace RelayTestApp
     public class ViewportControl : Control
     {
         private const double SplotchSize = 64.0; // rendered diameter (px), matches the other RTA clients
+        private const long AutoPaintIntervalMs = 150; // matches the cpp/js/Godot/Java cross-client standard for hold-to-paint
+
+        private bool _isPointerDown;
+        private long _lastAutoPaintMs;
+        private Point _lastPointerPos;
 
         // Shared splotch art (white alpha-mask), loaded once and used as an opacity mask
         // so it can be filled with each player's colour (opaque) and rotated to a synced angle.
@@ -38,6 +43,23 @@ namespace RelayTestApp
 
         public override void Render(DrawingContext ctx)
         {
+            // Repeatedly fires Shockwave while the mouse is held down, throttled to
+            // AutoPaintIntervalMs — matches the cpp/js/Godot/Java "hold to paint" feel.
+            // Render() runs every ~16ms while this screen is up (driven by MainWindow's
+            // DispatcherTimer -> UpdateEffects -> InvalidateVisual), so it doubles as the
+            // per-frame tick this needs; the initial paint-on-press already happens in
+            // OnPointerPressed (edge-triggered).
+            if (_isPointerDown && State.screenState == ScreenState.Game)
+            {
+                long nowMsForPaint = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                if (nowMsForPaint - _lastAutoPaintMs >= AutoPaintIntervalMs)
+                {
+                    _lastAutoPaintMs = nowMsForPaint;
+                    if (_lastPointerPos.X >= 0 && _lastPointerPos.X <= 1 && _lastPointerPos.Y >= 0 && _lastPointerPos.Y <= 1)
+                        State.app.Shockwave(_lastPointerPos);
+                }
+            }
+
             // Background — dark grey matching Java/C++/JS versions
             ctx.FillRectangle(new SolidColorBrush(Color.FromRgb(0x33, 0x33, 0x33)), new Rect(Bounds.Size));
 
@@ -136,7 +158,8 @@ namespace RelayTestApp
             if (State.screenState == ScreenState.Game)
             {
                 var raw = e.GetPosition(this);
-                State.app.MouseMoved(new Point(raw.X / Bounds.Width, raw.Y / Bounds.Height));
+                _lastPointerPos = new Point(raw.X / Bounds.Width, raw.Y / Bounds.Height);
+                State.app.MouseMoved(_lastPointerPos);
             }
         }
 
@@ -146,8 +169,17 @@ namespace RelayTestApp
             if (State.screenState == ScreenState.Game)
             {
                 var raw = e.GetPosition(this);
-                State.app.Shockwave(new Point(raw.X / Bounds.Width, raw.Y / Bounds.Height));
+                _lastPointerPos = new Point(raw.X / Bounds.Width, raw.Y / Bounds.Height);
+                _isPointerDown = true;
+                _lastAutoPaintMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                State.app.Shockwave(_lastPointerPos);
             }
+        }
+
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
+        {
+            base.OnPointerReleased(e);
+            _isPointerDown = false;
         }
     }
 }

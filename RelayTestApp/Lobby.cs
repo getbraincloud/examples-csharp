@@ -11,6 +11,11 @@ namespace RelayTestApp
         public string lobbyId;
         public string ownerCxId;
         public List<User> members = new List<User>();
+        // This-lobby chat (via Lobby service SendSignal). Lobby is rebuilt from
+        // scratch on every RTT lobby event (joins/updates, not just chat), so the
+        // caller must copy this field forward from the outgoing Lobby instance or
+        // every member update silently wipes the chat history.
+        public List<ChatMessage> chatMessages = new List<ChatMessage>();
 
         public Lobby(Dictionary<string, object> lobbyJson, string in_lobbyId)
         {

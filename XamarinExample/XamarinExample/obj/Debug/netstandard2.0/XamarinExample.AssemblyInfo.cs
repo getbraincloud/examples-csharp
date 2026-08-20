@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("XamarinExample")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+76b44bd2c30e85a603b644fcbaceded1ce2702eb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2bc4d8cdb9fe2d99c73b5510d1790b75b80a55d9")]
 [assembly: System.Reflection.AssemblyProductAttribute("XamarinExample")]
 [assembly: System.Reflection.AssemblyTitleAttribute("XamarinExample")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

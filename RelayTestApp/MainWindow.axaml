@@ -87,39 +87,82 @@
 
             <!-- MAIN MENU -->
             <Grid Name="screenMainMenu" IsVisible="False"
-                HorizontalAlignment="Center" VerticalAlignment="Center" Width="280">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="90" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="24">
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Lobby:" VerticalAlignment="Center"
-                    Margin="0,4" />
-                <ComboBox Grid.Row="0" Grid.Column="1" Name="cboLobbyType"
-                    HorizontalAlignment="Stretch" Margin="0,4" />
+                    <!-- Setup card -->
+                    <Border Width="380" Background="#1D202C" BorderBrush="#333845"
+                        BorderThickness="1" Padding="28">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Cursor Party" FontSize="26" FontWeight="Bold"
+                                HorizontalAlignment="Center" Margin="0,0,0,8" />
+                            <TextBlock Text="Paint more of the board than anyone else — cover it, and you win the party."
+                                FontSize="12" Foreground="#66EE88" TextWrapping="Wrap"
+                                TextAlignment="Center" Margin="0,0,0,12" />
+                            <Separator Margin="0,0,0,12" />
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Protocol:" VerticalAlignment="Center"
-                    Margin="0,4" />
-                <ComboBox Grid.Row="1" Grid.Column="1" Name="cboProtocol"
-                    SelectedIndex="0" HorizontalAlignment="Stretch" Margin="0,4">
-                    <ComboBoxItem>UDP</ComboBoxItem>
-                    <ComboBoxItem>TCP</ComboBoxItem>
-                    <ComboBoxItem>WebSocket</ComboBoxItem>
-                </ComboBox>
+                            <TextBlock Text="LOBBY TYPE" FontSize="10" FontWeight="Bold" Foreground="Gray" />
+                            <ComboBox Name="cboLobbyType" HorizontalAlignment="Stretch" Margin="0,4,0,12" />
 
-                <CheckBox Grid.Row="2" Grid.ColumnSpan="2" Name="chkUsePingData"
-                    Content="With Ping Region Data" Margin="0,4"
-                    IsCheckedChanged="chkUsePingData_Changed" />
+                            <TextBlock Text="NETWORK PROTOCOL" FontSize="10" FontWeight="Bold" Foreground="Gray" />
+                            <!-- Displays abbreviated protocol names; btnPlay_Click maps the
+                                 index back to RelayConnectionType the same way it already did. -->
+                            <ComboBox Name="cboProtocol" SelectedIndex="0"
+                                HorizontalAlignment="Stretch" Margin="0,4,0,12">
+                                <ComboBoxItem>WS</ComboBoxItem>
+                                <ComboBoxItem>TCP</ComboBoxItem>
+                                <ComboBoxItem>UDP</ComboBoxItem>
+                            </ComboBox>
 
-                <Button Grid.Row="3" Grid.ColumnSpan="2" Name="btnPlay"
-                    Content="Play" Click="btnPlay_Click"
-                    HorizontalAlignment="Stretch" Margin="0,12" />
+                            <CheckBox Name="chkUsePingData" Content="With Ping Region Data"
+                                IsCheckedChanged="chkUsePingData_Changed" Margin="0,0,0,12" />
+                            <Separator Margin="0,0,0,12" />
+
+                            <TextBlock Text="Not sure what any of this means? Just tap below."
+                                FontSize="11" FontStyle="Italic" Foreground="Gray"
+                                HorizontalAlignment="Center" Margin="0,0,0,8" />
+
+                            <Button Name="btnPlay" Content="Find / Create Lobby" Click="btnPlay_Click"
+                                HorizontalAlignment="Stretch" Padding="0,10"
+                                Background="#4466EE" Foreground="White" FontWeight="Bold" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Chat / Leaderboard card — independent of the Lobby screen's tabs
+                         (Avalonia names are window-scoped, so this can't share those named
+                         controls; it gets its own small state instead). -->
+                    <Border Width="340" Height="480" Background="#1D202C" BorderBrush="#333845"
+                        BorderThickness="1">
+                        <TabControl>
+                            <TabItem Header="Leaderboard">
+                                <DockPanel Margin="8">
+                                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" Margin="0,0,0,4">
+                                        <Button Name="btnLbPointsMenu" Content="Most Beaten" Click="btnLbBoardMenu_Click" Tag="0" />
+                                        <Button Name="btnLbCoverageMenu" Content="Coverage %" Click="btnLbBoardMenu_Click" Tag="1" />
+                                    </StackPanel>
+                                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" Margin="0,0,0,8">
+                                        <Button Name="btnLbLifetimeMenu" Content="Lifetime" Click="btnLbPeriodMenu_Click" Tag="0" />
+                                        <Button Name="btnLbQuarterlyMenu" Content="Quarterly" Click="btnLbPeriodMenu_Click" Tag="1" />
+                                    </StackPanel>
+                                    <ScrollViewer>
+                                        <StackPanel Name="panelLeaderboardMenu" Spacing="2" />
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </TabItem>
+                            <TabItem Header="Chat">
+                                <DockPanel Margin="8">
+                                    <Grid DockPanel.Dock="Bottom" Margin="0,8,0,0" ColumnDefinitions="*,Auto">
+                                        <TextBox Grid.Column="0" Name="txtChatInputMenu" KeyDown="txtChatInputMenu_KeyDown" Watermark="Message..." />
+                                        <Button Grid.Column="1" Content="Send" Click="btnChatSendMenu_Click" Margin="4,0,0,0" />
+                                    </Grid>
+                                    <ScrollViewer Name="scrollChatLogMenu">
+                                        <TextBlock Name="lblChatLogMenu" TextWrapping="Wrap" />
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </TabItem>
+                        </TabControl>
+                    </Border>
+                </StackPanel>
             </Grid>
 
             <!-- JOINING LOBBY -->
@@ -136,35 +179,83 @@
 
             <!-- LOBBY -->
             <Grid Name="screenLobby" IsVisible="False" Margin="16">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="300" />
+                </Grid.ColumnDefinitions>
 
-                <!-- Color grid — above player list -->
-                <StackPanel Grid.Row="0" Margin="0,0,0,12">
-                    <TextBlock Text="Color:" Margin="0,0,0,4" />
-                    <Grid Name="panelColorButtons" />
-                </StackPanel>
+                <!-- Left: members + ping data + buttons -->
+                <Grid Grid.Column="0" Margin="0,0,16,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <!-- Lobby ID -->
-                <TextBlock Grid.Row="1" Name="lblLobbyId"
-                    FontSize="11" Foreground="Gray" Margin="0,0,0,8" />
+                    <!-- Lobby ID -->
+                    <TextBlock Grid.Row="0" Name="lblLobbyId"
+                        FontSize="11" Foreground="Gray" Margin="0,0,0,8" />
 
-                <!-- Player list -->
-                <StackPanel Grid.Row="2">
-                    <TextBlock Text="Players:" FontWeight="Bold" Margin="0,0,0,8" />
-                    <WrapPanel Name="panelLobbyPlayers" />
-                    <StackPanel Name="panelPingData" Margin="0,12,0,0" />
-                </StackPanel>
+                    <!-- Member list -->
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="Members:" FontWeight="Bold" Margin="0,0,0,8" />
+                        <StackPanel Name="panelLobbyMembers" Spacing="4" />
+                        <StackPanel Name="panelPingData" Margin="0,12,0,0" />
+                    </StackPanel>
 
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0"
-                    HorizontalAlignment="Center">
-                    <Button Content="Leave" Click="btnLobbyLeave_Click" Width="80" />
-                    <Button Name="btnStart" Content="Start" Click="btnStart_Click" Width="80" />
-                </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0"
+                        HorizontalAlignment="Center">
+                        <Button Content="Leave" Click="btnLobbyLeave_Click" Width="80" />
+                        <!-- Host: Start has no readiness gate at all — always available as an
+                             early-start option. Non-host: Ready Up/Not Ready toggles only their
+                             own state, never starts anything. -->
+                        <Button Name="btnStart" Content="Start" Click="btnStart_Click" Width="80" />
+                        <Button Name="btnReadyToggle" Content="Ready Up" Click="btnReadyToggle_Click" Width="110" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Right: Chat / Leaderboards / Info tabs -->
+                <TabControl Grid.Column="1">
+                    <TabItem Header="Chat">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" Margin="0,0,0,8">
+                                <Button Name="btnChatThisLobby" Content="This Lobby" Click="btnChatSubTab_Click" Tag="lobby" />
+                                <Button Name="btnChatGlobal" Content="Global" Click="btnChatSubTab_Click" Tag="global" />
+                            </StackPanel>
+                            <Grid DockPanel.Dock="Bottom" Margin="0,8,0,0" ColumnDefinitions="*,Auto">
+                                <TextBox Grid.Column="0" Name="txtChatInput" KeyDown="txtChatInput_KeyDown" Watermark="Message..." />
+                                <Button Grid.Column="1" Content="Send" Click="btnChatSend_Click" Margin="4,0,0,0" />
+                            </Grid>
+                            <ScrollViewer Name="scrollChatLog">
+                                <TextBlock Name="lblChatLog" TextWrapping="Wrap" />
+                            </ScrollViewer>
+                        </DockPanel>
+                    </TabItem>
+                    <TabItem Header="Leaderboards">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" Margin="0,0,0,4">
+                                <Button Name="btnLbPoints" Content="Most Beaten" Click="btnLbBoard_Click" Tag="0" />
+                                <Button Name="btnLbCoverage" Content="Coverage %" Click="btnLbBoard_Click" Tag="1" />
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="4" Margin="0,0,0,8">
+                                <Button Name="btnLbLifetime" Content="Lifetime" Click="btnLbPeriod_Click" Tag="0" />
+                                <Button Name="btnLbQuarterly" Content="Quarterly" Click="btnLbPeriod_Click" Tag="1" />
+                            </StackPanel>
+                            <ScrollViewer>
+                                <StackPanel Name="panelLeaderboard" Spacing="2" />
+                            </ScrollViewer>
+                        </DockPanel>
+                    </TabItem>
+                    <TabItem Header="Info">
+                        <StackPanel Spacing="6" Margin="0,8,0,0">
+                            <TextBlock Name="lblInfoLobbyId" />
+                            <TextBlock Name="lblInfoRegion" />
+                            <TextBlock Name="lblInfoPlayers" />
+                            <TextBlock Name="lblInfoTimeInLobby" />
+                            <TextBlock Name="lblInfoStatus" Foreground="#66EE88" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
             </Grid>
 
             <!-- STARTING -->
@@ -182,63 +273,122 @@
                 </StackPanel>
             </Grid>
 
-            <!-- GAME: HUD panel LEFT, viewport RIGHT -->
+            <!-- GAME: live RANK/PLAYER/COVERAGE sidebar LEFT, header+viewport+debug RIGHT -->
             <Grid Name="screenGame" IsVisible="False" Background="#333333">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="210" />
+                    <ColumnDefinition Width="220" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- HUD: left panel -->
-                <Border Grid.Column="0" Background="#3A3A3A" BorderBrush="#555555"
+                <!-- Sidebar: live RANK / PLAYER / COVERAGE board (replaces the old
+                     debug-controls-only HUD) -->
+                <Border Grid.Column="0" Background="#2A2A2A" BorderBrush="#555555"
                     BorderThickness="0,0,1,0">
-                    <StackPanel Margin="8" Spacing="4">
-
-                        <!-- Game timer -->
-                        <TextBlock Name="lblGameTimer" FontSize="22" FontWeight="Bold"
-                            HorizontalAlignment="Center" Margin="0,0,0,4" />
-
-                        <!-- Lobby ID in game -->
-                        <TextBlock Name="lblGameLobbyId" FontSize="10" Foreground="Gray"
-                            HorizontalAlignment="Center" Margin="0,0,0,8" TextWrapping="Wrap" />
-
-                        <TextBlock Text="Players:" FontWeight="Bold" />
-                        <ScrollViewer MaxHeight="220">
-                            <StackPanel Name="panelPlayers" />
+                    <DockPanel Margin="8">
+                        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,4">
+                            <TextBlock Grid.Column="0" Text="RANK / PLAYER" FontSize="10"
+                                Foreground="Gray" FontWeight="Bold" />
+                            <TextBlock Grid.Column="1" Text="COVERAGE" FontSize="10"
+                                Foreground="Gray" FontWeight="Bold" />
+                        </Grid>
+                        <ScrollViewer>
+                            <StackPanel Name="panelCoverageSidebar" Spacing="2" />
                         </ScrollViewer>
-
-                        <!-- Host-only controls -->
-                        <StackPanel Name="panelHostControls" IsVisible="False" Spacing="4"
-                            Margin="0,8,0,0">
-                            <Button Content="End Match" Click="btnEndMatch_Click"
-                                HorizontalAlignment="Stretch" />
-                            <Button Content="Clear Splotches" Click="btnClearSplotches_Click"
-                                HorizontalAlignment="Stretch" />
-                        </StackPanel>
-
-                        <Separator Margin="0,8" />
-                        <TextBlock Text="Send options:" FontWeight="Bold" />
-                        <CheckBox Name="chkReliable" Content="Reliable"
-                            IsCheckedChanged="chkSendOption_Changed" />
-                        <CheckBox Name="chkOrdered" Content="Ordered" IsChecked="True"
-                            IsCheckedChanged="chkSendOption_Changed" />
-
-                        <TextBlock Text="Channel:" Margin="0,8,0,0" />
-                        <ComboBox Name="cboChannels" SelectedIndex="0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cboChannels_Changed">
-                            <ComboBoxItem>0</ComboBoxItem>
-                            <ComboBoxItem>1</ComboBoxItem>
-                            <ComboBoxItem>2</ComboBoxItem>
-                            <ComboBoxItem>3</ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
+                    </DockPanel>
                 </Border>
 
-                <!-- Viewport: custom-rendered game area, fills right column -->
-                <local:ViewportControl Grid.Column="1" Name="viewport"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch" />
+                <!-- Right: header (timer/ping/exit) + viewport + low-profile debug strip -->
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="12,8" ColumnDefinitions="Auto,*,Auto">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Name="lblGameTimer" FontSize="26" FontWeight="Bold" />
+                            <TextBlock Name="lblGamePing" FontSize="12" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2" Name="btnExitMatch" Content="↩ Exit Match"
+                            Click="btnExitMatch_Click" VerticalAlignment="Top" />
+                    </Grid>
+
+                    <local:ViewportControl Grid.Row="1" Name="viewport"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+                    <!-- Relay debug controls — not part of the primary HUD mockup, but this
+                         app exists to test relay configs, so these stay available in a
+                         low-profile expander rather than being deleted outright (mirrors
+                         cpp keeping an equivalent separate debug panel). -->
+                    <Expander Grid.Row="2" Header="Relay debug options" IsExpanded="False"
+                        Background="#2A2A2A">
+                        <StackPanel Margin="8" Spacing="6">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <CheckBox Name="chkReliable" Content="Reliable"
+                                    IsCheckedChanged="chkSendOption_Changed" />
+                                <CheckBox Name="chkOrdered" Content="Ordered" IsChecked="True"
+                                    IsCheckedChanged="chkSendOption_Changed" />
+                                <TextBlock Text="Channel:" VerticalAlignment="Center" />
+                                <ComboBox Name="cboChannels" SelectedIndex="0" Width="60"
+                                    SelectionChanged="cboChannels_Changed">
+                                    <ComboBoxItem>0</ComboBoxItem>
+                                    <ComboBoxItem>1</ComboBoxItem>
+                                    <ComboBoxItem>2</ComboBoxItem>
+                                    <ComboBoxItem>3</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                            <TextBlock Text="Send splotches to:" FontSize="11" Foreground="Gray" />
+                            <WrapPanel Name="panelSendMask" />
+                        </StackPanel>
+                    </Expander>
+                </Grid>
+            </Grid>
+
+            <!-- MATCH SUMMARY -->
+            <Grid Name="screenMatchSummary" IsVisible="False" Margin="24">
+                <Border Background="#1D202C" BorderBrush="#333845" BorderThickness="1"
+                    MaxWidth="880" MaxHeight="640"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <DockPanel Margin="20">
+                        <StackPanel DockPanel.Dock="Top" Spacing="2" Margin="0,0,0,12">
+                            <TextBlock Text="Match Summary" FontSize="22" FontWeight="Bold" />
+                            <TextBlock Name="lblSummarySubtitle" FontSize="11" Foreground="Gray" />
+                        </StackPanel>
+
+                        <Border DockPanel.Dock="Top" Background="#2A2518" BorderBrush="#665533"
+                            BorderThickness="1" Padding="12,8" Margin="0,0,0,12">
+                            <TextBlock Name="lblSummaryWinner" FontWeight="Bold"
+                                Foreground="#EEAA44" TextWrapping="Wrap" />
+                        </Border>
+
+                        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,90,260" Margin="0,0,0,8">
+                            <TextBlock Grid.Column="0" Text="RANK / PLAYER" FontSize="10"
+                                Foreground="Gray" FontWeight="Bold" />
+                            <TextBlock Grid.Column="1" Text="COVERAGE" FontSize="10"
+                                Foreground="Gray" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="LEADERBOARD RESULT" FontSize="10"
+                                Foreground="Gray" FontWeight="Bold" />
+                        </Grid>
+
+                        <!-- Bottom-docked children declared buttons-first so the countdown
+                             row ends up just above them, not below. -->
+                        <Grid DockPanel.Dock="Bottom" Margin="0,8,0,0" ColumnDefinitions="2*,1*">
+                            <Button Grid.Column="0" Name="btnRematch" Content="Queue for Rematch"
+                                Click="btnRematch_Click" HorizontalAlignment="Stretch"
+                                Background="#4466EE" Foreground="White" FontWeight="Bold" />
+                            <Button Grid.Column="1" Content="Main Menu"
+                                Click="btnSummaryMainMenu_Click" HorizontalAlignment="Stretch"
+                                Margin="8,0,0,0" />
+                        </Grid>
+                        <TextBlock DockPanel.Dock="Bottom" Name="lblSummaryCountdown"
+                            FontSize="11" Foreground="Gray" Margin="0,12,0,0" />
+
+                        <ScrollViewer>
+                            <StackPanel Name="panelSummaryRows" Spacing="8" />
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
             </Grid>
 
             <!-- Version overlay — always visible, bottom-left corner -->

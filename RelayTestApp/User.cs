@@ -7,6 +7,7 @@ namespace RelayTestApp
     {
         public string cxId;
         public string name;
+        public string profileId = ""; // brainCloud profileId — needed server-side for leaderboard posting (not the same as cxId)
         public int colorIndex = 7;
         public bool isReady = false;
         public bool isAlive = false;
@@ -21,6 +22,7 @@ namespace RelayTestApp
         {
             cxId = userJson["cxId"] as string;
             name = userJson["name"] as string;
+            profileId = userJson.ContainsKey("profileId") ? userJson["profileId"] as string ?? "" : "";
 
             var extra = userJson["extra"] as Dictionary<string, object>;
             colorIndex = (int)extra["colorIndex"];

@@ -11,8 +11,17 @@ namespace RelayTestApp
 {
     class GameApp
     {
-        const int MATCH_DURATION_SEC = 90;
-        const int COUNTDOWN_FROM_SEC = 80;
+        // Public: mirrored for display purposes by MainWindow (game timer / rematch
+        // countdown text) rather than duplicating these as separate magic numbers there.
+        public const int MATCH_DURATION_SEC = 90;
+        public const int RESULT_GRACE_SEC = 3; // gap between the host's match_result broadcast and the actual EndMatch() call
+        public const long MatchSummaryRematchMs = 45000; // matches the cpp/Java reference constant (a nearby cpp comment says 15s — the real constant is 45s)
+        public const long LeaderboardTimeoutMs = 8000;
+
+        const long CoverageRecomputeMs = 250;
+        const long ChatChannelRetryMs = 5000;
+        const long ResultsPollIntervalMs = 1000;
+        const int MaxRelayBytes = 900;
 
         BrainCloudWrapper m_bcWrapper;
         string m_appVersion = "";
@@ -33,6 +42,24 @@ namespace RelayTestApp
         // Stays true from disconnect until next successful relay Connect — mirrors Java's _disconnecting
         // and C++'s isDisconnecting, but kept across the async disconnect-to-reconnect window.
         bool _isRelayDisconnecting = false;
+
+        // Shared RTT-enable mechanism. RTTComms.EnableRTT silently no-ops (neither callback
+        // fires) when RTT is already connected or already connecting, so anything that needs
+        // RTT (chat bootstrap from the Main Menu, matchmaking from the Play button) must funnel
+        // through here rather than each calling EnableRTT directly — otherwise whichever caller
+        // comes second gets stuck waiting on a callback that will never arrive.
+        bool _rttConnecting = false;
+        List<Action> _rttEnableWaiters = new List<Action>();
+
+        // Global chat
+        bool _chatRTTRegistered = false;
+        string _chatChannelId = null;
+        bool _chatChannelResolving = false;
+        long _chatChannelRetryAtMs = 0;
+
+        // Match summary / leaderboard posting
+        long _lastResultsPollMs = 0;
+        List<Dictionary<string, object>> _pendingMatchResult = new List<Dictionary<string, object>>();
 
         public GameApp() { }
 
@@ -68,17 +95,18 @@ namespace RelayTestApp
                     m_bcWrapper.RelayService.Disconnect();
                     m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
                     m_bcWrapper.RTTService.RegisterRTTLobbyCallback(OnLobbyEvent);
+                    // RTT connection itself stays up — only the callback registrations were
+                    // cleared above, so chat needs re-registering too (not a fresh channel fetch).
+                    EnableChatRTT();
 
-                    // Mirror C++ pendingEndMatch:
-                    //   Non-host → UpdateReady(true):  auto-ready so the lobby threshold is met as
-                    //              soon as the host clicks Start, which fires STARTING for everyone.
-                    //   Host     → UpdateReady(false): host controls when the next round begins.
+                    // Explicitly re-send our (already-false, set in OnMatchEnded) ready state.
+                    // Everyone starts the summary screen not-ready and queues for rematch
+                    // explicitly (MatchSummaryScreen's Queue-for-Rematch button / 45s auto-queue)
+                    // — replaces the old auto non-host-ready quirk that predated this port.
                     if (State.lobby != null && State.user != null)
                     {
-                        bool isHost = State.lobby.ownerCxId == State.user.cxId;
-                        State.user.isReady = !isHost;
                         m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, BuildExtraJson(State.user.colorIndex));
-                        Console.WriteLine($"[APP] UpdateReady({State.user.isReady}) sent — isHost={isHost}");
+                        Console.WriteLine($"[APP] UpdateReady({State.user.isReady}) sent");
                     }
                 }
 
@@ -100,13 +128,34 @@ namespace RelayTestApp
                     // Update visual effects and clean up expired splotches
                     State.form.UpdateEffects();
 
-                    // Host: auto-end match after MATCH_DURATION_SEC
+                    // Throttled coverage recompute (mirrors cpp/Java's debounced, recompute-on-change tick)
+                    TickCoverageRecompute();
+
+                    // Host: broadcast match_result at MATCH_DURATION_SEC, then actually end the
+                    // match RESULT_GRACE_SEC later — mirrors cpp/Java's Running -> ResultsBroadcast
+                    // -> Ended timeline so every client has results before the relay tears down.
                     if (State.gameStartTime > 0 &&
                         State.lobby?.ownerCxId == State.user?.cxId)
                     {
                         int elapsed = (int)((now - State.gameStartTime) / 1000);
                         if (elapsed >= MATCH_DURATION_SEC)
+                            BroadcastMatchResults(); // internally idempotent per round
+                        if (elapsed >= MATCH_DURATION_SEC + RESULT_GRACE_SEC)
                             EndMatch();
+                    }
+                }
+
+                if (State.screenState == ScreenState.MatchSummary)
+                {
+                    TickMatchResultsPoll();
+                    long elapsed = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - State.matchSummaryArrivalTime;
+                    if (elapsed >= MatchSummaryRematchMs)
+                    {
+                        OnContinueFromSummary();
+                    }
+                    else
+                    {
+                        State.form.UpdateMatchSummaryCountdown(elapsed);
                     }
                 }
             }
@@ -157,7 +206,7 @@ namespace RelayTestApp
             State.lobbySearchStartTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             ChangeScreen(ScreenState.JoiningLobby);
             m_bcWrapper.RTTService.RegisterRTTLobbyCallback(OnLobbyEvent);
-            m_bcWrapper.RTTService.EnableRTT(OnRTTConnected, OnRTTDisconnected);
+            EnsureRTTEnabled(ProceedToFindLobby);
         }
 
         public void CloseGame()
@@ -177,6 +226,13 @@ namespace RelayTestApp
                 m_bcWrapper.LobbyService.LeaveLobby(State.lobby.lobbyId);
 
             m_bcWrapper.RTTService.DisableRTT();
+            // DisableRTT() drops the connection entirely, taking the chat channel
+            // subscription with it — reset both so the re-enable below re-resolves and
+            // re-subscribes fresh instead of trusting a stale channel id.
+            _chatRTTRegistered = false;
+            _chatChannelId = null;
+            _chatChannelResolving = false;
+            _chatChannelRetryAtMs = 0;
 
             State.lobby = null;
             State.server = null;
@@ -187,7 +243,11 @@ namespace RelayTestApp
             State.lobbyStatusStartTime = 0;
             State.mouseX = 0;
             State.mouseY = 0;
+            State.matchResult = new MatchResult();
+            State.coverage = new List<Coverage.CoverageEntry>();
+            State.lobbyJoinedAtMs = 0;
             ChangeScreen(ScreenState.MainMenu);
+            EnableChatRTT();
         }
 
         public void StartGame()
@@ -195,6 +255,18 @@ namespace RelayTestApp
             State.user.isReady = true;
             ChangeScreen(ScreenState.Starting);
             m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, BuildExtraJson(State.user.colorIndex));
+        }
+
+        // Non-host ready toggle. Starting the round is still host-only (via StartGame/the
+        // Start button, which has no readiness gate at all — always available as an
+        // early-start option), but every other member needs a way to signal readiness.
+        // Unlike StartGame this only flips the local flag, it never forces true and never
+        // starts anything itself.
+        public void OnToggleReady()
+        {
+            State.user.isReady = !State.user.isReady;
+            m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, BuildExtraJson(State.user.colorIndex));
+            State.form.UpdateLobby();
         }
 
         public void ChangeUserColor(int colorIndex)
@@ -310,15 +382,62 @@ namespace RelayTestApp
             m_bcWrapper.RelayService.EndMatch(new Dictionary<string, object>());
         }
 
-        // Host-only: wipe all splotches on every client.
-        public void ClearSplotches()
+
+        // Fetches top-5 + the local player's own rank for the given board/period combo.
+        // All bcWrapper calls stay in GameApp per this file's convention; MainWindow just
+        // renders whatever comes back.
+        public void FetchLeaderboard(bool coverage, bool quarterly, Action<List<LeaderboardEntry>> onTop5, Action<LeaderboardEntry> onSelf)
         {
-            if (State.lobby?.ownerCxId != State.user?.cxId) return;
-            State.splotches.Clear();
-            var json = new Dictionary<string, object> { ["op"] = "clear_splotches" };
-            byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(json));
-            m_bcWrapper.RelayService.Send(data, BrainCloudRelay.TO_ALL_PLAYERS,
-                true, true, BrainCloudRelay.CHANNEL_HIGH_PRIORITY_2);
+            string leaderboardId = coverage
+                ? (quarterly ? State.coverageLeaderboardIdQuarterly : State.coverageLeaderboardId)
+                : (quarterly ? State.pointsLeaderboardIdQuarterly : State.pointsLeaderboardId);
+
+            LeaderboardEntry ParseEntry(Dictionary<string, object> entry)
+            {
+                var e = new LeaderboardEntry();
+                e.score = entry.ContainsKey("score") ? Convert.ToInt64(entry["score"]) : 0;
+                e.rank = entry.ContainsKey("rank") ? Convert.ToInt32(entry["rank"]) : 0;
+                var data = entry.ContainsKey("data") ? entry["data"] as Dictionary<string, object> : null;
+                string name = data != null && data.ContainsKey("name") ? data["name"] as string ?? "" : "";
+                e.name = string.IsNullOrEmpty(name) ? "Player" : name;
+                return e;
+            }
+
+            m_bcWrapper.SocialLeaderboardService.GetGlobalLeaderboardPage(
+                leaderboardId, BrainCloudSocialLeaderboard.SortOrder.HIGH_TO_LOW, 0, 4,
+                (response, cbObj) =>
+                {
+                    try
+                    {
+                        var r = JsonReader.Deserialize<Dictionary<string, object>>(response);
+                        var data = r["data"] as Dictionary<string, object>;
+                        var arr = data["leaderboard"] as object[];
+                        var top = new List<LeaderboardEntry>();
+                        if (arr != null)
+                            foreach (var item in arr)
+                                top.Add(ParseEntry(item as Dictionary<string, object>));
+                        onTop5(top);
+                    }
+                    catch { onTop5(new List<LeaderboardEntry>()); }
+                },
+                (status, reasonCode, jsonError, cbObj) => onTop5(new List<LeaderboardEntry>()));
+
+            // beforeCount=0/afterCount=0 on GetGlobalLeaderboardView returns just the current
+            // player's own entry.
+            m_bcWrapper.SocialLeaderboardService.GetGlobalLeaderboardView(
+                leaderboardId, BrainCloudSocialLeaderboard.SortOrder.HIGH_TO_LOW, 0, 0,
+                (response, cbObj) =>
+                {
+                    try
+                    {
+                        var r = JsonReader.Deserialize<Dictionary<string, object>>(response);
+                        var data = r["data"] as Dictionary<string, object>;
+                        var arr = data["leaderboard"] as object[];
+                        onSelf(arr != null && arr.Length > 0 ? ParseEntry(arr[0] as Dictionary<string, object>) : null);
+                    }
+                    catch { onSelf(null); }
+                },
+                (status, reasonCode, jsonError, cbObj) => onSelf(null));
         }
 
         public string GetAppVersion()
@@ -421,6 +540,21 @@ namespace RelayTestApp
                                 catch { }
                             }
                         }
+
+                        string ReadStringProp(string key, string fallback)
+                        {
+                            if (data != null && data.ContainsKey(key) && data[key] is Dictionary<string, object> p
+                                && p.ContainsKey("value"))
+                            {
+                                string v = p["value"]?.ToString() ?? "";
+                                if (!string.IsNullOrEmpty(v)) return v;
+                            }
+                            return fallback;
+                        }
+                        State.pointsLeaderboardId = ReadStringProp("PointsLeaderboardId", State.pointsLeaderboardId);
+                        State.pointsLeaderboardIdQuarterly = ReadStringProp("PointsLeaderboardIdQuarterly", State.pointsLeaderboardIdQuarterly);
+                        State.coverageLeaderboardId = ReadStringProp("CoverageLeaderboardId", State.coverageLeaderboardId);
+                        State.coverageLeaderboardIdQuarterly = ReadStringProp("CoverageLeaderboardIdQuarterly", State.coverageLeaderboardIdQuarterly);
                     }
                     catch { }
                 },
@@ -456,6 +590,7 @@ namespace RelayTestApp
             FetchServerVersion();
             ChangeScreen(ScreenState.MainMenu);
             State.form.UpdateMainMenu();
+            EnableChatRTT();
         }
 
         void FetchServerVersion()
@@ -506,22 +641,7 @@ namespace RelayTestApp
             {
                 Console.WriteLine($"[APP] DieWithMessage: RS_ENDMATCH_REQUESTED in Game — treating as END_MATCH (race guard)");
                 _isRelayDisconnecting = true;
-                State.user.isAlive = false;
-                State.user.isReady = false;
-                State.shockwaves = new List<Shockwave>();
-                State.splotches = new List<Splotch>();
-                State.gameStartTime = 0;
-                State.lobbyStatusStartTime = 0;
-                State.lobbyStatusText = "";
-                _pendingMoveSend = false;
-                foreach (var member in State.lobby?.members ?? new List<User>())
-                {
-                    member.isAlive = false;
-                    member.isReady = false;
-                }
-                _pendingEndMatch = true;
-                ChangeScreen(ScreenState.Lobby);
-                State.form.UpdateLobby();
+                OnMatchEnded();
                 return;
             }
 
@@ -532,6 +652,15 @@ namespace RelayTestApp
             m_bcWrapper.RelayService.Disconnect();
             m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
             m_bcWrapper.RTTService.DisableRTT();
+
+            // resetCommunication-equivalent: reset the RTT/chat bootstrap flags too so a
+            // fresh login doesn't trust stale state.
+            _rttConnecting = false;
+            _rttEnableWaiters.Clear();
+            _chatRTTRegistered = false;
+            _chatChannelId = null;
+            _chatChannelResolving = false;
+            _chatChannelRetryAtMs = 0;
 
             string message = cbObject as string;
             State.form.ShowError((message ?? "Error") + ": " + jsonError);
@@ -553,7 +682,38 @@ namespace RelayTestApp
             ChangeScreen(ScreenState.Login);
         }
 
-        void OnRTTConnected(string jsonResponse, object cbObject)
+        // Shared RTT-enable helper — see the field comment above for why this exists.
+        // State.user.cxId is set once here (on the connect success path), then every
+        // queued waiter (chat bootstrap, Play's lobby search, ...) runs in order.
+        void EnsureRTTEnabled(Action onReady)
+        {
+            if (m_bcWrapper.RTTService.IsRTTEnabled())
+            {
+                onReady();
+                return;
+            }
+            _rttEnableWaiters.Add(onReady);
+            if (_rttConnecting) return;
+            _rttConnecting = true;
+
+            m_bcWrapper.RTTService.EnableRTT(
+                (jsonResponse, cbObject) =>
+                {
+                    _rttConnecting = false;
+                    State.user.cxId = m_bcWrapper.RTTService.getRTTConnectionID();
+                    var waiters = new List<Action>(_rttEnableWaiters);
+                    _rttEnableWaiters.Clear();
+                    foreach (var w in waiters) w();
+                },
+                (status, reasonCode, jsonError, cbObject) =>
+                {
+                    _rttConnecting = false;
+                    _rttEnableWaiters.Clear();
+                    OnRTTDisconnected(status, reasonCode, jsonError, cbObject);
+                });
+        }
+
+        void ProceedToFindLobby()
         {
             var algo = new Dictionary<string, object>
             {
@@ -561,7 +721,6 @@ namespace RelayTestApp
                 ["alignment"] = "center",
                 ["ranges"] = new System.Collections.Generic.List<int> { 1000 }
             };
-            State.user.cxId = m_bcWrapper.RTTService.getRTTConnectionID();
 
             void DoFindLobby(bool withPingData)
             {
@@ -616,6 +775,476 @@ namespace RelayTestApp
             }
         }
 
+        // -----------------------------------------------------------------------
+        // Global chat
+        // -----------------------------------------------------------------------
+
+        void EnableChatRTT()
+        {
+            if (!_chatRTTRegistered)
+            {
+                _chatRTTRegistered = true;
+                m_bcWrapper.RTTService.RegisterRTTChatCallback(OnChatRTTEvent);
+            }
+            EnsureRTTEnabled(EnsureChatChannel);
+        }
+
+        void EnsureChatChannel()
+        {
+            if (_chatChannelId != null || _chatChannelResolving) return;
+            if (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() < _chatChannelRetryAtMs) return;
+            _chatChannelResolving = true;
+
+            m_bcWrapper.ChatService.GetChannelId("gl", "gl",
+                (response, cbObj) =>
+                {
+                    string channelId;
+                    try
+                    {
+                        var r = JsonReader.Deserialize<Dictionary<string, object>>(response);
+                        var data = r["data"] as Dictionary<string, object>;
+                        channelId = data["channelId"] as string;
+                    }
+                    catch
+                    {
+                        _chatChannelResolving = false;
+                        _chatChannelRetryAtMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + ChatChannelRetryMs;
+                        return;
+                    }
+
+                    m_bcWrapper.ChatService.ChannelConnect(channelId, 30,
+                        (connectResponse, cbObj2) =>
+                        {
+                            _chatChannelId = channelId;
+                            _chatChannelResolving = false;
+                            try
+                            {
+                                var r2 = JsonReader.Deserialize<Dictionary<string, object>>(connectResponse);
+                                var data2 = r2["data"] as Dictionary<string, object>;
+                                var messages = data2.ContainsKey("messages") ? data2["messages"] as object[] : null;
+                                State.chatMessagesGlobal.Clear();
+                                if (messages != null)
+                                    foreach (var m in messages)
+                                        State.chatMessagesGlobal.Add(ParseChatMessage(m as Dictionary<string, object>));
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Failed to parse chat history: " + ex.Message);
+                            }
+                            State.form.UpdateChat();
+                        },
+                        (status, reasonCode, jsonError, cbObj2) =>
+                        {
+                            _chatChannelResolving = false;
+                            _chatChannelRetryAtMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + ChatChannelRetryMs;
+                        });
+                },
+                (status, reasonCode, jsonError, cbObj) =>
+                {
+                    _chatChannelResolving = false;
+                    _chatChannelRetryAtMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + ChatChannelRetryMs;
+                });
+        }
+
+        ChatMessage ParseChatMessage(Dictionary<string, object> m)
+        {
+            var msg = new ChatMessage();
+            msg.msgId = m.ContainsKey("msgId") ? m["msgId"] as string ?? "" : "";
+            var from = m.ContainsKey("from") ? m["from"] as Dictionary<string, object> : null;
+            string fromName = from != null && from.ContainsKey("name") ? from["name"] as string ?? "" : "";
+            msg.fromName = string.IsNullOrEmpty(fromName) ? "Player" : fromName;
+            var content = m.ContainsKey("content") ? m["content"] as Dictionary<string, object> : null;
+            msg.text = content != null && content.ContainsKey("text") ? content["text"] as string ?? "" : "";
+            return msg;
+        }
+
+        // operation: INCOMING (new message) / UPDATE (edited) / DELETE (removed), all keyed
+        // by msgId. The event's "operation" is a SIBLING of "data", not nested inside it —
+        // getting this wrong silently swallows every incoming chat message (confirmed the
+        // hard way porting this to Java first).
+        void OnChatRTTEvent(string jsonResponse)
+        {
+            try
+            {
+                var eventJson = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
+                if (!eventJson.ContainsKey("service") || eventJson["service"] as string != "chat") return;
+                string operation = eventJson["operation"] as string;
+                var data = eventJson["data"] as Dictionary<string, object>;
+
+                if (operation == "DELETE")
+                {
+                    string msgId = data["msgId"] as string;
+                    State.chatMessagesGlobal.RemoveAll(m => m.msgId == msgId);
+                }
+                else
+                {
+                    var msg = ParseChatMessage(data);
+                    int idx = State.chatMessagesGlobal.FindIndex(m => m.msgId == msg.msgId);
+                    if (idx >= 0) State.chatMessagesGlobal[idx] = msg;
+                    else State.chatMessagesGlobal.Add(msg);
+                }
+                State.form.UpdateChat();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to parse chat RTT event: " + ex.Message);
+            }
+        }
+
+        public void SendGlobalChatMessage(string text)
+        {
+            if (_chatChannelId == null || string.IsNullOrEmpty(text)) return;
+            m_bcWrapper.ChatService.PostChatMessageSimple(_chatChannelId, text, true);
+        }
+
+        // Sends a chat message to everyone currently in this lobby, via the Lobby service's
+        // SendSignal (not the Chat service — rides the RTT connection the lobby already has,
+        // no separate channel/registration needed). Appends locally right away; the receive
+        // handler (OnLobbyEvent, "SIGNAL" operation) skips the echo of our own signal that the
+        // server sends back to us too.
+        public void SendLobbySignalChat(string text)
+        {
+            if (string.IsNullOrEmpty(text) || State.lobby == null) return;
+            m_bcWrapper.LobbyService.SendSignal(State.lobby.lobbyId, new Dictionary<string, object> { ["text"] = text });
+
+            State.lobby.chatMessages.Add(new ChatMessage { fromName = State.user.name, text = text });
+            State.form.UpdateLobby();
+        }
+
+        // -----------------------------------------------------------------------
+        // Coverage / match end / summary / leaderboard posting
+        // -----------------------------------------------------------------------
+
+        // Recomputes State.coverage only when the splotch set has actually changed
+        // (State.splotchGeneration) and at least CoverageRecomputeMs has elapsed since the
+        // last compute — mirrors the cpp reference client's debounced, recompute-on-change
+        // coverage tick rather than a fixed-interval poll.
+        void TickCoverageRecompute()
+        {
+            if (State.lobby == null) return;
+            if (State.coverageComputedGen == State.splotchGeneration) return;
+            long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (now - State.coverageComputedAtMs < CoverageRecomputeMs) return;
+
+            State.coverageComputedAtMs = now;
+            State.coverageComputedGen = State.splotchGeneration;
+            State.coverage = Coverage.Compute(State.splotches, State.lobby.members);
+            State.form.UpdateCoverageSidebar();
+        }
+
+        // Called on every client when the relay server's END_MATCH system event arrives
+        // (from OnRelaySystemMessage) or is inferred via the RS_ENDMATCH_REQUESTED race
+        // guard in DieWithMessage — shared reset + transition to Match Summary.
+        void OnMatchEnded()
+        {
+            // Fallback: if the host's match_result broadcast never arrived (dropped, or the
+            // host disconnected mid-broadcast), compute a local snapshot so the summary
+            // screen has something to show. No cloud posting from this fallback path — only
+            // the host posts to the leaderboards.
+            if ((!State.matchResult.valid || State.matchResult.round != State.roundNumber) && State.lobby != null)
+            {
+                var coverage = Coverage.Compute(State.splotches, State.lobby.members);
+                State.matchResult = BuildMatchResult(State.roundNumber, coverage);
+            }
+
+            State.user.isAlive = false;
+            State.user.isReady = false;
+            State.shockwaves = new List<Shockwave>();
+            State.splotches = new List<Splotch>();
+            State.splotchGeneration++;
+            State.coverage = new List<Coverage.CoverageEntry>();
+            State.gameStartTime = 0;
+            State.lobbyStatusStartTime = 0;
+            State.lobbyStatusText = "";
+            _pendingMoveSend = false;
+            foreach (var member in State.lobby?.members ?? new List<User>())
+            {
+                member.isAlive = false;
+                member.isReady = false;
+            }
+
+            State.matchSummaryArrivalTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            _lastResultsPollMs = 0;
+
+            // Defer relay disconnect — cannot safely call from inside a relay callback
+            _pendingEndMatch = true;
+            ChangeScreen(ScreenState.MatchSummary);
+            State.form.UpdateMatchSummary();
+        }
+
+        // Called when the local player continues past Match Summary — either by clicking
+        // the button or via the 45s auto-timeout. The host's Start button in the Lobby has
+        // no readiness gate at all (always available as an early-start option), so the
+        // host never auto-readies here — they just land back in the Lobby where Start is
+        // waiting for them. Everyone else marks themselves ready (so the ready count the
+        // host sees builds up) and lands in the same place.
+        public void OnContinueFromSummary()
+        {
+            bool isHost = State.lobby?.ownerCxId == State.user?.cxId;
+            if (!isHost)
+            {
+                State.user.isReady = true;
+                if (State.lobby != null)
+                    m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, true, BuildExtraJson(State.user.colorIndex));
+            }
+            ChangeScreen(ScreenState.Lobby);
+            State.form.UpdateLobby();
+        }
+
+        MatchResult BuildMatchResult(int round, List<Coverage.CoverageEntry> coverage)
+        {
+            var result = new MatchResult { round = round, valid = true };
+            foreach (var c in coverage)
+            {
+                result.entries.Add(new MatchResult.Entry
+                {
+                    cxId = c.cxId,
+                    rank = c.rank,
+                    coveragePct = c.coveragePct,
+                    beaten = c.beaten
+                });
+            }
+            return result;
+        }
+
+        void ApplyMatchResult(int round, List<Dictionary<string, object>> entries)
+        {
+            if (State.matchResult.valid && State.matchResult.round == round) return; // idempotent — guards a duplicate broadcast (e.g. a migrated host)
+            var result = new MatchResult { round = round, valid = true };
+            foreach (var e in entries)
+            {
+                result.entries.Add(new MatchResult.Entry
+                {
+                    cxId = e["cx"] as string,
+                    rank = Convert.ToInt32(e["r"]),
+                    coveragePct = Convert.ToInt32(e["c"]) / 100.0f, // basis points -> percent
+                    beaten = Convert.ToInt32(e["b"])
+                });
+            }
+            State.matchResult = result;
+            State.form.UpdateMatchSummary();
+        }
+
+        // Host-only: computes the final coverage snapshot, broadcasts it to everyone (relay
+        // op match_result) and posts it to the leaderboards via cloud code. Guarded per-round
+        // since the points leaderboard is cumulative — a duplicate post would silently and
+        // permanently inflate a lifetime total.
+        void BroadcastMatchResults()
+        {
+            if (State.lobby == null) return;
+            if (State.leaderboardPostedRound == State.roundNumber) return;
+            State.leaderboardPostedRound = State.roundNumber;
+
+            var coverage = Coverage.Compute(State.splotches, State.lobby.members);
+            var result = BuildMatchResult(State.roundNumber, coverage);
+            State.matchResult = result;
+            State.form.UpdateMatchSummary();
+
+            SendMatchResultToAll(result);
+            HostPostMatchResultsToCloud(result);
+        }
+
+        void SendMatchResultToAll(MatchResult result)
+        {
+            if (result.entries.Count == 0) return;
+            bool isFirst = true;
+            var batch = new List<Dictionary<string, object>>();
+            int currentSize = 80; // envelope overhead estimate
+
+            for (int i = 0; i <= result.entries.Count; i++)
+            {
+                Dictionary<string, object> entry = null;
+                string entryStr = null;
+                if (i < result.entries.Count)
+                {
+                    var e = result.entries[i];
+                    entry = new Dictionary<string, object>
+                    {
+                        ["cx"] = e.cxId,
+                        ["r"] = e.rank,
+                        ["c"] = (int)Math.Round(e.coveragePct * 100.0f),
+                        ["b"] = e.beaten
+                    };
+                    entryStr = JsonWriter.Serialize(entry);
+                }
+
+                bool isLastIteration = (i == result.entries.Count);
+                bool flush = isLastIteration || (entry != null
+                    && currentSize + entryStr.Length + 1 > MaxRelayBytes && batch.Count > 0);
+                if (flush && batch.Count > 0)
+                {
+                    var msg = new Dictionary<string, object>
+                    {
+                        ["op"] = "match_result",
+                        ["data"] = new Dictionary<string, object>
+                        {
+                            ["round"] = result.round,
+                            ["first"] = isFirst,
+                            ["last"] = isLastIteration,
+                            ["e"] = batch.ToArray()
+                        }
+                    };
+                    byte[] data = Encoding.ASCII.GetBytes(JsonWriter.Serialize(msg));
+                    // Reliable AND ordered (unlike splotch_sync's reliable/unordered) — a
+                    // chunk-reassembly race is cosmetic for splotches but would corrupt a
+                    // posted score here.
+                    m_bcWrapper.RelayService.Send(data, BrainCloudRelay.TO_ALL_PLAYERS,
+                        true, true, BrainCloudRelay.CHANNEL_HIGH_PRIORITY_1);
+                    isFirst = false;
+                    batch = new List<Dictionary<string, object>>();
+                    currentSize = 80;
+                }
+                if (entry != null)
+                {
+                    batch.Add(entry);
+                    currentSize += entryStr.Length + 1;
+                }
+            }
+        }
+
+        // The PostMatchResults cloud-code script itself is server-side (already deployed
+        // against this brainCloud app — the cpp/react/godot/Java clients already call it) and
+        // posts on our behalf via postScoreToLeaderboardOnBehalfOf, since individual clients
+        // can no longer post directly.
+        void HostPostMatchResultsToCloud(MatchResult result)
+        {
+            var payload = new Dictionary<string, object>
+            {
+                ["round"] = result.round,
+                ["lobbyId"] = State.lobby.lobbyId,
+                ["pointsLeaderboardId"] = State.pointsLeaderboardId,
+                ["pointsLeaderboardIdQuarterly"] = State.pointsLeaderboardIdQuarterly,
+                ["coverageLeaderboardId"] = State.coverageLeaderboardId,
+                ["coverageLeaderboardIdQuarterly"] = State.coverageLeaderboardIdQuarterly
+            };
+
+            var entries = new List<Dictionary<string, object>>();
+            foreach (var e in result.entries)
+            {
+                var member = MemberByCxId(e.cxId);
+                if (member == null || string.IsNullOrEmpty(member.profileId)) continue; // can't post server-side without a profileId
+                entries.Add(new Dictionary<string, object>
+                {
+                    ["profileId"] = member.profileId,
+                    ["name"] = member.name,
+                    ["points"] = e.beaten + 1,
+                    ["coverageBasisPoints"] = (int)Math.Round(e.coveragePct * 100.0f)
+                });
+            }
+            payload["entries"] = entries.ToArray();
+
+            int round = result.round;
+            m_bcWrapper.ScriptService.RunScript("PostMatchResults", JsonWriter.Serialize(payload),
+                (response, cbObj) =>
+                {
+                    try
+                    {
+                        // The script's return value sits at data.response (a sibling of
+                        // runTimeData/success), not directly at data.results.
+                        var r = JsonReader.Deserialize<Dictionary<string, object>>(response);
+                        var data = r["data"] as Dictionary<string, object>;
+                        var resp = data["response"] as Dictionary<string, object>;
+                        var results = resp["results"] as object[];
+                        ApplyLeaderboardResultsFromCloud(round, results);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Failed to parse PostMatchResults response: " + ex.Message);
+                    }
+                },
+                (status, reasonCode, jsonError, cbObj) =>
+                {
+                    Console.WriteLine("PostMatchResults failed: " + jsonError);
+                });
+        }
+
+        // Non-host clients don't get the leaderboard delta via relay (no such op exists) —
+        // they poll a GlobalEntity the cloud script writes, indexed by "<lobbyId>:<round>",
+        // since a host that disconnects right after posting would otherwise leave everyone
+        // else waiting forever even though the post itself already succeeded.
+        public void TickMatchResultsPoll()
+        {
+            if (!State.matchResult.valid || State.lobby == null) return;
+            if (State.lobby.ownerCxId == State.user?.cxId) return; // host posts directly, no need to poll
+
+            foreach (var e in State.matchResult.entries)
+                if (e.lbDelta.ready) return; // already applied this round
+
+            long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (now - _lastResultsPollMs < ResultsPollIntervalMs) return;
+            _lastResultsPollMs = now;
+
+            string indexedId = State.lobby.lobbyId + ":" + State.matchResult.round;
+            int round = State.matchResult.round;
+            m_bcWrapper.GlobalEntityService.GetListByIndexedId(indexedId, 1,
+                (response, cbObj) =>
+                {
+                    try
+                    {
+                        var r = JsonReader.Deserialize<Dictionary<string, object>>(response);
+                        var data = r["data"] as Dictionary<string, object>;
+                        var entityList = data["entityList"] as object[];
+                        if (entityList == null || entityList.Length == 0) return;
+                        var entity = entityList[0] as Dictionary<string, object>;
+                        var edata = entity["data"] as Dictionary<string, object>;
+                        var results = edata["results"] as object[];
+                        ApplyLeaderboardResultsFromCloud(round, results);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Failed to parse match-results GlobalEntity: " + ex.Message);
+                    }
+                },
+                (status, reasonCode, jsonError, cbObj) => { /* silently retry next tick */ });
+        }
+
+        // Shared by both the host's direct script response and the GlobalEntity poll.
+        void ApplyLeaderboardResultsFromCloud(int round, object[] results)
+        {
+            if (!State.matchResult.valid || State.matchResult.round != round || results == null) return;
+            foreach (var item in results)
+            {
+                var r = item as Dictionary<string, object>;
+                if (r == null) continue;
+                string profileId = r.ContainsKey("profileId") ? r["profileId"] as string ?? "" : "";
+                var member = MemberByProfileId(profileId);
+                if (member == null) continue;
+                foreach (var e in State.matchResult.entries)
+                {
+                    if (e.cxId != member.cxId) continue;
+                    e.lbDelta.ready = true;
+                    ParsePeriodDelta(e.lbDelta.pointsLifetime, r.ContainsKey("pointsLifetime") ? r["pointsLifetime"] as Dictionary<string, object> : null);
+                    ParsePeriodDelta(e.lbDelta.pointsQuarterly, r.ContainsKey("pointsQuarterly") ? r["pointsQuarterly"] as Dictionary<string, object> : null);
+                    ParsePeriodDelta(e.lbDelta.coverageLifetime, r.ContainsKey("coverageLifetime") ? r["coverageLifetime"] as Dictionary<string, object> : null);
+                    ParsePeriodDelta(e.lbDelta.coverageQuarterly, r.ContainsKey("coverageQuarterly") ? r["coverageQuarterly"] as Dictionary<string, object> : null);
+                    break;
+                }
+            }
+            State.form.UpdateMatchSummary();
+        }
+
+        void ParsePeriodDelta(MatchResult.PeriodDelta delta, Dictionary<string, object> period)
+        {
+            if (period == null) return;
+            delta.improved = period.ContainsKey("improved") && period["improved"] is bool b && b;
+            delta.rankBefore = period.ContainsKey("before") ? Convert.ToInt32(period["before"]) : -1;
+            delta.rankAfter = period.ContainsKey("after") ? Convert.ToInt32(period["after"]) : -1;
+        }
+
+        User MemberByCxId(string cxId)
+        {
+            if (State.lobby == null) return null;
+            foreach (var m in State.lobby.members) if (m.cxId == cxId) return m;
+            return null;
+        }
+
+        User MemberByProfileId(string profileId)
+        {
+            if (State.lobby == null || string.IsNullOrEmpty(profileId)) return null;
+            foreach (var m in State.lobby.members) if (m.profileId == profileId) return m;
+            return null;
+        }
+
         void OnLobbyEvent(string jsonResponse)
         {
             var response = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
@@ -623,8 +1252,11 @@ namespace RelayTestApp
 
             if (jsonData.ContainsKey("lobby"))
             {
+                var carryForwardChat = State.lobby?.chatMessages;
                 State.lobby = new Lobby(jsonData["lobby"] as Dictionary<string, object>,
                                         jsonData["lobbyId"] as string);
+                if (carryForwardChat != null) State.lobby.chatMessages = carryForwardChat;
+                if (State.lobbyJoinedAtMs == 0) State.lobbyJoinedAtMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 if (State.screenState == ScreenState.JoiningLobby)
                     ChangeScreen(ScreenState.Lobby);
                 State.form.UpdateLobby();
@@ -634,6 +1266,32 @@ namespace RelayTestApp
             {
                 switch (response["operation"] as string)
                 {
+                    case "SIGNAL":
+                    {
+                        // This-lobby chat, via SendSignal. Real wire shape: data: { lobbyId,
+                        // from: {id,name,pic,cxId}, signalData: <our own payload> }. "from" is
+                        // the server's authoritative sender info.
+                        var fromJson = jsonData.ContainsKey("from") ? jsonData["from"] as Dictionary<string, object> : null;
+                        string fromCxId = fromJson != null && fromJson.ContainsKey("cxId") ? fromJson["cxId"] as string ?? "" : "";
+                        string fromName = fromJson != null && fromJson.ContainsKey("name") ? fromJson["name"] as string ?? "" : "";
+                        var signalData = jsonData.ContainsKey("signalData") ? jsonData["signalData"] as Dictionary<string, object> : null;
+                        string text = signalData != null && signalData.ContainsKey("text") ? signalData["text"] as string ?? "" : "";
+
+                        // Skip echoes of our own signal — SendLobbySignalChat already appended
+                        // it locally on send. Compared by cxId (not name) since two players
+                        // could share a display name.
+                        if (!string.IsNullOrEmpty(text) && fromCxId != State.user?.cxId && State.lobby != null)
+                        {
+                            State.lobby.chatMessages.Add(new ChatMessage
+                            {
+                                fromName = string.IsNullOrEmpty(fromName) ? "Player" : fromName,
+                                text = text
+                            });
+                            State.form.UpdateLobby();
+                        }
+                        break;
+                    }
+
                     case "ROOM_ASSIGNED":
                         State.lobbyStatusText = "Server assigned...";
                         State.form.UpdateLobbyStatus(State.lobbyStatusText);
@@ -719,6 +1377,10 @@ namespace RelayTestApp
         void GoToGameScreen()
         {
             bool isHost = State.lobby?.ownerCxId == State.user?.cxId;
+
+            State.matchResult = new MatchResult();
+            State.coverage = new List<Coverage.CoverageEntry>();
+            State.coverageComputedGen = -1;
 
             ChangeScreen(ScreenState.Game);
             State.form.UpdateGameViewport();
@@ -844,6 +1506,7 @@ namespace RelayTestApp
                 angle = angle,
                 startTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
             });
+            State.splotchGeneration++;
         }
 
         // -----------------------------------------------------------------------
@@ -892,12 +1555,33 @@ namespace RelayTestApp
                         }
                     }
                 }
+                State.splotchGeneration++;
                 return;
             }
 
             if (op == "clear_splotches")
             {
                 State.splotches.Clear();
+                State.splotchGeneration++;
+                return;
+            }
+
+            if (op == "match_result" && data != null)
+            {
+                int round = Convert.ToInt32(data["round"]);
+                bool first = data.ContainsKey("first") && data["first"] is bool fb && fb;
+                if (first) _pendingMatchResult = new List<Dictionary<string, object>>();
+
+                if (data.ContainsKey("e"))
+                {
+                    var arr = data["e"] as object[];
+                    if (arr != null)
+                        foreach (var item in arr)
+                            _pendingMatchResult.Add(item as Dictionary<string, object>);
+                }
+
+                bool last = data.ContainsKey("last") && data["last"] is bool lb && lb;
+                if (last) ApplyMatchResult(round, _pendingMatchResult);
                 return;
             }
 
@@ -960,27 +1644,8 @@ namespace RelayTestApp
                 // waiting for _pendingEndMatch to fire next frame) ensures DieWithMessage is
                 // suppressed even in that race window.
                 _isRelayDisconnecting = true;
-
-                // Reset per-round state immediately (mirrors Java onGameScreenToLobby / JS onSystemMessage)
-                State.user.isAlive = false;
-                State.user.isReady = false;
-                State.shockwaves = new List<Shockwave>();
-                State.splotches = new List<Splotch>();
-                State.gameStartTime = 0;
-                State.lobbyStatusStartTime = 0;
-                State.lobbyStatusText = "";
-                _pendingMoveSend = false;
-                foreach (var member in State.lobby?.members ?? new List<User>())
-                {
-                    member.isAlive = false;
-                    member.isReady = false;
-                }
-
-                // Defer relay disconnect — cannot safely call from inside a relay callback
-                _pendingEndMatch = true;
-                ChangeScreen(ScreenState.Lobby);
-                State.form.UpdateLobby();
-                Console.WriteLine("[SYS] END_MATCH done — screen=Lobby _pendingEndMatch=true");
+                OnMatchEnded();
+                Console.WriteLine("[SYS] END_MATCH done — screen=MatchSummary _pendingEndMatch=true");
             }
             else if (op == "CONNECT")
             {
