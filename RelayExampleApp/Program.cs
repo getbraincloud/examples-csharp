@@ -23,8 +23,7 @@ namespace RelayExampleApp
             bc = new BrainCloudWrapper("RelayExampleAppProd");
             bc.ResetStoredProfileId();
 
-            // Comment this line, and uncomment the next one. Fill in you ids
-            InitBCFromIdsTXT();
+            InitBC();
 
             bc.Client.EnableLogging(true);
             bc.AuthenticateAnonymous(onAuthenticated, onFailed);
@@ -44,36 +43,11 @@ namespace RelayExampleApp
             return returnCode;
         }
 
-        static void InitBCFromIdsTXT()
+        static void InitBC()
         {
-            string url = "";
-            string appId = "";
-            string appSecret = "";
-            using (var reader = new StreamReader("ids.txt"))
-            {
-                Console.WriteLine("Found ids.txt");
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (line.StartsWith("serverUrl="))
-                    {
-                        url = line.Substring(("serverUrl=").Length);
-                        url.Trim();
-                    }
-                    else if (line.StartsWith("appId="))
-                    {
-                        appId = line.Substring(("appId=").Length);
-                        appId.Trim();
-                    }
-                    else if (line.StartsWith("secret="))
-                    {
-                        appSecret = line.Substring(("secret=").Length);
-                        appSecret.Trim();
-                    }
-                }
-            }
-
-            bc.Init(url, appSecret, appId, "1.0");
+            bc.Init();
+            if (!bc.Client.Initialized)
+                throw new InvalidOperationException("braincloud.cfg not found or unreadable next to the executable.");
         }
 
         static void onFailed(int status, int reasonCode, 

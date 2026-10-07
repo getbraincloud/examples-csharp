@@ -252,7 +252,7 @@ namespace RelayTestApp
             bool isMe = member.cxId == State.user?.cxId;
             bool isHostMember = member.cxId == State.lobby?.ownerCxId;
 
-            var row = new Grid { ColumnDefinitions = new ColumnDefinitions("28,*"), Margin = new Avalonia.Thickness(0, 2) };
+            var row = new Grid { ColumnDefinitions = new ColumnDefinitions("28,*,Auto"), Margin = new Avalonia.Thickness(0, 2) };
 
             var swatch = new Button
             {
@@ -286,7 +286,29 @@ namespace RelayTestApp
             Grid.SetColumn(infoStack, 1);
             row.Children.Add(infoStack);
 
+            var lblRank = new TextBlock
+            {
+                Text = member.worldwideRank >= 0 ? $"#{member.worldwideRank}" : "Unranked",
+                Foreground = new SolidColorBrush(RankColor(member.worldwideRank)),
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                Margin = new Avalonia.Thickness(8, 0, 0, 0)
+            };
+            Grid.SetColumn(lblRank, 2);
+            row.Children.Add(lblRank);
+
             return row;
+        }
+
+        // Gold/silver/bronze for top 3, matching the cpp/java/unity RTAs.
+        static Avalonia.Media.Color RankColor(int rank)
+        {
+            switch (rank)
+            {
+                case 1: return Avalonia.Media.Color.FromRgb(255, 214, 0);
+                case 2: return Avalonia.Media.Color.FromRgb(191, 191, 191);
+                case 3: return Avalonia.Media.Color.FromRgb(204, 128, 51);
+                default: return rank < 0 ? Avalonia.Media.Color.FromRgb(153, 153, 153) : Avalonia.Media.Colors.White;
+            }
         }
 
         Control BuildBadge(string text, string hexColor)

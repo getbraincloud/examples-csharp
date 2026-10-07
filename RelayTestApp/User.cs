@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Avalonia;
 
@@ -15,6 +16,7 @@ namespace RelayTestApp
         public Point pos = new Point(0, 0);
         public Dictionary<string, int> pings = new Dictionary<string, int>(); // pre-game region latencies shared via lobby extra (ms)
         public int activePing = -1; // live relay-server RTT broadcast during gameplay; -1 = not yet received
+        public int worldwideRank = -1; // coverage-board rank shared via lobby extra "rank"; -1 = unranked/unknown
 
         public User() { }
 
@@ -26,6 +28,7 @@ namespace RelayTestApp
 
             var extra = userJson["extra"] as Dictionary<string, object>;
             colorIndex = (int)extra["colorIndex"];
+            worldwideRank = extra.TryGetValue("rank", out var rank) && rank != null ? Convert.ToInt32(rank) : -1;
         }
     }
 }

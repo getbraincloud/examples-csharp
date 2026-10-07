@@ -43,6 +43,10 @@ namespace RelayTestApp
         // and C++'s isDisconnecting, but kept across the async disconnect-to-reconnect window.
         bool _isRelayDisconnecting = false;
 
+        // Set from FindOrCreateLobby's own callback and every OnLobbyEvent, not just once
+        // State.lobby is populated, so CloseGame can leave even on an early cancel.
+        string _currentLobbyId;
+
         // Shared RTT-enable mechanism. RTTComms.EnableRTT silently no-ops (neither callback
         // fires) when RTT is already connected or already connecting, so anything that needs
         // RTT (chat bootstrap from the Main Menu, matchmaking from the Play button) must funnel
@@ -53,6 +57,7 @@ namespace RelayTestApp
 
         // Global chat
         bool _chatRTTRegistered = false;
+        bool _rankFetchInFlight = false;
         string _chatChannelId = null;
         bool _chatChannelResolving = false;
         long _chatChannelRetryAtMs = 0;
@@ -211,28 +216,24 @@ namespace RelayTestApp
 
         public void CloseGame()
         {
-            bool wasInRelay = m_bcWrapper.RelayService.IsConnected();
-
             _isRelayDisconnecting = true;
             m_bcWrapper.RelayService.DeregisterRelayCallback();
             m_bcWrapper.RelayService.DeregisterSystemCallback();
             m_bcWrapper.RelayService.Disconnect();
-            _isRelayDisconnecting = false;  // RTT is also shutting down, so no relay reconnect expected
+            _isRelayDisconnecting = false;  // reset now; relay may reconnect later for a new match
             m_bcWrapper.RTTService.DeregisterAllRTTCallbacks();
-
-            // If we were in the lobby (not yet in relay), explicitly tell the server we're
-            // leaving so other members see the departure immediately (mirrors C++ app_cancelLobby).
-            if (!wasInRelay && State.lobby != null)
-                m_bcWrapper.LobbyService.LeaveLobby(State.lobby.lobbyId);
-
-            m_bcWrapper.RTTService.DisableRTT();
-            // DisableRTT() drops the connection entirely, taking the chat channel
-            // subscription with it — reset both so the re-enable below re-resolves and
-            // re-subscribes fresh instead of trusting a stale channel id.
+            m_bcWrapper.RTTService.RegisterRTTLobbyCallback(OnLobbyEvent);
+            // DeregisterAllRTTCallbacks() above just wiped the actual chat callback too —
+            // reset the flag so EnableChatRTT() re-registers it instead of no-op'ing.
             _chatRTTRegistered = false;
-            _chatChannelId = null;
-            _chatChannelResolving = false;
-            _chatChannelRetryAtMs = 0;
+            EnableChatRTT();
+
+            // Tell the server we're leaving, whether or not a match was in progress.
+            if (!string.IsNullOrEmpty(_currentLobbyId))
+            {
+                m_bcWrapper.LobbyService.LeaveLobby(_currentLobbyId);
+                _currentLobbyId = null;
+            }
 
             State.lobby = null;
             State.server = null;
@@ -247,7 +248,7 @@ namespace RelayTestApp
             State.coverage = new List<Coverage.CoverageEntry>();
             State.lobbyJoinedAtMs = 0;
             ChangeScreen(ScreenState.MainMenu);
-            EnableChatRTT();
+            FetchWorldwideRank();
         }
 
         public void StartGame()
@@ -284,10 +285,10 @@ namespace RelayTestApp
         }
 
         // Build the extra dict for lobby join/updateReady calls.
-        // Always includes colorIndex; includes per-region pings when available.
+        // Always includes colorIndex + rank; includes per-region pings when available.
         Dictionary<string, object> BuildExtraJson(int colorIndex)
         {
-            var extra = new Dictionary<string, object> { ["colorIndex"] = colorIndex };
+            var extra = new Dictionary<string, object> { ["colorIndex"] = colorIndex, ["rank"] = State.user?.worldwideRank ?? -1 };
             if (State.pingData.Count > 0)
                 extra["pings"] = State.pingData;
             return extra;
@@ -444,13 +445,6 @@ namespace RelayTestApp
         {
             if (m_bcWrapper != null) return m_bcWrapper.Client.GetAppVersion();
             if (!string.IsNullOrEmpty(m_appVersion)) return m_appVersion;
-            // Read directly from ids.txt if not yet initialized
-            string idsPath = Path.Combine(AppContext.BaseDirectory, "ids.txt");
-            if (File.Exists(idsPath))
-            {
-                foreach (var line in File.ReadAllLines(idsPath))
-                    if (line.StartsWith("appVersion=")) return line["appVersion=".Length..].Trim();
-            }
             return "N/A";
         }
         // -----------------------------------------------------------------------
@@ -462,22 +456,11 @@ namespace RelayTestApp
             if (m_bcWrapper == null)
                 m_bcWrapper = new BrainCloudWrapper("RelayTestApp");
 
-            string url = "", appId = "", appSecret = "", appVersion = "";
-            string idsPath = Path.Combine(AppContext.BaseDirectory, "ids.txt");
-            using (var reader = new StreamReader(idsPath))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (line.StartsWith("serverUrl=")) url = line.Substring("serverUrl=".Length).Trim();
-                    else if (line.StartsWith("appId=")) appId = line.Substring("appId=".Length).Trim();
-                    else if (line.StartsWith("secret=")) appSecret = line.Substring("secret=".Length).Trim();
-                    else if (line.StartsWith("appVersion=")) appVersion = line.Substring("appVersion=".Length).Trim();
-                }
-            }
+            m_bcWrapper.Init();
+            if (!m_bcWrapper.Client.Initialized)
+                throw new InvalidOperationException("braincloud.cfg not found or unreadable next to the executable.");
 
-            m_appVersion = appVersion;
-            m_bcWrapper.Init(url, appSecret, appId, appVersion);
+            m_appVersion = m_bcWrapper.Client.GetAppVersion();
             m_bcWrapper.Client.EnableLogging(true);
             State.form?.SetClientVersion(m_bcWrapper.Client.BrainCloudClientVersion);
         }
@@ -591,6 +574,36 @@ namespace RelayTestApp
             ChangeScreen(ScreenState.MainMenu);
             State.form.UpdateMainMenu();
             EnableChatRTT();
+            FetchWorldwideRank();
+        }
+
+        // No API to look up another player's rank, so each player fetches their own and shares it via lobby extra.
+        public void FetchWorldwideRank()
+        {
+            if (_rankFetchInFlight || m_bcWrapper == null || string.IsNullOrEmpty(State.coverageLeaderboardId)) return;
+            _rankFetchInFlight = true;
+            m_bcWrapper.SocialLeaderboardService.GetGlobalLeaderboardView(
+                State.coverageLeaderboardId, BrainCloudSocialLeaderboard.SortOrder.HIGH_TO_LOW, 0, 0,
+                (response, cbObj) =>
+                {
+                    _rankFetchInFlight = false;
+                    int rank = -1;
+                    try
+                    {
+                        var r = JsonReader.Deserialize<Dictionary<string, object>>(response);
+                        var data = r["data"] as Dictionary<string, object>;
+                        var arr = data["leaderboard"] as object[];
+                        if (arr != null && arr.Length > 0 && arr[0] is Dictionary<string, object> entry && entry.ContainsKey("rank"))
+                            rank = Convert.ToInt32(entry["rank"]);
+                    }
+                    catch { }
+                    if (State.user == null || rank == State.user.worldwideRank) return;
+                    State.user.worldwideRank = rank;
+                    // Push it to lobby-mates now rather than waiting for the next extra re-send.
+                    if (State.lobby != null)
+                        m_bcWrapper.LobbyService.UpdateReady(State.lobby.lobbyId, State.user.isReady, BuildExtraJson(State.user.colorIndex));
+                },
+                (status, reasonCode, jsonError, cbObj) => _rankFetchInFlight = false);
         }
 
         void FetchServerVersion()
@@ -722,6 +735,19 @@ namespace RelayTestApp
                 ["ranges"] = new System.Collections.Generic.List<int> { 1000 }
             };
 
+            void OnFindLobbySuccess(string jsonResponse, object cbObject)
+            {
+                try
+                {
+                    var r = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
+                    var data = r["data"] as Dictionary<string, object>;
+                    string lobbyId = data != null && data.ContainsKey("lobbyId") ? data["lobbyId"] as string : null;
+                    if (!string.IsNullOrEmpty(lobbyId))
+                        _currentLobbyId = lobbyId;
+                }
+                catch { }
+            }
+
             void DoFindLobby(bool withPingData)
             {
                 var extra = BuildExtraJson(State.user.colorIndex);
@@ -731,14 +757,14 @@ namespace RelayTestApp
                         new Dictionary<string, object>(),
                         false, extra, "all",
                         new Dictionary<string, object>(),
-                        null, null, DieWithMessage, "Failed to find lobby");
+                        null, OnFindLobbySuccess, DieWithMessage, "Failed to find lobby");
                 else
                     m_bcWrapper.LobbyService.FindOrCreateLobby(
                         Settings.lobbyType, 0, 1, algo,
                         new Dictionary<string, object>(),
                         false, extra, "all",
                         new Dictionary<string, object>(),
-                        null, null, DieWithMessage, "Failed to find lobby");
+                        null, OnFindLobbySuccess, DieWithMessage, "Failed to find lobby");
             }
 
             if (Settings.usePingData)
@@ -1250,6 +1276,10 @@ namespace RelayTestApp
             var response = JsonReader.Deserialize<Dictionary<string, object>>(jsonResponse);
             var jsonData = response["data"] as Dictionary<string, object>;
 
+            // Not gated on "lobby" so an early event with just a lobbyId still counts.
+            if (jsonData.ContainsKey("lobbyId"))
+                _currentLobbyId = jsonData["lobbyId"] as string;
+
             if (jsonData.ContainsKey("lobby"))
             {
                 var carryForwardChat = State.lobby?.chatMessages;
@@ -1328,7 +1358,11 @@ namespace RelayTestApp
                         {
                             var reason = jsonData["reason"] as Dictionary<string, object>;
                             if (Convert.ToInt32(reason["code"]) != BrainCloud.ReasonCodes.RTT_ROOM_READY)
+                            {
+                                // Already gone server-side — skip the redundant leave in CloseGame.
+                                _currentLobbyId = null;
                                 CloseGame();
+                            }
                             break;
                         }
 
